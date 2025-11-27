@@ -7,6 +7,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { FilterQuery } from 'mongoose';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
+import { GetUsersQueryParams } from '../../api/input-dto/get-users-query-params.input-dto';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -30,10 +31,10 @@ export class UsersQueryRepository {
     const filter: FilterQuery<User> = {
       deletedAt: null,
     };
-    if (query.searchLohinTerm) {
+    if (query.searchLoginTerm) {
       filter.$or = filter.$or || [];
       filter.$or.push({
-        login: { $regex: query.searchLohinTerm, $options: 'i' },
+        login: { $regex: query.searchLoginTerm, $options: 'i' },
       });
     }
 
