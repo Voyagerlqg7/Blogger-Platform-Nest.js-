@@ -13,22 +13,22 @@ import {
 
 import { CreateBlogDto } from '../dto/create-blog.dto';
 import { CreatePostForBlogDto } from '../dto/create-post-for-blog.dto';
+import { BlogService } from '../application/blog.service';
 
 @Controller('blogs')
 export class BlogsController {
+  constructor(private readonly blogService: BlogService) {}
+
   @Get()
   async getAllBlogs(@Query() query: any) {
-    return;
   }
 
   @Get(':id')
   async getBlog(@Param('id') blogId: string) {
-    return;
   }
 
   @Get(':id/posts')
   async getAllPostsFromBlog(@Param('id') blogId: string, @Query() query: any) {
-    return;
   }
 
   @Post(':id/posts')
@@ -36,7 +36,7 @@ export class BlogsController {
     @Param('id') blogId: string,
     @Body() dto: CreatePostForBlogDto,
   ) {
-    return;
+    return await this.blogService.createPostForSpecialBlog(blogId, CreatePostForBlogDto);
   }
 
   @Delete(':id')

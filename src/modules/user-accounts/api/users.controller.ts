@@ -9,7 +9,7 @@ import {
   Body,
   Query,
 } from '@nestjs/common';
-import { CreateUserInputDto } from '../dto/create-user.dto';
+import { CreateUserInputDto } from './input-dto/users.input-dto';
 
 @Controller('users')
 export class UsersController {

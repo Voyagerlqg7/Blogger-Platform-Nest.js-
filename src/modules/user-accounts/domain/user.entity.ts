@@ -1,4 +1,8 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Model } from 'mongoose';
+import { UpdateUserDto } from '../dto/create-user.dto';
+import { CreateUserDomainDto } from './dto/create-user.domain.dto';
+import { Name, NameSchema } from './name.schema';
 
 /**
  * User Entity Schema

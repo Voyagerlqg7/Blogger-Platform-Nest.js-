@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModelType } from '../domain/user.entity';
-import { CreateUserDto } from '../dto/create-user.dto';
+import { User } from '../domain/user.entity';
+import type { UserModelType } from '../domain/user.entity';
+import { CreateUserDto, UpdateUserDto } from '../dto/create-user.dto';
 import bcrypt from 'bcrypt';
 import { UsersRepository } from '../infrastructure/users.repository';
 
@@ -14,13 +15,13 @@ export class UsersService {
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<string> {
-    //TODO: move to brypt service
+    //TODO: move to bcrypt service
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
     const user = this.UserModel.createInstance({
       email: dto.email,
       login: dto.login,
-      password: passwordHash,
+      passwordHash: passwordHash,
     });
 
     await this.usersRepository.save(user);
@@ -31,7 +32,9 @@ export class UsersService {
   async updateUser(id: string, dto: UpdateUserDto): Promise<string> {
     const user = await this.usersRepository.findOrNotFoundFail(id);
 
-    user.update(dto);
+    // не присваиваем св-ва сущностям напрямую в сервисах! даже для изменения одного св-ва
+    // создаём метод
+    user.update(dto); // change detection
 
     await this.usersRepository.save(user);
 
