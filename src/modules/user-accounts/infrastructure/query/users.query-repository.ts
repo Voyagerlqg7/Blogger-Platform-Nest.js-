@@ -5,7 +5,8 @@ import { UserViewDto } from '../../api/view-dto/users.view-dto';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { FilterQuery } from 'mongoose';
+import { QueryFilter } from 'mongoose';
+
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetUsersQueryParams } from '../../api/input-dto/get-users-query-params.input-dto';
 
@@ -28,7 +29,7 @@ export class UsersQueryRepository {
   async getAll(
     query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UserViewDto[]>> {
-    const filter: FilterQuery<User> = {
+    const filter: QueryFilter<User> = {
       deletedAt: null,
     };
     if (query.searchLoginTerm) {
