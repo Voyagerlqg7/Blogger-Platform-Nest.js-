@@ -40,11 +40,11 @@ export class User {
     user.login = dto.login;
     user.isEmailConfirmed = false;
 
-    user.name = {
-      firstName: 'firstName xxx',
-      lastName: 'lastName yyy',
-    };
-
+    /*user.name = {
+          firstName: 'firstName xxx',
+          lastName: 'lastName yyy',
+        };
+    */
     return user as UserDocument;
   }
 

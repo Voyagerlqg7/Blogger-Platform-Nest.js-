@@ -23,15 +23,13 @@ export class Post {
   deletedAt: Date | null;
 
   static createInstance(dto: CreatePostsDomainDto): PostDocument {
-    /*const post = new this();
-            post.title = dto.name;
-            post.shortDescription = dto.description;
-            post.content = dto.websiteUrl;
-            post.blogId = false;
-            post.blogName = dto.blogName;
-    
-            return post as PostDocument;
-            */
+    const post = new this();
+    post.title = dto.title;
+    post.shortDescription = dto.shortDescription;
+    post.content = dto.content;
+    post.blogId = dto.blogId;
+    post.blogName = dto.blogName;
+    return post as PostDocument;
   }
 
   makeDeleted() {
