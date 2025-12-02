@@ -1,4 +1,5 @@
-import { User, UserModelType } from '../../domain/user.entity';
+import { User } from '../../domain/user.entity';
+import type { UserModelType } from '../../domain/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserExternalDto } from './external-dto/users.external-dto';
