@@ -1,0 +1,46 @@
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import type { PostModelType } from '../domain/posts.entity';
+import { CreatePostDto, UpdatePostDto } from '../dto/create-post.dto';
+import { PostsRepository } from '../infrastructure/posts.repository';
+import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
+import { NotFoundException } from '@nestjs/common';
+
+@Injectable()
+export class PostService {
+  constructor(
+    @InjectModel('Post')
+    private PostModel: PostModelType,
+    private blogRepository: BlogsRepository,
+    private postRepository: PostsRepository,
+  ) {}
+
+  async createPost(dto: CreatePostDto): Promise<string> {
+    const blog = await this.blogRepository.findOrNotFoundFail(dto.blogId);
+    if (!blog) {
+      throw new NotFoundException('Blog not found');
+    }
+    const post = this.PostModel.createInstance({
+      title: dto.title,
+      shortDescription: dto.shortDescription,
+      content: dto.content,
+      blogId: dto.blogId,
+      blogName: blog.name,
+    });
+    await this.postRepository.save(post);
+    return post._id.toString();
+  }
+
+  async updatePost(id: string, dto: UpdatePostDto): Promise<string> {
+    const post = await this.postRepository.findOrNotFoundFail(id);
+    post.update(dto);
+    await this.postRepository.save(post);
+    return post._id.toString();
+  }
+
+  async deletePost(id: string) {
+    const post = await this.postRepository.findOrNotFoundFail(id);
+    post.makeDeleted();
+    await this.postRepository.save(post);
+  }
+}
