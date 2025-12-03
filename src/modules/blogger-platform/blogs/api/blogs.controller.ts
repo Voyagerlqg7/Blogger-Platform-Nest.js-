@@ -12,10 +12,13 @@ import {
 } from '@nestjs/common';
 
 import { CreateBlogDto } from '../dto/create-blog.dto';
+import { UpdateBlogDto } from '../dto/update-blog.dto';
 import { CreatePostForBlogDto } from '../dto/create-post-for-blog.dto';
 import { BlogService } from '../application/blog.service';
 import { BlogsQueryRepository } from '../infrastructure/query/blogs.query-repository';
 import { BlogsViewDto } from './view-dto/blogs.view-dto';
+import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
+import { GetBlogsQueryParams } from './input-dto/get-blogs-query-params.input-dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -25,7 +28,9 @@ export class BlogsController {
   ) {}
 
   @Get()
-  async getAllBlogs(@Query() query: any): Promise<BlogsViewDto[]> {
+  async getAllBlogs(
+    @Query() query: GetBlogsQueryParams,
+  ): Promise<PaginatedViewDto<BlogsViewDto[]>> {
     return this.blogsQueryRepository.getAll(query);
   }
 
@@ -37,12 +42,12 @@ export class BlogsController {
   @Get(':id/posts')
   async getAllPostsFromBlog(@Param('id') blogId: string, @Query() query: any) {}
 
-  @Post(':id/posts')
-  async createPostsForSpecificBlog(
-    @Param('id') blogId: string,
-    @Body() dto: CreatePostForBlogDto,
-  ) {}
-
+  /*@Post(':id/posts')
+      async createPostsForSpecificBlog(
+        @Param('id') blogId: string,
+        @Body() dto: CreatePostForBlogDto,
+      ) {}
+    */
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param('id') blogId: string): Promise<void> {
@@ -50,12 +55,14 @@ export class BlogsController {
   }
 
   @Put(':id')
-  async updateBlog(@Param('id') blogId: string, @Body() body: CreateBlogDto) {
+  async updateBlog(@Param('id') blogId: string, @Body() body: UpdateBlogDto) {
     return this.blogService.updateBlog(blogId, body);
   }
 
   @Post()
-  async createBlog(@Body() createBlogDto: CreateBlogDto) {
+  async createBlog(
+    @Body() createBlogDto: CreateBlogDto,
+  ): Promise<BlogsViewDto> {
     return this.blogService.createBlog(createBlogDto);
   }
 }

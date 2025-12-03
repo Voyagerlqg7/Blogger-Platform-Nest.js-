@@ -1,7 +1,9 @@
-import { BlogsSortBy } from './blogs-sort-by';
+import { IsOptional, IsString } from 'class-validator';
 import { BaseQueryParams } from '../../../../../core/dto/base.query-params.input-dto';
 
 export class GetBlogsQueryParams extends BaseQueryParams {
-  sortBy = BlogsSortBy.createdAt;
-  searchNameTerm: string | null = null;
+  @IsOptional()
+  @IsString()
+  searchNameTerm?: string;
+  sortBy: string = 'createdAt';
 }

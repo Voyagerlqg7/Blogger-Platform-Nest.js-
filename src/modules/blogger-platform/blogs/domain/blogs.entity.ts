@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { UpdateBlogDto } from '../dto/update-blog.dto';
-import { CreateBlogDomainDto } from './dto/create-blog.domain.dto';
+import {
+  CreateBlogDomainDto,
+  UpdateBlogDomainDto,
+} from './dto/create-blog.domain.dto';
 
 @Schema({ timestamps: true })
 export class Blog {
@@ -36,14 +38,15 @@ export class Blog {
     this.deletedAt = new Date();
   }
 
-  update(dto: UpdateBlogDto) {
+  update(dto: UpdateBlogDomainDto) {
     if (
-      dto.name !== this.name &&
-      dto.description !== this.description &&
-      dto.websiteUrl !== this.websiteUrl
+      dto.name === this.name &&
+      dto.description === this.description &&
+      dto.websiteUrl === this.websiteUrl
     ) {
-      throw new Error('Entity already updated');
+      throw new Error('Nothing to update');
     }
+
     this.name = dto.name;
     this.description = dto.description;
     this.websiteUrl = dto.websiteUrl;

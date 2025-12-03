@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import type { BlogModelType } from '../domain/blogs.entity';
 import { CreateBlogDto, UpdateBlogDto } from '../dto/create-blog.dto';
 import { BlogsRepository } from '../infrastructure/blogs.repository';
+import { BlogsViewDto } from '../api/view-dto/blogs.view-dto';
 
 @Injectable()
 export class BlogService {
@@ -12,14 +13,14 @@ export class BlogService {
     private blogRepository: BlogsRepository,
   ) {}
 
-  async createBlog(dto: CreateBlogDto): Promise<string> {
+  async createBlog(dto: CreateBlogDto): Promise<BlogsViewDto> {
     const blog = this.BlogModel.createInstance({
       name: dto.name,
       description: dto.description,
       websiteUrl: dto.websiteUrl,
     });
     await this.blogRepository.save(blog);
-    return blog._id.toString();
+    return BlogsViewDto.mapToView(blog);
   }
 
   async updateBlog(id: string, dto: UpdateBlogDto): Promise<string> {
