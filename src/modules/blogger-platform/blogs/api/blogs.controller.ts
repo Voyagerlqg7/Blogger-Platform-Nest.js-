@@ -21,6 +21,7 @@ export class BlogsController {
 
   @Get()
   async getAllBlogs(@Query() query: any) {
+    await
   }
 
   @Get(':id')
@@ -36,7 +37,6 @@ export class BlogsController {
     @Param('id') blogId: string,
     @Body() dto: CreatePostForBlogDto,
   ) {
-    return await this.blogService.createPostForSpecialBlog(blogId, CreatePostForBlogDto);
   }
 
   @Delete(':id')
