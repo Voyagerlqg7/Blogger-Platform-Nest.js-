@@ -41,12 +41,12 @@ export class Post {
 
   update(dto: UpdatePostDto) {
     if (
-      dto.blogId !== this.blogId &&
-      dto.content !== this.content &&
-      dto.shortDescription !== this.shortDescription &&
-      dto.title !== this.title
+      dto.blogId == this.blogId &&
+      dto.content == this.content &&
+      dto.shortDescription == this.shortDescription &&
+      dto.title == this.title
     ) {
-      throw new Error('Entity already updated');
+      throw new Error('Nothing to update POST');
     }
     this.blogId = dto.blogId;
     this.content = dto.content;

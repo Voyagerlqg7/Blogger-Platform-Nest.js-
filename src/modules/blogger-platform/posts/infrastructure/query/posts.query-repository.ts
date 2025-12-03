@@ -2,7 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { PostsViewDto } from '../../api/view-dto/posts.view-dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { QueryFilter } from 'mongoose';
-import { Post } from '../../domain/posts.entity';
+import { PostDocument } from '../../domain/posts.entity';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { GetPostsQueryParams } from '../../api/input-dto/get-blogs-query-params.input-dto';
 import type { PostModelType } from '../../domain/posts.entity';
@@ -25,16 +25,18 @@ export class PostsQueryRepository {
   async getAll(
     query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
-    const filter: QueryFilter<Post> = {
+    const filter: QueryFilter<PostDocument> = {
       deletedAt: null,
     };
+
     const post = await this.PostModel.find(filter)
       .sort({ [query.sortBy]: query.sortDirection })
       .skip(query.calculateSkip())
-      .limit(query.pageSize);
+      .limit(query.pageSize)
+      .lean();
 
     const totalCount = await this.PostModel.countDocuments(filter);
-    const items = post.map(PostsViewDto.mapToView);
+    const items = post.map((post) => PostsViewDto.mapToView(post));
     return PaginatedViewDto.mapToView({
       items,
       totalCount,

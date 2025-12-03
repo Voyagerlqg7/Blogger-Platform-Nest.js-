@@ -44,7 +44,7 @@ export class Blog {
       dto.description === this.description &&
       dto.websiteUrl === this.websiteUrl
     ) {
-      throw new Error('Nothing to update');
+      throw new Error('Nothing to update BLOGS');
     }
 
     this.name = dto.name;

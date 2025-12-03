@@ -15,6 +15,8 @@ import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
 import { PostsViewDto } from './view-dto/posts.view-dto';
+import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
+import { GetPostsQueryParams } from './input-dto/get-blogs-query-params.input-dto';
 
 @Controller('posts')
 export class PostsController {
@@ -24,7 +26,9 @@ export class PostsController {
   ) {}
 
   @Get()
-  async getAllPosts(@Query() query: any): Promise<PostsViewDto[]> {
+  async getAllPosts(
+    @Query() query: GetPostsQueryParams,
+  ): Promise<PaginatedViewDto<PostsViewDto[]>> {
     return this.postsQueryRepository.getAll(query);
   }
 
@@ -34,10 +38,10 @@ export class PostsController {
   }
 
   /*@Get(':id/comments')
-  async getAllCommentsFromSpecificPost(
-    @Param('id') postId: string,
-    @Query() query: any,
-  ) {}*/
+      async getAllCommentsFromSpecificPost(
+        @Param('id') postId: string,
+        @Query() query: any,
+      ) {}*/
 
   @Post()
   async createPost(@Body() newPost: CreatePostDto) {
