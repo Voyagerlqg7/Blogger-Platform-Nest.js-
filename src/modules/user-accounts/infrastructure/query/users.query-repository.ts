@@ -1,5 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../../domain/user.entity';
+import { User, UserDocument } from '../../domain/user.entity';
 import type { UserModelType } from '../../domain/user.entity';
 import { UserViewDto } from '../../api/view-dto/users.view-dto';
 
@@ -29,9 +29,8 @@ export class UsersQueryRepository {
   async getAll(
     query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UserViewDto[]>> {
-    const filter: QueryFilter<User> = {
-      deletedAt: null,
-    };
+    const filter: QueryFilter<UserDocument> = { deletedAt: null };
+
     if (query.searchLoginTerm) {
       filter.$or = filter.$or || [];
       filter.$or.push({
@@ -42,10 +41,11 @@ export class UsersQueryRepository {
     const users = await this.UserModel.find(filter)
       .sort({ [query.sortBy]: query.sortDirection })
       .skip(query.calculateSkip())
-      .limit(query.pageSize);
+      .limit(query.pageSize)
+      .lean();
 
     const totalCount = await this.UserModel.countDocuments(filter);
-    const items = users.map(UserViewDto.mapToView);
+    const items = users.map((user) => UserViewDto.mapToView(user));
 
     return PaginatedViewDto.mapToView({
       items,
