@@ -1,7 +1,9 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { CreatePostsDomainDto } from './dto/create-posts.domain.dto';
-import { UpdatePostDto } from '../dto/update-post.dto';
 import { HydratedDocument, Model } from 'mongoose';
+import {
+  CreatePostsDomainDto,
+  UpdatePostDomainDto,
+} from './dto/create-posts.domain.dto';
 
 @Schema({ timestamps: true })
 export class Post {
@@ -39,7 +41,7 @@ export class Post {
     this.deletedAt = new Date();
   }
 
-  update(dto: UpdatePostDto) {
+  update(dto: UpdatePostDomainDto) {
     if (
       dto.blogId == this.blogId &&
       dto.content == this.content &&

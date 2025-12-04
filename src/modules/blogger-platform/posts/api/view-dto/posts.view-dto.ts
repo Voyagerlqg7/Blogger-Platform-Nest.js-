@@ -1,3 +1,5 @@
+import { PostDocument } from '../../domain/posts.entity';
+
 export class PostsViewDto {
   id: string;
   title: string;
@@ -9,7 +11,7 @@ export class PostsViewDto {
 
   static mapToView(post: PostDocument): PostsViewDto {
     const dto = new PostsViewDto();
-    dto = post._id.toString();
+    dto.id = post._id.toString();
     dto.title = post.title;
     dto.shortDescription = post.shortDescription;
     dto.content = post.content;
