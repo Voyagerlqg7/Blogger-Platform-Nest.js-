@@ -19,6 +19,8 @@ import { BlogsQueryRepository } from '../infrastructure/query/blogs.query-reposi
 import { BlogsViewDto } from './view-dto/blogs.view-dto';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetBlogsQueryParams } from './input-dto/get-blogs-query-params.input-dto';
+import { PostsViewDto } from '../../posts/api/view-dto/posts.view-dto';
+import { GetPostsQueryParams } from '../../posts/api/input-dto/get-blogs-query-params.input-dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -40,14 +42,21 @@ export class BlogsController {
   }
 
   @Get(':id/posts')
-  async getAllPostsFromBlog(@Param('id') blogId: string, @Query() query: any) {}
+  async getAllPostsFromBlog(
+    @Param('id') blogId: string,
+    @Query() query: GetPostsQueryParams,
+  ): Promise<PaginatedViewDto<PostsViewDto[]>> {
+    return this.blogsQueryRepository.getAllPostsFromSpecialBlog(blogId, query);
+  }
 
-  /*@Post(':id/posts')
-      async createPostsForSpecificBlog(
-        @Param('id') blogId: string,
-        @Body() dto: CreatePostForBlogDto,
-      ) {}
-    */
+  @Post(':id/posts')
+  async createPostsForSpecificBlog(
+    @Param('id') blogId: string,
+    @Body() dto: CreatePostForBlogDto,
+  ): Promise<PostsViewDto> {
+    return this.blogService.createPostForSpecificBlog(blogId, dto);
+  }
+
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param('id') blogId: string): Promise<void> {
