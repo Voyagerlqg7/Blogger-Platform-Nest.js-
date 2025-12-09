@@ -8,13 +8,17 @@ import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dt
 import { GetBlogsQueryParams } from '../../api/input-dto/get-blogs-query-params.input-dto';
 import { PostsViewDto } from '../../../posts/api/view-dto/posts.view-dto';
 import { GetPostsQueryParams } from '../../../posts/api/input-dto/get-blogs-query-params.input-dto';
-import type { PostModelType, PostDocument } from '../../../posts/domain/posts.entity';
+import type {
+  PostModelType,
+  PostDocument,
+} from '../../../posts/domain/posts.entity';
+import { Post } from '../../../posts/domain/posts.entity';
 
 @Injectable()
 export class BlogsQueryRepository {
   constructor(
     @InjectModel(Blog.name) private blogModel: BlogModelType,
-    private PostModel: PostModelType,
+    @InjectModel(Post.name) private postModel: PostModelType, // <-- Добавить декоратор
   ) {}
 
   async getByIdOrNotFoundFail(id: string): Promise<BlogsViewDto> {
@@ -71,13 +75,14 @@ export class BlogsQueryRepository {
       blogId: blogId,
       deletedAt: null,
     };
-    const post = await this.PostModel.find(filter)
+    const post = await this.postModel
+      .find(filter)
       .sort({ [query.sortBy]: query.sortDirection })
       .skip(query.calculateSkip())
       .limit(query.pageSize)
       .lean();
 
-    const totalCount = await this.PostModel.countDocuments(filter);
+    const totalCount = await this.postModel.countDocuments(filter);
     const items = post.map((post) => PostsViewDto.mapToView(post));
     return PaginatedViewDto.mapToView({
       items,

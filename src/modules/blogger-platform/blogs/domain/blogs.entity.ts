@@ -53,6 +53,16 @@ export class Blog {
   }
 }
 
+/* Factory method
+BlogSchema.statics.createInstance = function(dto: CreateBlogDomainDto): BlogDocument {
+  return new this({
+    name: dto.name,
+    description: dto.description,
+    websiteUrl: dto.websiteUrl,
+    isMembership: false,
+  });
+};*/
+
 export const BlogSchema = SchemaFactory.createForClass(Blog);
 BlogSchema.loadClass(Blog);
 export type BlogDocument = HydratedDocument<Blog>;
