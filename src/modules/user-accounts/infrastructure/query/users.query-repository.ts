@@ -12,10 +12,10 @@ import { GetUsersQueryParams } from '../../api/input-dto/get-users-query-params.
 
 @Injectable()
 export class UsersQueryRepository {
-  constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
+  constructor(@InjectModel(User.name) private userModel: UserModelType) {}
 
   async getByIdOrNotFoundFail(id: string): Promise<UserViewDto> {
-    const user = await this.UserModel.findOne({
+    const user = await this.userModel.findOne({
       _id: id,
       deleteAt: null,
     });
@@ -38,13 +38,14 @@ export class UsersQueryRepository {
       });
     }
 
-    const users = await this.UserModel.find(filter)
+    const users = await this.userModel
+      .find(filter)
       .sort({ [query.sortBy]: query.sortDirection })
       .skip(query.calculateSkip())
       .limit(query.pageSize)
       .lean();
 
-    const totalCount = await this.UserModel.countDocuments(filter);
+    const totalCount = await this.userModel.countDocuments(filter);
     const items = users.map((user) => UserViewDto.mapToView(user));
 
     return PaginatedViewDto.mapToView({
