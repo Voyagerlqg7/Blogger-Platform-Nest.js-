@@ -17,6 +17,10 @@ export class Post {
   blogId: string;
   @Prop({ type: String, required: true })
   blogName: string;
+  @Prop({ type: Number, required: true })
+  likesCount: number;
+  @Prop({ type: Number, required: true })
+  dislikesCount: number;
 
   createdAt: Date;
   updatedAt: Date;
