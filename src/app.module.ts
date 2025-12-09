@@ -1,21 +1,28 @@
+// app.module.ts
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserAccountsModule } from './modules/user-accounts/user-accounts.module';
 import { BloggerPlatform } from './modules/blogger-platform/blogger-platform.module';
 import { TestingModule } from './testing/testing.module';
 
-const mongoURI: string = process.env.LOCAL_MONGODB_URI!;
-
 @Module({
   imports: [
-    MongooseModule.forRoot(mongoURI),
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        const uri = config.get<string>('LOCAL_MONGODB_URI');
+        if (!uri) {
+          throw new Error('LOCAL_MONGODB_URI is not defined');
+        }
+        return { uri };
+      },
+    }),
     UserAccountsModule,
     BloggerPlatform,
     TestingModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
