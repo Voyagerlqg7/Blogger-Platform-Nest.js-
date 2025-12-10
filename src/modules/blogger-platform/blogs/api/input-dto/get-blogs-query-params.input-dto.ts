@@ -5,5 +5,7 @@ export class GetBlogsQueryParams extends BaseQueryParams {
   @IsOptional()
   @IsString()
   searchNameTerm?: string;
-  sortBy: string = 'createdAt';
+  @IsOptional()
+  @IsString()
+  override sortBy: string = 'createdAt';
 }

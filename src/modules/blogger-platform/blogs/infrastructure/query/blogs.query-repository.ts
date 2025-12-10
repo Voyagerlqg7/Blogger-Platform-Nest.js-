@@ -7,7 +7,8 @@ import { BlogsViewDto } from '../../api/view-dto/blogs.view-dto';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { GetBlogsQueryParams } from '../../api/input-dto/get-blogs-query-params.input-dto';
 import { PostsViewDto } from '../../../posts/api/view-dto/posts.view-dto';
-import { GetPostsQueryParams } from '../../../posts/api/input-dto/get-blogs-query-params.input-dto';
+import { GetPostsQueryParams } from '../../../posts/api/input-dto/get-posts-query-params.input-dto';
+import { SortDirection } from '../../../../../core/dto/base.query-params.input-dto';
 import type {
   PostModelType,
   PostDocument,
@@ -44,13 +45,16 @@ export class BlogsQueryRepository {
     }
 
     const allowedSortFields = ['name', 'createdAt', 'websiteUrl'];
-    const sortBy = allowedSortFields.includes(query.sortBy)
-      ? query.sortBy
-      : 'createdAt';
+    const sortBy =
+      query.sortBy && allowedSortFields.includes(query.sortBy)
+        ? query.sortBy
+        : 'createdAt';
+
+    const sortDirection = query.sortDirection || SortDirection.Desc;
 
     const blogs = await this.blogModel
       .find(filter)
-      .sort({ [sortBy]: query.sortDirection })
+      .sort({ [sortBy]: sortDirection })
       .skip(query.calculateSkip())
       .limit(query.pageSize)
       .lean();
@@ -75,9 +79,15 @@ export class BlogsQueryRepository {
       blogId: blogId,
       deletedAt: null,
     };
+    const allowedSortFields = ['title', 'createdAt'];
+    const sortBy =
+      query.sortBy && allowedSortFields.includes(query.sortBy)
+        ? query.sortBy
+        : 'createdAt';
+    const sortDirection = query.sortDirection || SortDirection.Desc;
     const post = await this.postModel
       .find(filter)
-      .sort({ [query.sortBy]: query.sortDirection })
+      .sort({ [sortBy]: sortDirection })
       .skip(query.calculateSkip())
       .limit(query.pageSize)
       .lean();

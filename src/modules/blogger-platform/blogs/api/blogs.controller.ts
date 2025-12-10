@@ -20,7 +20,7 @@ import { BlogsViewDto } from './view-dto/blogs.view-dto';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetBlogsQueryParams } from './input-dto/get-blogs-query-params.input-dto';
 import { PostsViewDto } from '../../posts/api/view-dto/posts.view-dto';
-import { GetPostsQueryParams } from '../../posts/api/input-dto/get-blogs-query-params.input-dto';
+import { GetPostsQueryParams } from '../../posts/api/input-dto/get-posts-query-params.input-dto';
 
 @Controller('blogs')
 export class BlogsController {
