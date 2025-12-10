@@ -16,7 +16,7 @@ import { PostService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
 import { PostsViewDto } from './view-dto/posts.view-dto';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
-import { GetPostsQueryParams } from './input-dto/get-blogs-query-params.input-dto';
+import { GetPostsQueryParams } from './input-dto/get-posts-query-params.input-dto';
 
 @Controller('posts')
 export class PostsController {

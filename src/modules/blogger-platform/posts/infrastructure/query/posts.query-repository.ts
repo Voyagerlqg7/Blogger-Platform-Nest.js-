@@ -4,8 +4,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { QueryFilter } from 'mongoose';
 import { Post, PostDocument } from '../../domain/posts.entity';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
-import { GetPostsQueryParams } from '../../api/input-dto/get-blogs-query-params.input-dto';
+import { GetPostsQueryParams } from '../../api/input-dto/get-posts-query-params.input-dto';
 import type { PostModelType } from '../../domain/posts.entity';
+import { SortDirection } from '../../../../../core/dto/base.query-params.input-dto';
 
 @Injectable()
 export class PostsQueryRepository {
@@ -29,9 +30,17 @@ export class PostsQueryRepository {
       deletedAt: null,
     };
 
+    const allowedSortFields = ['title', 'createdAt' ];
+    const sortBy =
+      query.sortBy && allowedSortFields.includes(query.sortBy)
+        ? query.sortBy
+        : 'createdAt';
+
+    const sortDirection = query.sortDirection || SortDirection.Desc;
+
     const post = await this.postModel
       .find(filter)
-      .sort({ [query.sortBy]: query.sortDirection })
+      .sort({ [sortBy]: sortDirection })
       .skip(query.calculateSkip())
       .limit(query.pageSize)
       .lean();
