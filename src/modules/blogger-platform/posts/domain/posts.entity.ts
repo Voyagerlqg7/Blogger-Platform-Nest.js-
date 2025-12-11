@@ -28,6 +28,7 @@ export class Post {
   @Prop({ type: Date, nullable: true })
   deletedAt: Date | null;
 
+  //TODO: change createInstance as in blog entity
   static createInstance(dto: CreatePostsDomainDto): PostDocument {
     const post = new this();
     post.title = dto.title;

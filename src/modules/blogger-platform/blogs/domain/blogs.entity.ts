@@ -22,13 +22,17 @@ export class Blog {
   @Prop({ type: Date, nullable: true })
   deletedAt: Date | null;
 
-  static createInstance(dto: CreateBlogDomainDto): BlogDocument {
-    const blog = new this();
-    blog.name = dto.name;
-    blog.description = dto.description;
-    blog.websiteUrl = dto.websiteUrl;
-    blog.isMembership = false;
-    return blog as BlogDocument;
+  static createInstance(
+    this: BlogModelType,
+    dto: CreateBlogDomainDto,
+  ): BlogDocument {
+    return new this({
+      name: dto.name,
+      description: dto.description,
+      websiteUrl: dto.websiteUrl,
+      isMembership: false,
+      deletedAt: null,
+    });
   }
 
   makeDeleted() {

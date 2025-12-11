@@ -14,9 +14,14 @@ export class BlogsRepository {
       deletedAt: null,
     });
   }
+  /* TODO: creating blog in Repository for future
+  async create(dto: CreateBlogDomainDto): Promise<BlogDocument> {
+    return this.blogModel.createInstance(dto);
+  }
+   */
 
-  async saveBlog(blog: BlogDocument): Promise<void> {
-    await blog.save();
+  async saveBlog(blog: BlogDocument): Promise<BlogDocument> {
+    return await blog.save();
   }
 
   async savePostForSpecificBlog(post: PostDocument): Promise<void> {
