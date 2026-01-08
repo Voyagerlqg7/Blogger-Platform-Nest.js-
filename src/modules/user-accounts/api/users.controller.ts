@@ -9,7 +9,7 @@ import {
   Body,
   Query,
 } from '@nestjs/common';
-import { CreateUserInputDto } from './input-dto/users.input-dto';
+import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from '../application/users.service';
 import { UsersQueryRepository } from '../infrastructure/query/users.query-repository';
 import { UserViewDto } from './view-dto/users.view-dto';
@@ -36,7 +36,7 @@ export class UsersController {
   }
 
   @Post()
-  async createUser(@Body() body: CreateUserInputDto): Promise<UserViewDto> {
+  async createUser(@Body() body: CreateUserDto): Promise<UserViewDto> {
     const userId = await this.usersService.createUser(body);
 
     return this.usersQueryRepository.getByIdOrNotFoundFail(userId);
