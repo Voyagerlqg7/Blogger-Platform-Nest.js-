@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreatePostDto, UpdatePostDto } from '../dto/create-post.dto';
+import { CreatePostDto } from '../dto/create-post.dto';
+import { UpdatePostDto } from '../dto/update-post.dto';
 import { PostsRepository } from '../infrastructure/posts.repository';
 import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
 import { NotFoundException } from '@nestjs/common';
