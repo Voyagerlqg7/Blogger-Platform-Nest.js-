@@ -29,14 +29,17 @@ export class Post {
   deletedAt: Date | null;
 
   //TODO: change createInstance as in blog entity
-  static createInstance(dto: CreatePostsDomainDto): PostDocument {
-    const post = new this();
-    post.title = dto.title;
-    post.shortDescription = dto.shortDescription;
-    post.content = dto.content;
-    post.blogId = dto.blogId;
-    post.blogName = dto.blogName;
-    return post as PostDocument;
+  static createInstance(
+    this: PostModelType,
+    dto: CreatePostsDomainDto,
+  ): PostDocument {
+    return new this({
+      title: dto.title,
+      shortDescription: dto.shortDescription,
+      content: dto.content,
+      blogId: dto.blogId,
+      blogName: dto.blogName,
+    });
   }
 
   makeDeleted() {
