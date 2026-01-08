@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { CreatePostDto, UpdatePostDto } from '../dto/create-post.dto';
 import { PostsRepository } from '../infrastructure/posts.repository';
 import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
 import { NotFoundException } from '@nestjs/common';
 import { Post } from '../domain/posts.entity';
+import type { PostModelType } from '../domain/posts.entity';
 
 @Injectable()
 export class PostService {
   constructor(
+    @InjectModel(Post.name)
+    private readonly postModel: PostModelType,
     private blogRepository: BlogsRepository,
     private postRepository: PostsRepository,
   ) {}
@@ -17,7 +21,7 @@ export class PostService {
     if (!blog) {
       throw new NotFoundException('Blog not found');
     }
-    const post = Post.createInstance({
+    const post = this.postModel.createInstance({
       title: dto.title,
       shortDescription: dto.shortDescription,
       content: dto.content,

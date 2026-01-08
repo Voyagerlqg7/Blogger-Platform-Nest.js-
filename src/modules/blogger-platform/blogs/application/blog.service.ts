@@ -9,11 +9,13 @@ import { PostsViewDto } from '../../posts/api/view-dto/posts.view-dto';
 import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 import { Blog } from '../domain/blogs.entity';
 import { Post } from '../../posts/domain/posts.entity';
+import type { PostModelType } from '../../posts/domain/posts.entity';
 
 @Injectable()
 export class BlogService {
   constructor(
     @InjectModel(Blog.name) private blogModel: BlogModelType,
+    @InjectModel(Post.name) private postModel: PostModelType,
     private blogRepository: BlogsRepository,
     private postRepository: PostsRepository,
   ) {}
@@ -45,7 +47,7 @@ export class BlogService {
     if (!blog) {
       throw new NotFoundException('Blog not found for creating post');
     }
-    const post = Post.createInstance({
+    const post = this.postModel.createInstance({
       title: dto.title,
       shortDescription: dto.shortDescription,
       content: dto.content,
