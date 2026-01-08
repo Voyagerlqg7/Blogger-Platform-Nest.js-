@@ -6,7 +6,6 @@ import { BlogsRepository } from '../infrastructure/blogs.repository';
 import { BlogsViewDto } from '../api/view-dto/blogs.view-dto';
 import { CreatePostForBlogDto } from '../dto/create-post-for-blog.dto';
 import { PostsViewDto } from '../../posts/api/view-dto/posts.view-dto';
-import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 import { Blog } from '../domain/blogs.entity';
 import { Post } from '../../posts/domain/posts.entity';
 import type { PostModelType } from '../../posts/domain/posts.entity';
@@ -17,11 +16,15 @@ export class BlogService {
     @InjectModel(Blog.name) private blogModel: BlogModelType,
     @InjectModel(Post.name) private postModel: PostModelType,
     private blogRepository: BlogsRepository,
-    private postRepository: PostsRepository,
   ) {}
 
   async createBlog(dto: CreateBlogDto): Promise<BlogsViewDto> {
-    const blog = this.blogModel.createInstance(dto);
+    const blog = this.blogModel.createInstance({
+      name: dto.name,
+      description: dto.description,
+      websiteUrl: dto.websiteUrl,
+    });
+
     await this.blogRepository.saveBlog(blog);
     return BlogsViewDto.mapToView(blog);
   }
