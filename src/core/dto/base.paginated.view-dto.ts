@@ -1,5 +1,5 @@
-export abstract class PaginatedViewDto<T> {
-  abstract items: T;
+export class PaginatedViewDto<T> {
+  items: T;
   totalCount: number;
   pagesCount: number;
   page: number;
@@ -12,12 +12,12 @@ export abstract class PaginatedViewDto<T> {
     totalCount: number;
     items: T;
   }): PaginatedViewDto<T> {
-    return {
-      pagesCount: data.pagesCount,
-      page: data.page,
-      pageSize: data.size,
-      totalCount: data.totalCount,
-      items: data.items,
-    };
+    const dto = new PaginatedViewDto<T>();
+    dto.pagesCount = data.pagesCount;
+    dto.page = data.page;
+    dto.pageSize = data.size;
+    dto.totalCount = data.totalCount;
+    dto.items = data.items;
+    return dto;
   }
 }
