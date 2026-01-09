@@ -44,9 +44,6 @@ export class Post {
   }
 
   makeDeleted() {
-    if (this.deletedAt !== null) {
-      throw new Error('Entity already deleted');
-    }
     this.deletedAt = new Date();
   }
 

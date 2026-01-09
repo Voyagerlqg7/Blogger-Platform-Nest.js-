@@ -14,8 +14,8 @@ export class UsersRepository {
     });
   }
 
-  async save(user: UserDocument) {
-    await user.save();
+  async save(user: UserDocument): Promise<UserDocument> {
+    return await user.save();
   }
 
   async findOrNotFoundFail(id: string): Promise<UserDocument> {

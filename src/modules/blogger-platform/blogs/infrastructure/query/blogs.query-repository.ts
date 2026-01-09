@@ -76,10 +76,7 @@ export class BlogsQueryRepository {
     blogId: string,
     query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
-    const blog = await this.getByIdOrNotFoundFail(blogId);
-    if (!blog) {
-      throw new NotFoundException('Blog not found');
-    }
+    await this.getByIdOrNotFoundFail(blogId);
     const filter: QueryFilter<PostDocument> = {
       blogId: blogId,
       deletedAt: null,
@@ -90,7 +87,8 @@ export class BlogsQueryRepository {
         ? query.sortBy
         : 'createdAt';
     const sortDirection = query.sortDirection || SortDirection.Desc;
-    const post = await this.postModel
+
+    const posts = await this.postModel
       .find(filter)
       .sort({ [sortBy]: sortDirection })
       .skip(query.calculateSkip())
@@ -98,7 +96,7 @@ export class BlogsQueryRepository {
       .lean();
 
     const totalCount = await this.postModel.countDocuments(filter);
-    const items = post.map((post) => PostsViewDto.mapToView(post));
+    const items = posts.map((post) => PostsViewDto.mapToView(post));
     return PaginatedViewDto.mapToView({
       pagesCount: Math.ceil(totalCount / query.pageSize),
       page: query.pageNumber,

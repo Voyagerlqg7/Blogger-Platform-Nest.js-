@@ -30,7 +30,7 @@ export class PostsQueryRepository {
       deletedAt: null,
     };
 
-    const allowedSortFields = ['title', 'createdAt' ];
+    const allowedSortFields = ['title', 'createdAt', 'blogName'];
     const sortBy =
       query.sortBy && allowedSortFields.includes(query.sortBy)
         ? query.sortBy

@@ -37,10 +37,10 @@ export class User {
       login: dto.login,
       isEmailConfirmed: false,
       /*user.name = {
-                  firstName: 'firstName xxx',
-                  lastName: 'lastName yyy',
-                };
-            */
+                        firstName: 'firstName xxx',
+                        lastName: 'lastName yyy',
+                      };
+                  */
     });
   }
 
@@ -51,9 +51,6 @@ export class User {
    * DDD continue: инкапсуляция (вызываем методы, которые меняют состояние\св-ва) объектов согласно правилам этого объекта
    */
   makeDeleted() {
-    if (this.deletedAt !== null) {
-      throw new Error('Entity already deleted');
-    }
     this.deletedAt = new Date();
   }
 
