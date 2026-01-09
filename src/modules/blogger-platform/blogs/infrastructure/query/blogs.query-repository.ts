@@ -19,7 +19,7 @@ import { Post } from '../../../posts/domain/posts.entity';
 export class BlogsQueryRepository {
   constructor(
     @InjectModel(Blog.name) private blogModel: BlogModelType,
-    @InjectModel(Post.name) private postModel: PostModelType, // <-- Добавить декоратор
+    @InjectModel(Post.name) private postModel: PostModelType,
   ) {}
 
   async getByIdOrNotFoundFail(id: string): Promise<BlogsViewDto> {
@@ -64,10 +64,11 @@ export class BlogsQueryRepository {
     const items = blogs.map((blog) => BlogsViewDto.mapToView(blog));
 
     return PaginatedViewDto.mapToView({
-      items,
-      totalCount,
+      pagesCount: Math.ceil(totalCount / query.pageSize),
       page: query.pageNumber,
       size: query.pageSize,
+      totalCount,
+      items,
     });
   }
 
@@ -75,6 +76,10 @@ export class BlogsQueryRepository {
     blogId: string,
     query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
+    const blog = await this.getByIdOrNotFoundFail(blogId);
+    if (!blog) {
+      throw new NotFoundException('Blog not found');
+    }
     const filter: QueryFilter<PostDocument> = {
       blogId: blogId,
       deletedAt: null,
@@ -95,10 +100,11 @@ export class BlogsQueryRepository {
     const totalCount = await this.postModel.countDocuments(filter);
     const items = post.map((post) => PostsViewDto.mapToView(post));
     return PaginatedViewDto.mapToView({
-      items,
-      totalCount,
+      pagesCount: Math.ceil(totalCount / query.pageSize),
       page: query.pageNumber,
       size: query.pageSize,
+      totalCount,
+      items,
     });
   }
 }

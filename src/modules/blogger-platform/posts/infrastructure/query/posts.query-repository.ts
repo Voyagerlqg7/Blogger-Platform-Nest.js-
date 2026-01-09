@@ -48,10 +48,11 @@ export class PostsQueryRepository {
     const totalCount = await this.postModel.countDocuments(filter);
     const items = post.map((post) => PostsViewDto.mapToView(post));
     return PaginatedViewDto.mapToView({
-      items,
-      totalCount,
+      pagesCount: Math.ceil(totalCount / query.pageSize),
       page: query.pageNumber,
       size: query.pageSize,
+      totalCount,
+      items,
     });
   }
 }

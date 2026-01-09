@@ -67,10 +67,11 @@ export class UsersQueryRepository {
     const items = users.map((user) => UserViewDto.mapToView(user));
 
     return PaginatedViewDto.mapToView({
-      items,
-      totalCount,
+      pagesCount: Math.ceil(totalCount / query.pageSize),
       page: query.pageNumber,
       size: query.pageSize,
+      totalCount,
+      items,
     });
   }
 }
