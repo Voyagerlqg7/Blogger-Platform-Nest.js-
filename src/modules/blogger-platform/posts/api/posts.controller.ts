@@ -38,18 +38,19 @@ export class PostsController {
   }
 
   /*@Get(':id/comments')
-      async getAllCommentsFromSpecificPost(
-        @Param('id') postId: string,
-        @Query() query: any,
-      ) {}*/
+        async getAllCommentsFromSpecificPost(
+          @Param('id') postId: string,
+          @Query() query: any,
+        ) {}*/
 
   @Post()
-  async createPost(@Body() newPost: CreatePostDto) {
+  async createPost(@Body() newPost: CreatePostDto): Promise<PostsViewDto> {
     return this.postService.createPost(newPost);
   }
 
   @Delete(':id')
-  async deletePost(@Param('id') postId: string) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deletePost(@Param('id') postId: string): Promise<void> {
     return this.postService.deletePost(postId);
   }
 
@@ -58,7 +59,7 @@ export class PostsController {
   async updatePost(
     @Param('id') postId: string,
     @Body() updatePostDto: UpdatePostDto,
-  ) {
+  ): Promise<void> {
     return this.postService.updatePost(postId, updatePostDto);
   }
 }

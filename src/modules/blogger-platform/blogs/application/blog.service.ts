@@ -30,14 +30,13 @@ export class BlogService {
     return BlogsViewDto.mapToView(blog);
   }
 
-  async updateBlog(id: string, dto: UpdateBlogDto): Promise<string> {
+  async updateBlog(id: string, dto: UpdateBlogDto): Promise<void> {
     const blog = await this.blogRepository.findOrNotFoundFail(id);
     blog.update(dto);
     await this.blogRepository.saveBlog(blog);
-    return blog._id.toString();
   }
 
-  async deleteBlog(id: string) {
+  async deleteBlog(id: string): Promise<void> {
     const blog = await this.blogRepository.findOrNotFoundFail(id);
     blog.makeDeleted();
     await this.blogRepository.saveBlog(blog);

@@ -7,6 +7,7 @@ import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
 import { NotFoundException } from '@nestjs/common';
 import { Post } from '../domain/posts.entity';
 import type { PostModelType } from '../domain/posts.entity';
+import { PostsViewDto } from '../api/view-dto/posts.view-dto';
 
 @Injectable()
 export class PostService {
@@ -17,7 +18,7 @@ export class PostService {
     private postRepository: PostsRepository,
   ) {}
 
-  async createPost(dto: CreatePostDto): Promise<string> {
+  async createPost(dto: CreatePostDto): Promise<PostsViewDto> {
     const blog = await this.blogRepository.findOrNotFoundFail(dto.blogId);
     if (!blog) {
       throw new NotFoundException('Blog not found');
@@ -30,17 +31,16 @@ export class PostService {
       blogName: blog.name,
     });
     await this.postRepository.save(post);
-    return post._id.toString();
+    return PostsViewDto.mapToView(post);
   }
 
-  async updatePost(id: string, dto: UpdatePostDto): Promise<string> {
+  async updatePost(id: string, dto: UpdatePostDto): Promise<void> {
     const post = await this.postRepository.findOrNotFoundFail(id);
     post.update(dto);
     await this.postRepository.save(post);
-    return post._id.toString();
   }
 
-  async deletePost(id: string) {
+  async deletePost(id: string): Promise<void> {
     const post = await this.postRepository.findOrNotFoundFail(id);
     post.makeDeleted();
     await this.postRepository.save(post);

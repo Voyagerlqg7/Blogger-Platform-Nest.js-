@@ -14,8 +14,8 @@ export class PostsRepository {
     });
   }
 
-  async save(post: PostDocument): Promise<void> {
-    await post.save();
+  async save(post: PostDocument): Promise<PostDocument> {
+    return await post.save();
   }
 
   async findOrNotFoundFail(id: string): Promise<PostDocument> {
