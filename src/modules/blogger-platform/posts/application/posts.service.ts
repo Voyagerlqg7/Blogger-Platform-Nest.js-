@@ -29,6 +29,8 @@ export class PostService {
       content: dto.content,
       blogId: dto.blogId,
       blogName: blog.name,
+      likesCount: 0,
+      dislikesCount: 0,
     });
     await this.postRepository.save(post);
     return PostsViewDto.mapToView(post);

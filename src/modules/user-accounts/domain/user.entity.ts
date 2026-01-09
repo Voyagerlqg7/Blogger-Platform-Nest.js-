@@ -13,39 +13,35 @@ import { Name, NameSchema } from './name.schema';
 export class User {
   @Prop({ type: String, required: true })
   login: string;
-
   @Prop({ type: String, required: true })
   passwordHash: string;
-
   @Prop({ type: String, required: true })
   email: string;
-
   @Prop({ type: Boolean, required: true, default: false })
   isEmailConfirmed: boolean;
-
   // @Prop(NameSchema) this variant from doc. doesn't make validation for inner object
   @Prop({ type: NameSchema })
   name: Name;
-
   createdAt: Date;
   updatedAt: Date;
-
   @Prop({ type: Date, nullable: true })
   deletedAt: Date | null;
 
-  static createInstance(dto: CreateUserDomainDto): UserDocument {
-    const user = new this();
-    user.email = dto.email;
-    user.passwordHash = dto.passwordHash;
-    user.login = dto.login;
-    user.isEmailConfirmed = false;
-
-    /*user.name = {
-          firstName: 'firstName xxx',
-          lastName: 'lastName yyy',
-        };
-    */
-    return user as UserDocument;
+  static createInstance(
+    this: UserModelType,
+    dto: CreateUserDomainDto,
+  ): UserDocument {
+    return new this({
+      email: dto.email,
+      passwordHash: dto.passwordHash,
+      login: dto.login,
+      isEmailConfirmed: false,
+      /*user.name = {
+                  firstName: 'firstName xxx',
+                  lastName: 'lastName yyy',
+                };
+            */
+    });
   }
 
   /**

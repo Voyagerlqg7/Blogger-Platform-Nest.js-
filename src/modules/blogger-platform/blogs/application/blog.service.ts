@@ -56,6 +56,8 @@ export class BlogService {
       content: dto.content,
       blogId: blogId,
       blogName: blog.name,
+      likesCount: 0,
+      dislikesCount: 0,
     });
     await this.blogRepository.savePostForSpecificBlog(post);
     return PostsViewDto.mapToView(post);

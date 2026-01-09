@@ -4,6 +4,8 @@ export class CreatePostsDomainDto {
   content: string;
   blogId: string;
   blogName: string;
+  likesCount: number;
+  dislikesCount: number;
 }
 
 export class UpdatePostDomainDto {

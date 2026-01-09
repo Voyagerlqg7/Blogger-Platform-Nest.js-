@@ -38,6 +38,8 @@ export class Post {
       content: dto.content,
       blogId: dto.blogId,
       blogName: dto.blogName,
+      likesCount: dto.likesCount,
+      dislikesCount: dto.dislikesCount,
     });
   }
 
