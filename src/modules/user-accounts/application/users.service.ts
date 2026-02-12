@@ -6,6 +6,7 @@ import { User } from '../domain/user.entity';
 import type { UserModelType } from '../domain/user.entity';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { UserViewDto } from '../api/view-dto/users.view-dto';
+import { registrationUserDTO } from '../dto/auth_dto/registration.dto';
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,18 @@ export class UsersService {
     private readonly userModel: UserModelType,
     private usersRepository: UsersRepository,
   ) {}
+
+  //For Auth
+  async registerUser(dto: registrationUserDTO): Promise<UserViewDto> {
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const user = this.userModel.createInstance({
+      email: dto.email,
+      login: dto.login,
+      passwordHash: passwordHash,
+    });
+    await this.usersRepository.save(user);
+    return UserViewDto.mapToView(user);
+  }
 
   async createUser(dto: CreateUserDto): Promise<UserViewDto> {
     //TODO: move to bcrypt service

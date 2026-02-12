@@ -23,7 +23,9 @@ export class AuthController {
   async registration_confirmation(@Body() dto: codeDto) {}
 
   @Post('registration')
-  async registration(@Body() dto: registrationUserDTO) {}
+  async registration(@Body() dto: registrationUserDTO) {
+    return
+  }
 
   @Post('registration-email-resending')
   async registration_email_resending(@Body() dto: isItEmailDTO) {}
