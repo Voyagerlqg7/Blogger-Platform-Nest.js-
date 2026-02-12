@@ -15,7 +15,7 @@ export class UsersExternalService {
 
   async makeUserAsSpammer(userId: string) {
     const user = await this.usersRepository.findOrNotFoundFail(userId);
-
+    //TODO: make rate limiter
     // user.makeSpammer();
 
     await this.usersRepository.save(user);
