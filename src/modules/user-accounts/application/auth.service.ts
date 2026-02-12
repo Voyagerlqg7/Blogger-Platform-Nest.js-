@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateUserDto, UpdateUserDto } from '../dto/create-user.dto';
 import { User } from '../domain/user.entity';
 import type { UserModelType } from '../domain/user.entity';
 import { UsersRepository } from '../infrastructure/users.repository';
@@ -17,7 +16,6 @@ export class UsersService {
     private usersRepository: UsersRepository,
   ) {}
 
-  //For Auth
   async registerUser(dto: registrationUserDTO): Promise<UserViewDto> {
     const hash = await this.passwordService.generateHash(dto.password);
     const user = this.userModel.createInstance({
@@ -28,32 +26,7 @@ export class UsersService {
     await this.usersRepository.save(user);
     return UserViewDto.mapToView(user);
   }
+  async signIn(){
 
-  async createUser(dto: CreateUserDto): Promise<UserViewDto> {
-    const hash = await this.passwordService.generateHash(dto.password);
-    const user = this.userModel.createInstance({
-      email: dto.email,
-      login: dto.login,
-      passwordHash: hash,
-    });
 
-    await this.usersRepository.save(user);
-
-    return UserViewDto.mapToView(user);
-  }
-
-  async updateUser(id: string, dto: UpdateUserDto): Promise<string> {
-    const user = await this.usersRepository.findOrNotFoundFail(id);
-    user.update(dto); // change detection
-
-    await this.usersRepository.save(user);
-
-    return user._id.toString();
-  }
-
-  async deleteUser(id: string) {
-    const user = await this.usersRepository.findOrNotFoundFail(id);
-    user.makeDeleted();
-    await this.usersRepository.save(user);
-  }
-}
+  }}
