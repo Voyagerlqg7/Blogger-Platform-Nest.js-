@@ -20,7 +20,7 @@ export class AuthService {
     private usersRepository: UsersRepository,
   ) {}
 
-  async checkCredentials(loginOrEmail: string, password: string) {
+  async checkCredentials(loginOrEmail: string, password: string): Promise<boolean> {
     const passwordHash =
       await this.usersRepository.getPasswordHash(loginOrEmail);
     const isValid: boolean = await this.passwordService.comparePassword(
@@ -30,6 +30,7 @@ export class AuthService {
     if (!isValid) {
       throw new UnauthorizedException('Invalid password');
     }
+    return true;
   }
 
   async registerUser(dto: registrationUserDTO): Promise<UserViewDto> {

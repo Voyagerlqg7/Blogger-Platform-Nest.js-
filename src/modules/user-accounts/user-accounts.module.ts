@@ -8,6 +8,7 @@ import { UsersQueryRepository } from './infrastructure/query/users.query-reposit
 import { UsersRepository } from './infrastructure/users.repository';
 import { AuthController } from './api/auth.controller';
 import { JwtStrategy } from './application/auth/jwt.strategy';
+import { LocalStrategy } from './application/auth/local.strategy';
 
 @Module({
   imports: [
@@ -19,6 +20,12 @@ import { JwtStrategy } from './application/auth/jwt.strategy';
     }),
   ],
   controllers: [UsersController, AuthController],
-  providers: [UsersService, UsersQueryRepository, UsersRepository, JwtStrategy],
+  providers: [
+    UsersService,
+    UsersQueryRepository,
+    UsersRepository,
+    JwtStrategy,
+    LocalStrategy,
+  ],
 })
 export class UserAccountsModule {}
