@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersQueryRepository } from './infrastructure/query/users.query-repository';
 import { UsersRepository } from './infrastructure/users.repository';
 import { AuthController } from './api/auth.controller';
+import { JwtStrategy } from './application/auth/jwt.strategy';
 
 @Module({
   imports: [
@@ -18,6 +19,6 @@ import { AuthController } from './api/auth.controller';
     }),
   ],
   controllers: [UsersController, AuthController],
-  providers: [UsersService, UsersQueryRepository, UsersRepository],
+  providers: [UsersService, UsersQueryRepository, UsersRepository, JwtStrategy],
 })
 export class UserAccountsModule {}
