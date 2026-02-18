@@ -7,7 +7,6 @@ import { UsersRepository } from '../../infrastructure/users.repository';
 import { UserViewDto } from '../../api/view-dto/users.view-dto';
 import { registrationUserDTO } from '../../dto/auth_dto/registration.dto';
 import { PasswordService } from './password.service';
-import { loginDTO } from '../../dto/auth_dto/login.dto';
 import { UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
@@ -20,7 +19,27 @@ export class AuthService {
     private usersRepository: UsersRepository,
   ) {}
 
-  async checkCredentials(loginOrEmail: string, password: string): Promise<boolean> {
+  async generateTokens(userId: string, login: string) {
+    const payload = {
+      sub: userId,
+      userLogin: login,
+    };
+
+    const accessToken = await this.JWTService.signAsync(payload, {
+      expiresIn: '5m',
+    });
+
+    const refreshToken = await this.JWTService.signAsync(payload, {
+      expiresIn: '7d',
+    });
+
+    return { accessToken, refreshToken };
+  }
+
+  async checkCredentials(
+    loginOrEmail: string,
+    password: string,
+  ): Promise<boolean> {
     const passwordHash =
       await this.usersRepository.getPasswordHash(loginOrEmail);
     const isValid: boolean = await this.passwordService.comparePassword(
@@ -34,6 +53,14 @@ export class AuthService {
   }
 
   async registerUser(dto: registrationUserDTO): Promise<UserViewDto> {
+    if (
+      (await this.usersRepository.findByLoginOrEmail(dto.login)) ||
+      (await this.usersRepository.findByLoginOrEmail(dto.login))
+    ) {
+      throw new UnauthorizedException(
+        'User with this login or email already exists',
+      );
+    }
     const hash = await this.passwordService.generateHash(dto.password);
     const user = this.userModel.createInstance({
       email: dto.email,
@@ -42,16 +69,6 @@ export class AuthService {
     });
     await this.usersRepository.save(user);
     return UserViewDto.mapToView(user);
-  }
-
-  async signIn(dto: loginDTO) {
-    const user = await this.usersRepository.findByLoginOrEmail(
-      dto.loginOrEmail,
-    );
-    await this.checkCredentials(dto.loginOrEmail, dto.password);
-    const payload = { sub: user._id, userLogin: user.login };
-    const access_token = await this.JWTService.signAsync(payload);
-    return access_token;
   }
 
   async sendCode() {}
