@@ -5,7 +5,7 @@ import { User } from '../domain/user.entity';
 import type { UserModelType } from '../domain/user.entity';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { UserViewDto } from '../api/view-dto/users.view-dto';
-import { PasswordService } from './auth/password.service';
+import { PasswordService } from './external/password.service';
 
 @Injectable()
 export class UsersService {

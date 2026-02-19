@@ -26,7 +26,7 @@ export class AuthController {
     const user = req.user as any;
     //TODO: create user type in request.
     const tokens = await this.authService.generateTokens(
-      user._id.toString(),
+      user.id.toString(),
       user.login,
     );
 

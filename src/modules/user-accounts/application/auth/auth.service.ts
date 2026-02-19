@@ -6,7 +6,7 @@ import type { UserModelType } from '../../domain/user.entity';
 import { UsersRepository } from '../../infrastructure/users.repository';
 import { UserViewDto } from '../../api/view-dto/users.view-dto';
 import { registrationUserDTO } from '../../dto/auth_dto/registration.dto';
-import { PasswordService } from './password.service';
+import { PasswordService } from '../external/password.service';
 import { UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
