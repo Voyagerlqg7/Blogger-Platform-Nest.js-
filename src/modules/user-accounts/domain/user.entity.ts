@@ -24,6 +24,8 @@ export class User {
   @Prop({ type: String, required: true })
   passwordHash: string;
   @Prop({ type: String, required: true })
+  passwordSalt: string;
+  @Prop({ type: String, required: true })
   email: string;
   @Prop({ type: Boolean, required: true, default: false })
   isEmailConfirmed: boolean;

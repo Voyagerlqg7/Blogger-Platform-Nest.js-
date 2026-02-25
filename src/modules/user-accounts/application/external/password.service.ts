@@ -9,7 +9,7 @@ export class PasswordService {
   async comparePassword(password: string, passwordHash: string) {
     return await bcrypt.compare(password, passwordHash);
   }
-  async generateHash(password: string) {
-    return await bcrypt.hash(password, process.env.JWT_SECRET);
+  async generateHash(password: string, passwordSalt: string) {
+    return await bcrypt.hash(password, passwordSalt);
   }
 }

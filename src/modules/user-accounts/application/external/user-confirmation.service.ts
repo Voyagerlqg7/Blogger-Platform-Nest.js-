@@ -66,7 +66,7 @@ export class UserConfirmationService {
     if (!user.recoverPasswordExpiresAt) return false;
 
     const isExpired = new Date() > new Date(user.recoverPasswordExpiresAt);
-    if (isExpired) return false; // Код истек
+    if (isExpired) return false;
 
     return true;
   }
