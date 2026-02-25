@@ -3,6 +3,14 @@ import { HydratedDocument, Model } from 'mongoose';
 import { UpdateUserDto } from '../dto/create-user.dto';
 import { CreateUserDomainDto } from './dto/create-user.domain.dto';
 import { Name, NameSchema } from './name.schema';
+import {
+  EmailConfirmationSchema,
+  EmailConfirmation,
+} from './email-confirmation.valueObject';
+import {
+  RecoverPasswordInfo,
+  RecoverPasswordInfoSchema,
+} from './recover-password.valueObject';
 
 /**
  * User Entity Schema
@@ -27,6 +35,12 @@ export class User {
   @Prop({ type: Date, nullable: true })
   deletedAt: Date | null;
 
+  @Prop({ type: EmailConfirmationSchema, required: true })
+  emailConfirmation: EmailConfirmation;
+
+  @Prop({ type: RecoverPasswordInfoSchema, required: false })
+  recoverPasswordInfo: RecoverPasswordInfo;
+
   static createInstance(
     this: UserModelType,
     dto: CreateUserDomainDto,
@@ -37,10 +51,10 @@ export class User {
       login: dto.login,
       isEmailConfirmed: false,
       /*user.name = {
-                        firstName: 'firstName xxx',
-                        lastName: 'lastName yyy',
-                      };
-                  */
+                              firstName: 'firstName xxx',
+                              lastName: 'lastName yyy',
+                            };
+                        */
     });
   }
 
