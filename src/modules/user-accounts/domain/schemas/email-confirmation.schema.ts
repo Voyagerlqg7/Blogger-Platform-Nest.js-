@@ -8,7 +8,7 @@ export class EmailConfirmation {
   @Prop({ type: Date, required: true })
   expiresAt: Date;
 
-  @Prop({ type: Boolean, required: true })
+  @Prop({ type: Boolean, required: true, default: false })
   isConfirmed: boolean;
 }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateUserDto, UpdateUserDto } from '../dto/create-user.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../domain/user.entity';
 import type { UserModelType } from '../domain/user.entity';
 import { UsersRepository } from '../infrastructure/users.repository';
@@ -17,23 +17,19 @@ export class UsersService {
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<UserViewDto> {
-    const hash = await this.passwordService.generateHash(dto.password);
+    const salt: string = await this.passwordService.generatePasswordSalt();
+    const hash: string = await this.passwordService.generateHash(
+      dto.password,
+      salt,
+    );
     const user = this.userModel.createInstance({
       email: dto.email,
       login: dto.login,
       passwordHash: hash,
+      passwordSalt: salt,
     });
-
     await this.usersRepository.save(user);
-
     return UserViewDto.mapToView(user);
-  }
-
-  async updateUser(id: string, dto: UpdateUserDto): Promise<string> {
-    const user = await this.usersRepository.findOrNotFoundFail(id);
-    user.update(dto); // change detection
-    await this.usersRepository.save(user);
-    return user._id.toString();
   }
 
   async deleteUser(id: string) {

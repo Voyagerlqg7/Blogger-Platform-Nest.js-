@@ -45,21 +45,17 @@ export class User {
     dto: CreateUserDomainDto,
   ): UserDocument {
     return new this({
+      login: dto.login,
       email: dto.email,
       passwordHash: dto.passwordHash,
-      login: dto.login,
-      isEmailConfirmed: false,
-      /*user.name = {
-                                                      firstName: 'firstName xxx',
-                                                      lastName: 'lastName yyy',
-                                                    };
-                                                */
+      passwordSalt: dto.passwordSalt,
     });
   }
 
   makeDeleted(): void {
     this.deletedAt = new Date();
   }
+
   confirmEmail(currentDate: Date): void {
     if (this.emailConfirmation.isConfirmed) {
       throw new Error('Email already confirmed');
@@ -69,6 +65,7 @@ export class User {
     }
     this.emailConfirmation.isConfirmed = true;
   }
+
   updateCodeConfirmationWithExpiresTime(
     newCode: string,
     newExpiresAt: Date,
@@ -81,6 +78,7 @@ export class User {
     this.emailConfirmation.expiresAt = newExpiresAt;
     this.emailConfirmation.isConfirmed = false; //still not confirmed
   }
+
   updatePassword(new_passwordHash: string, new_passwordSalt: string): void {
     if (this.passwordHash == new_passwordHash) {
       throw new Error('Password is the same!');
@@ -94,4 +92,6 @@ export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.loadClass(User);
 export type UserDocument = HydratedDocument<User>;
-export type UserModelType = Model<UserDocument> & typeof User;
+export type UserModelType = Model<User> & {
+  createInstance(dto: CreateUserDomainDto): UserDocument;
+};
