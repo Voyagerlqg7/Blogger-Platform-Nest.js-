@@ -55,18 +55,20 @@ export class User {
   makeDeleted(): void {
     this.deletedAt = new Date();
   }
-
-  confirmEmail(currentDate: Date): void {
+  confirmEmail(code: string): void {
+    const now = new Date();
     if (this.emailConfirmation.isConfirmed) {
       throw new Error('Email already confirmed');
     }
-    if (currentDate > this.emailConfirmation.expiresAt) {
+    if (now > this.emailConfirmation.expiresAt) {
       throw new Error('Confirmation code expired');
+    }
+    if (code != this.emailConfirmation.confirmationCode) {
+      throw new Error('Incorrect confirmation code');
     }
     this.emailConfirmation.isConfirmed = true;
   }
-
-  updateCodeConfirmationWithExpiresTime(
+  updateCodeConfirmationWithExpiresTimeForEmail(
     newCode: string,
     newExpiresAt: Date,
   ): void {
@@ -78,10 +80,28 @@ export class User {
     this.emailConfirmation.expiresAt = newExpiresAt;
     this.emailConfirmation.isConfirmed = false; //still not confirmed
   }
-
-  updatePassword(new_passwordHash: string, new_passwordSalt: string): void {
+  updateRecoverPasswordCodeAndExpiresTime(
+    newCode: string,
+    newExpiresAt: Date,
+  ): void {
+    //TODO: replace to exception filter soon
+    this.recoverPasswordInfo.code = newCode;
+    this.recoverPasswordInfo.expiresAt = newExpiresAt;
+  }
+  updatePassword(
+    code: string,
+    new_passwordHash: string,
+    new_passwordSalt: string,
+  ): void {
+    const now = new Date();
     if (this.passwordHash == new_passwordHash) {
       throw new Error('Password is the same!');
+    }
+    if (now > this.recoverPasswordInfo.expiresAt) {
+      throw new Error('Confirmation code expired');
+    }
+    if (code != this.recoverPasswordInfo.code) {
+      throw new Error('Incorrect confirmation code');
     }
     this.passwordHash = new_passwordHash;
     this.passwordSalt = new_passwordSalt;
