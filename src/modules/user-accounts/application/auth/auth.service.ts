@@ -71,4 +71,16 @@ export class AuthService {
     await this.usersRepository.save(user);
     return UserViewDto.mapToView(user);
   }
+
+  async createSession(): Promise<void> {
+    //todo: finish creating session
+    /*await this.sessionRepository.create({
+          userId: user.id,
+          deviceId,
+          ip: req.ip,
+          title: req.headers["user-agent"] ?? "Unknown device",
+          lastActiveDate: new Date(),
+          expirationDate: new Date(Date.now() + 20_000),
+        })*/
+  }
 }

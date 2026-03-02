@@ -45,6 +45,7 @@ export class AuthController {
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+    await this.authService.createSession();
     await this.tokenRepository.saveToken(tokens.refreshToken);
     return { accessToken: tokens.accessToken };
   }

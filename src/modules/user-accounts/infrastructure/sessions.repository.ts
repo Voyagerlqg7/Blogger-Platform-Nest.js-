@@ -21,18 +21,6 @@ export class SessionRepository {
     return await this.sessionModel.findOne({ deviceId });
   }
 
-  //TODO: next methods should be moved to DDD concepts
-  async updateLastActiveDate(
-    deviceId: string,
-    update: { lastActiveDate: Date; expirationDate?: Date },
-  ) {
-    return await this.sessionModel.updateOne({ deviceId }, { $set: update });
-  }
-
-  async deleteAllExcept(userId: string, deviceId: string) {
-    await this.sessionModel.deleteMany({ userId, deviceId: { $ne: deviceId } });
-  }
-
   async deleteDeviceById(deviceId: string) {
     await this.sessionModel.deleteOne({ deviceId });
   }
