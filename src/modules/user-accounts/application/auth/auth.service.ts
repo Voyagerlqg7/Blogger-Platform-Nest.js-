@@ -32,7 +32,6 @@ export class AuthService {
     const refreshToken = await this.JWTService.signAsync(payload, {
       expiresIn: '7d',
     });
-
     return { accessToken, refreshToken };
   }
 
@@ -61,21 +60,15 @@ export class AuthService {
         'User with this login or email already exists',
       );
     }
-    const hash = await this.passwordService.generateHash(dto.password);
+    const salt = await this.passwordService.generatePasswordSalt();
+    const hash = await this.passwordService.generateHash(dto.password, salt);
     const user = this.userModel.createInstance({
       email: dto.email,
       login: dto.login,
       passwordHash: hash,
+      passwordSalt: salt,
     });
     await this.usersRepository.save(user);
     return UserViewDto.mapToView(user);
   }
-
-  async sendCode() {}
-
-  async resetPassword() {}
-
-  async confirmAccount() {}
-
-  async resendCode() {}
 }
