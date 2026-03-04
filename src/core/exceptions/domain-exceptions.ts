@@ -22,4 +22,11 @@ export class DomainException extends Error {
     this.code = errorInfo.code;
     this.extensions = errorInfo.extensions || [];
   }
+
+  static notFound(entity: string) {
+    return new DomainException({
+      code: DomainExceptionCode.NotFound,
+      message: `${entity} not found`,
+    });
+  }
 }

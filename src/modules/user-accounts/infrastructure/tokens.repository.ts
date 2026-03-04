@@ -1,15 +1,19 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { Token } from '../domain/token.entity';
+import { Token, TokenDocument } from '../domain/token.entity';
 import type { TokenModelType } from '../domain/token.entity';
+import { DomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class TokensRepository {
   constructor(@InjectModel(Token.name) private tokenModel: TokenModelType) {}
 
-  async findToken(token: string): Promise<string | null> {
+  async findToken(token: string): Promise<TokenDocument> {
     const tokenInD = await this.tokenModel.findOne({ token });
-    return tokenInD ? token : null;
+    if (!tokenInD) {
+      throw DomainException.notFound('token');
+    }
+    return tokenInD;
   }
 
   async saveToken(token: string): Promise<string | null> {

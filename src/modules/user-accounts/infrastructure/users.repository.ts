@@ -1,15 +1,12 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../domain/user.entity';
 import type { UserModelType } from '../domain/user.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PasswordService } from '../application/external/password.service';
+import { Injectable } from '@nestjs/common';
+import { DomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class UsersRepository {
-  constructor(
-    @InjectModel(User.name) private UserModel: UserModelType,
-    private readonly passwordService: PasswordService,
-  ) {}
+  constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
 
   async findById(id: string): Promise<UserDocument | null> {
     return this.UserModel.findOne({
@@ -24,20 +21,16 @@ export class UsersRepository {
 
   async findOrNotFoundFail(id: string): Promise<UserDocument> {
     const user = await this.findById(id);
-
     if (!user) {
-      //TODO: replace with domain exception
-      throw new NotFoundException('user not found');
+      throw DomainException.notFound('User');
     }
-
     return user;
   }
 
   async getPasswordHash(loginOrEmail: string): Promise<string> {
     const user = await this.findByLoginOrEmail(loginOrEmail);
     if (!user) {
-      //TODO: replace with domain exception
-      throw new NotFoundException('user not found');
+      throw DomainException.notFound('User');
     }
     return user.passwordHash;
   }
@@ -47,8 +40,7 @@ export class UsersRepository {
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
     if (!user) {
-      //TODO: replace with domain exception
-      throw new NotFoundException('user not found');
+      throw DomainException.notFound('User');
     }
     return user;
   }
@@ -60,7 +52,7 @@ export class UsersRepository {
       'emailConfirmation.code': confirmation_code,
     });
     if (!user) {
-      throw new NotFoundException('user not found');
+      throw DomainException.notFound('User');
     }
     return user;
   }
@@ -70,7 +62,7 @@ export class UsersRepository {
       'recoverPasswordInfo.code': recover_code,
     });
     if (!user) {
-      throw new NotFoundException('user not found');
+      throw DomainException.notFound('User');
     }
     return user;
   }

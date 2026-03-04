@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from './core/exceptions/filters/all-exceptions.filter';
+import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exception.filter';
 import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  //app.setGlobalPrefix('api');
-  //TODO: add exception filters for all endpoints
-  //TODO: use two keys REFRESH & ACCESS from .env for strategy's
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -17,6 +17,12 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.useGlobalFilters(
+    new DomainHttpExceptionsFilter(),
+    new AllExceptionsFilter(),
+  );
+
   app.use(cookieParser());
 
   await app.listen(6419);
