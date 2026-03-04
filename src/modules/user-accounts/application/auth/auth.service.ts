@@ -8,15 +8,20 @@ import { UserViewDto } from '../../api/view-dto/users.view-dto';
 import { registrationUserDTO } from '../../dto/auth_dto/registration.dto';
 import { PasswordService } from '../external/password.service';
 import { UnauthorizedException } from '@nestjs/common';
+import type { SessionModelType } from '../../domain/session.entity';
+import { CreateSessionDto } from '../../dto/auth_dto/create-session.dto';
+import { SessionRepository } from '../../infrastructure/sessions.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name)
     private readonly userModel: UserModelType,
+    private readonly sessionModel: SessionModelType,
+    private readonly sessionRepository: SessionRepository,
     private readonly passwordService: PasswordService,
     private readonly JWTService: JwtService,
-    private usersRepository: UsersRepository,
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   async generateTokens(userId: string, login: string) {
@@ -72,15 +77,8 @@ export class AuthService {
     return UserViewDto.mapToView(user);
   }
 
-  async createSession(): Promise<void> {
-    //todo: finish creating session
-    /*await this.sessionRepository.create({
-          userId: user.id,
-          deviceId,
-          ip: req.ip,
-          title: req.headers["user-agent"] ?? "Unknown device",
-          lastActiveDate: new Date(),
-          expirationDate: new Date(Date.now() + 20_000),
-        })*/
+  async createSession(dto: CreateSessionDto): Promise<void> {
+    const session = this.sessionModel.createInstance(dto, 20_000);
+    await this.sessionRepository.save(session);
   }
 }

@@ -18,6 +18,9 @@ import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { TokensRepository } from '../infrastructure/tokens.repository';
 import { UserConfirmationService } from '../application/external/user-confirmation.service';
 import { UserViewDto } from './view-dto/users.view-dto';
+import { randomUUID } from 'crypto';
+import { CreateSessionDto } from '../dto/auth_dto/create-session.dto';
+import { HttpException } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
@@ -33,19 +36,29 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string }> {
-    const user = req.user as any;
+    const user = req.user as UserViewDto;
     const tokens = await this.authService.generateTokens(
       user.id.toString(),
       user.login,
     );
-
+    if (!req.ip) {
+      throw new HttpException('ip address is empty!', 400);
+    }
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    await this.authService.createSession();
+
+    const deviceId: string = randomUUID();
+    const dto: CreateSessionDto = {
+      userId: user.id,
+      deviceId: deviceId,
+      ip: req.ip,
+      title: req.headers['user-agent'] ?? 'Unknown device',
+    };
+    await this.authService.createSession(dto);
     await this.tokenRepository.saveToken(tokens.refreshToken);
     return { accessToken: tokens.accessToken };
   }
@@ -86,5 +99,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  async about_me() {}
+  getMe(@Req() req: Request) {
+    return req.user;
+  }
 }
