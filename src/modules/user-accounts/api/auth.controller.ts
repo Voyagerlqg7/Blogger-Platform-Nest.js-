@@ -21,6 +21,7 @@ import { UserViewDto } from './view-dto/users.view-dto';
 import { randomUUID } from 'crypto';
 import { CreateSessionDto } from '../dto/auth_dto/create-session.dto';
 import { HttpException } from '@nestjs/common';
+import { Throttle} from "@nestjs/throttler";
 
 @Controller('auth')
 export class AuthController {
@@ -64,6 +65,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('registration')
   async registration(@Body() dto: registrationUserDTO) {
     const user: UserViewDto = await this.authService.registerUser(dto);
@@ -71,12 +73,14 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('password-recovery')
   async password_recovery(@Body() dto: EmailDTO) {
     await this.confirmationService.sendRecoverPasswordCode(dto.email);
   }
 
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('new-password')
   async new_password(@Body() dto: newPasswordDTO): Promise<void> {
     await this.confirmationService.checkCodeRecoverPassword(
@@ -86,12 +90,14 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('registration-confirmation')
   async registration_confirmation(@Body() dto: codeDto) {
     await this.confirmationService.checkCodeConfirmation(dto.code);
   }
 
   @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('registration-email-resending')
   async registration_email_resending(@Body() dto: EmailDTO) {
     await this.confirmationService.resendCodeConfirmation(dto.email);
