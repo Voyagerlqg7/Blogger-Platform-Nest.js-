@@ -15,19 +15,22 @@ import { LocalStrategy } from './application/auth/local.strategy';
 import { PasswordService } from './application/external/password.service';
 import { AuthService } from './application/auth/auth.service';
 import { EmailService } from './application/external/email.service';
+import { UserConfirmationService } from './application/external/user-confirmation.service';
+import { TokensRepository } from './infrastructure/tokens.repository';
+import { Token, TokenSchema } from './domain/token.entity';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Session.name, schema: SessionSchema },
+      { name: Token.name, schema: TokenSchema },
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET') || 'secret-key',
-        signOptions: { expiresIn: '1d' },
+        secret: configService.get('JWT_ACCESS_SECRET_KEY'),
       }),
     }),
   ],
@@ -35,6 +38,7 @@ import { EmailService } from './application/external/email.service';
   providers: [
     UsersService,
     UsersQueryRepository,
+    TokensRepository,
     UsersRepository,
     SessionRepository,
     JwtStrategy,
@@ -42,6 +46,7 @@ import { EmailService } from './application/external/email.service';
     PasswordService,
     AuthService,
     EmailService,
+    UserConfirmationService,
   ],
   exports: [
     UsersService,
