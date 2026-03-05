@@ -4,11 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { UsersRepository } from '../../infrastructure/users.repository';
 import { UserViewDto } from '../../api/view-dto/users.view-dto';
 import { UnauthorizedException } from '@nestjs/common';
-
-export type JwtPayload = {
-  userId: string;
-  deviceId?: string;
-};
+import { JwtPayload } from './payload/JwtPayload';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

@@ -6,7 +6,7 @@ import { Session } from '../domain/session.entity';
 @Injectable()
 export class SessionRepository {
   constructor(
-    @InjectModel(Session.name) private readonly sessionModel: SessionModelType,
+    @InjectModel(Session.name) private sessionModel: SessionModelType,
   ) {}
 
   async save(session: Session): Promise<void> {

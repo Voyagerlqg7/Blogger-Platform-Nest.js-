@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { UsersRepository } from '../../infrastructure/users.repository';
 
-//TODO: finish confirmation service
 @Injectable()
 export class UserConfirmationService {
   constructor(
