@@ -1,15 +1,20 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../../domain/user.entity';
+import { User } from '../../domain/user.entity';
 import type { UserModelType } from '../../domain/user.entity';
 import { UserViewDto } from '../../api/view-dto/users.view-dto';
+import { SortDirection } from '../../../../core/dto/base.query-params.input-dto';
 
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { QueryFilter } from 'mongoose';
-
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetUsersQueryParams } from '../../api/input-dto/get-users-query-params.input-dto';
-import { SortDirection } from '../../../../core/dto/base.query-params.input-dto';
+
+type FilterQuery<T> = {
+  [P in keyof T]?: any;
+} & {
+  $or?: any[];
+  deletedAt?: any;
+};
 
 @Injectable()
 export class UsersQueryRepository {
@@ -18,7 +23,7 @@ export class UsersQueryRepository {
   async getByIdOrNotFoundFail(id: string): Promise<UserViewDto> {
     const user = await this.userModel.findOne({
       _id: id,
-      deleteAt: null,
+      deletedAt: null,
     });
 
     if (!user) {
@@ -30,22 +35,23 @@ export class UsersQueryRepository {
   async getAll(
     query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UserViewDto[]>> {
-    const filter: QueryFilter<UserDocument> = { deletedAt: null };
+    const filter: FilterQuery<User> = { deletedAt: null };
+    const orFilters: any[] = [];
 
-    if (query.searchLoginTerm || query.searchEmailTerm) {
-      filter.$or = [];
+    if (query.searchLoginTerm) {
+      orFilters.push({
+        login: { $regex: query.searchLoginTerm, $options: 'i' },
+      });
+    }
 
-      if (query.searchLoginTerm) {
-        filter.$or.push({
-          login: { $regex: query.searchLoginTerm, $options: 'i' },
-        });
-      }
+    if (query.searchEmailTerm) {
+      orFilters.push({
+        email: { $regex: query.searchEmailTerm, $options: 'i' },
+      });
+    }
 
-      if (query.searchEmailTerm) {
-        filter.$or.push({
-          email: { $regex: query.searchEmailTerm, $options: 'i' },
-        });
-      }
+    if (orFilters.length > 0) {
+      filter.$or = orFilters;
     }
 
     const allowedSortFields = ['login', 'email', 'createdAt'];
@@ -55,13 +61,11 @@ export class UsersQueryRepository {
         : 'createdAt';
 
     const sortDirection = query.sortDirection || SortDirection.Desc;
-
     const users = await this.userModel
       .find(filter)
       .sort({ [sortBy]: sortDirection })
       .skip(query.calculateSkip())
-      .limit(query.pageSize)
-      .lean();
+      .limit(query.pageSize);
 
     const totalCount = await this.userModel.countDocuments(filter);
     const items = users.map((user) => UserViewDto.mapToView(user));

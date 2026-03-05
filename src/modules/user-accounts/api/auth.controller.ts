@@ -21,7 +21,7 @@ import { UserViewDto } from './view-dto/users.view-dto';
 import { randomUUID } from 'crypto';
 import { CreateSessionDto } from '../dto/auth_dto/create-session.dto';
 import { HttpException } from '@nestjs/common';
-import { Throttle} from "@nestjs/throttler";
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
