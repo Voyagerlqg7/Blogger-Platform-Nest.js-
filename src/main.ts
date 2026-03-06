@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { AllExceptionsFilter } from './core/exceptions/filters/all-exceptions.filter';
 import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exception.filter';
 import cookieParser from 'cookie-parser';
@@ -10,10 +10,19 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
       whitelist: true,
-      transformOptions: {
-        enableImplicitConversion: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      exceptionFactory: (errors) => {
+        const formattedErrors = errors.map((error) => ({
+          message: Object.values(error.constraints || {}).join(', '),
+          key: error.property,
+        }));
+
+        return new BadRequestException({
+          message: 'Validation failed',
+          errors: formattedErrors,
+        });
       },
     }),
   );

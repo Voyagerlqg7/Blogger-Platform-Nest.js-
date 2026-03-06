@@ -8,6 +8,7 @@ import {
   HttpStatus,
   Body,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UsersService } from '../application/users.service';
@@ -15,6 +16,7 @@ import { UsersQueryRepository } from '../infrastructure/query/users.query-reposi
 import { UserViewDto } from './view-dto/users.view-dto';
 import { GetUsersQueryParams } from './input-dto/get-users-query-params.input-dto';
 import { PaginatedViewDto } from '../../../core/dto/base.paginated.view-dto';
+import { BasicAuthGuard } from '../../../core/guards/basic-auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -35,12 +37,14 @@ export class UsersController {
     return this.usersQueryRepository.getAll(query);
   }
 
+  @UseGuards(BasicAuthGuard)
   @Post()
   async createUser(@Body() body: CreateUserDto): Promise<UserViewDto> {
     return this.usersService.createUser(body);
   }
 
   @Delete(':id')
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteUser(@Param('id') id: string): Promise<void> {
     return this.usersService.deleteUser(id);
