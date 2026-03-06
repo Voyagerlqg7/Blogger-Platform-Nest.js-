@@ -64,7 +64,6 @@ export class AuthController {
     return { accessToken: tokens.accessToken };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('registration')
   async registration(@Body() dto: registrationUserDTO) {
@@ -72,14 +71,12 @@ export class AuthController {
     await this.confirmationService.sendConfirmationMessage(user.id, user.email);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('password-recovery')
   async password_recovery(@Body() dto: EmailDTO) {
     await this.confirmationService.sendRecoverPasswordCode(dto.email);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('new-password')
   async new_password(@Body() dto: newPasswordDTO): Promise<void> {
@@ -89,14 +86,12 @@ export class AuthController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
   @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('registration-confirmation')
   async registration_confirmation(@Body() dto: codeDto) {
     await this.confirmationService.checkCodeConfirmation(dto.code);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('registration-email-resending')
   async registration_email_resending(@Body() dto: EmailDTO) {

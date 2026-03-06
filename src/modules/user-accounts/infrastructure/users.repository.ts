@@ -3,6 +3,15 @@ import { User, UserDocument } from '../domain/user.entity';
 import type { UserModelType } from '../domain/user.entity';
 import { Injectable } from '@nestjs/common';
 import { DomainException } from '../../../core/exceptions/domain-exceptions';
+import { DomainExceptionCode } from '../../../core/exceptions/domain-exceptions-codes';
+import { Error as MongooseError } from 'mongoose';
+import { Extension } from '../../../core/exceptions/domain-exceptions';
+
+function isMongooseValidationError(
+  error: unknown,
+): error is MongooseError.ValidationError {
+  return error instanceof MongooseError.ValidationError;
+}
 
 @Injectable()
 export class UsersRepository {
@@ -16,7 +25,25 @@ export class UsersRepository {
   }
 
   async save(user: UserDocument): Promise<UserDocument> {
-    return await user.save();
+    try {
+      return await user.save();
+    } catch (error) {
+      if (isMongooseValidationError(error)) {
+        const extensions: Extension[] = Object.values(error.errors).map(
+          (err) => ({
+            message: err.message,
+            key: err.path,
+          }),
+        );
+
+        throw new DomainException({
+          code: DomainExceptionCode.ValidationError,
+          message: error.message,
+          extensions,
+        });
+      }
+      throw error;
+    }
   }
 
   async findOrNotFoundFail(id: string): Promise<UserDocument> {

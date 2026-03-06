@@ -34,7 +34,7 @@ export class User {
   @Prop({ type: Date, nullable: true })
   deletedAt: Date | null;
 
-  @Prop({ type: EmailConfirmationSchema, required: true })
+  @Prop({ type: EmailConfirmationSchema, required: false })
   emailConfirmation: EmailConfirmation;
 
   @Prop({ type: RecoverPasswordInfoSchema, required: false })
