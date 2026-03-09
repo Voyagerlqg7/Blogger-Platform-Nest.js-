@@ -18,6 +18,9 @@ import { EmailService } from './application/external/email.service';
 import { UserConfirmationService } from './application/external/user-confirmation.service';
 import { TokensRepository } from './infrastructure/tokens.repository';
 import { Token, TokenSchema } from './domain/token.entity';
+import { BasicStrategy } from './application/auth/basic.strategy';
+import { APP_FILTER } from '@nestjs/core';
+import { Base } from '../../core/exceptions/filters/base';
 
 @Module({
   imports: [
@@ -36,6 +39,10 @@ import { Token, TokenSchema } from './domain/token.entity';
   ],
   controllers: [UsersController, AuthController],
   providers: [
+    {
+      provide: APP_FILTER,
+      useClass: Base,
+    },
     UsersService,
     UsersQueryRepository,
     TokensRepository,
@@ -47,6 +54,7 @@ import { Token, TokenSchema } from './domain/token.entity';
     AuthService,
     EmailService,
     UserConfirmationService,
+    BasicStrategy,
   ],
   exports: [
     UsersService,

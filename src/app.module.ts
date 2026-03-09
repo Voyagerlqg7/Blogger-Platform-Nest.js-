@@ -5,6 +5,10 @@ import { UserAccountsModule } from './modules/user-accounts/user-accounts.module
 import { BloggerPlatform } from './modules/blogger-platform/blogger-platform.module';
 import { TestingModule } from './testing/testing.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { AppService } from './app.service';
+import { APP_FILTER } from '@nestjs/core';
+import { AllHttpExceptionsFilter } from './core/exceptions/filters/all-exceptions';
+import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exception.filter';
 
 @Module({
   imports: [
@@ -28,9 +32,20 @@ import { ThrottlerModule } from '@nestjs/throttler';
         return { uri };
       },
     }),
+    AppService,
     UserAccountsModule,
     BloggerPlatform,
     TestingModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllHttpExceptionsFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: DomainHttpExceptionsFilter,
+    },
   ],
 })
 export class AppModule {}

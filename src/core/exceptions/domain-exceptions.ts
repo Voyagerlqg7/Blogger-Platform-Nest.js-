@@ -29,4 +29,34 @@ export class DomainException extends Error {
       message: `${entity} not found`,
     });
   }
+
+  static badRequest(message: string, extensions?: Extension[]) {
+    return new DomainException({
+      code: DomainExceptionCode.BadRequest,
+      message,
+      extensions,
+    });
+  }
+
+  static unauthorized(message: string = 'Unauthorized') {
+    return new DomainException({
+      code: DomainExceptionCode.Unauthorized,
+      message,
+    });
+  }
+
+  static forbidden(message: string = 'Forbidden') {
+    return new DomainException({
+      code: DomainExceptionCode.Forbidden,
+      message,
+    });
+  }
+
+  static validationError(message: string, extensions: Extension[]) {
+    return new DomainException({
+      code: DomainExceptionCode.ValidationError,
+      message,
+      extensions,
+    });
+  }
 }

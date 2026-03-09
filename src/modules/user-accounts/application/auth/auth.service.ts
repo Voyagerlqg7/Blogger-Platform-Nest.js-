@@ -65,10 +65,14 @@ export class AuthService {
   }
 
   async registerUser(dto: registrationUserDTO): Promise<UserViewDto> {
-    if (
-      (await this.usersRepository.findByLoginOrEmail(dto.login)) ||
-      (await this.usersRepository.findByLoginOrEmail(dto.login))
-    ) {
+    const existingUser = await this.usersRepository.findByLoginOrEmail(
+      dto.login,
+    );
+    const existingEmail = await this.usersRepository.findByLoginOrEmail(
+      dto.email,
+    );
+
+    if (existingUser || existingEmail) {
       throw new UnauthorizedException(
         'User with this login or email already exists',
       );

@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
-import { AllExceptionsFilter } from './core/exceptions/filters/all-exceptions.filter';
 import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exception.filter';
+import { AllHttpExceptionsFilter } from './core/exceptions/filters/all-exceptions';
 import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
@@ -14,14 +14,13 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
       transform: true,
       exceptionFactory: (errors) => {
-        const formattedErrors = errors.map((error) => ({
+        const errorMessages = errors.map((error) => ({
           message: Object.values(error.constraints || {}).join(', '),
-          key: error.property,
+          field: error.property,
         }));
 
         return new BadRequestException({
-          message: 'Validation failed',
-          errors: formattedErrors,
+          errorsMessages: errorMessages,
         });
       },
     }),
@@ -29,7 +28,7 @@ async function bootstrap() {
 
   app.useGlobalFilters(
     new DomainHttpExceptionsFilter(),
-    new AllExceptionsFilter(),
+    new AllHttpExceptionsFilter(),
   );
 
   app.use(cookieParser());

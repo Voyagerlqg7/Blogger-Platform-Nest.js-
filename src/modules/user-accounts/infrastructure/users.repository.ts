@@ -6,6 +6,7 @@ import { DomainException } from '../../../core/exceptions/domain-exceptions';
 import { DomainExceptionCode } from '../../../core/exceptions/domain-exceptions-codes';
 import { Error as MongooseError } from 'mongoose';
 import { Extension } from '../../../core/exceptions/domain-exceptions';
+import { Types } from 'mongoose';
 
 function isMongooseValidationError(
   error: unknown,
@@ -18,6 +19,10 @@ export class UsersRepository {
   constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
 
   async findById(id: string): Promise<UserDocument | null> {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
     return this.UserModel.findOne({
       _id: id,
       deletedAt: null,
