@@ -20,7 +20,7 @@ import { UserConfirmationService } from '../application/external/user-confirmati
 import { UserViewDto } from './view-dto/users.view-dto';
 import { randomUUID } from 'crypto';
 import { CreateSessionDto } from '../dto/auth_dto/create-session.dto';
-import { HttpException } from '@nestjs/common';
+import { HttpException, HttpCode, HttpStatus } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
@@ -66,6 +66,7 @@ export class AuthController {
 
   @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('registration')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() dto: registrationUserDTO) {
     const user: UserViewDto = await this.authService.registerUser(dto);
     await this.confirmationService.sendConfirmationMessage(user.id, user.email);

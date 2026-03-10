@@ -21,34 +21,52 @@ export class UserConfirmationService {
     const now = new Date();
     now.setSeconds(now.getSeconds() + 10);
     const user = await this.userRepository.findOrNotFoundFail(userId);
+    if (!user.emailConfirmation) {
+      user.emailConfirmation = {
+        confirmationCode: null,
+        expiresAt: null,
+        isConfirmed: false,
+      };
+    }
     user.updateCodeConfirmationWithExpiresTimeForEmail(code, now);
     await this.userRepository.save(user);
-    return await this.emailService.sendMassage(email, code);
+    return this.emailService.sendMassage(email, code);
   }
 
   async sendRecoverPasswordCode(email: string): Promise<void> {
     const user = await this.userRepository.findByLoginOrEmail(email);
-    if (user == null) {
-      DomainException.badRequest('Cannot send recover password code!');
-    } else {
-      const code = randomUUID();
-      const now = new Date();
-      now.setSeconds(now.getSeconds() + 10);
-      user.updateRecoverPasswordCodeAndExpiresTime(code, now);
-      await this.userRepository.save(user);
-      await this.emailService.sendPasswordReset(email, code);
-    }
-  }
-
-  async resendCodeConfirmation(email: string): Promise<boolean> {
-    const user = await this.userRepository.findByLoginOrEmail(email);
-    if (user == null) {
-      DomainException.badRequest('Cannot send code confirmation!');
-      return false;
+    if (!user) {
+      throw DomainException.badRequest('Cannot send recover password code!');
     }
     const code = randomUUID();
     const now = new Date();
     now.setSeconds(now.getSeconds() + 10);
+    if (!user.recoverPasswordInfo) {
+      user.recoverPasswordInfo = {
+        code: null,
+        expiresAt: null,
+      };
+    }
+    user.updateRecoverPasswordCodeAndExpiresTime(code, now);
+    await this.userRepository.save(user);
+    await this.emailService.sendPasswordReset(email, code);
+  }
+
+  async resendCodeConfirmation(email: string): Promise<boolean> {
+    const user = await this.userRepository.findByLoginOrEmail(email);
+    if (!user) {
+      throw DomainException.badRequest('Cannot send code confirmation!');
+    }
+    const code = randomUUID();
+    const now = new Date();
+    now.setSeconds(now.getSeconds() + 10);
+    if (!user.emailConfirmation) {
+      user.emailConfirmation = {
+        confirmationCode: null,
+        expiresAt: null,
+        isConfirmed: false,
+      };
+    }
     user.updateCodeConfirmationWithExpiresTimeForEmail(code, now);
     await this.userRepository.save(user);
     return await this.emailService.sendMassage(email, code);
@@ -56,9 +74,8 @@ export class UserConfirmationService {
 
   async checkCodeConfirmation(code: string): Promise<boolean> {
     const user = await this.userRepository.findByCodeConfirmation(code);
-    if (user == null) {
-      DomainException.badRequest('Cannot send code confirmation!');
-      return false;
+    if (!user) {
+      throw DomainException.badRequest('Cannot send code confirmation!');
     }
     user.confirmEmail(code);
     await this.userRepository.save(user);
@@ -70,9 +87,8 @@ export class UserConfirmationService {
     new_password: string,
   ): Promise<boolean> {
     const user = await this.userRepository.findByRecoverPasswordCode(code);
-    if (user == null) {
-      DomainException.badRequest('Cannot check recover password code!');
-      return false;
+    if (!user) {
+      throw DomainException.badRequest('Cannot check recover password code!');
     }
     const salt: string = await this.passwordService.generatePasswordSalt();
     const hash: string = await this.passwordService.generateHash(

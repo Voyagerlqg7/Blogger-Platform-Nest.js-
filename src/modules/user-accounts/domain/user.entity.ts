@@ -10,6 +10,7 @@ import {
   RecoverPasswordInfo,
   RecoverPasswordInfoSchema,
 } from './schemas/recover-password.schema';
+import { DomainException } from '../../../core/exceptions/domain-exceptions';
 
 /**
  * User Entity Schema
@@ -44,64 +45,89 @@ export class User {
     this: UserModelType,
     dto: CreateUserDomainDto,
   ): UserDocument {
-    return new this({
+    const user = new this({
       login: dto.login,
       email: dto.email,
       passwordHash: dto.passwordHash,
       passwordSalt: dto.passwordSalt,
     });
+    return user;
   }
 
   makeDeleted(): void {
     this.deletedAt = new Date();
   }
+
   confirmEmail(code: string): void {
+    if (!this.emailConfirmation) {
+      throw DomainException.badRequest('Email confirmation not initialized');
+    }
+    if (!this.emailConfirmation.expiresAt) {
+      throw DomainException.badRequest(
+        'Confirmation code has no expiration date',
+      );
+    }
+
     const now = new Date();
     if (this.emailConfirmation.isConfirmed) {
-      throw new Error('Email already confirmed');
+      throw DomainException.badRequest('Email already confirmed');
     }
     if (now > this.emailConfirmation.expiresAt) {
-      throw new Error('Confirmation code expired');
+      throw DomainException.badRequest('Confirmation code expired');
     }
     if (code != this.emailConfirmation.confirmationCode) {
-      throw new Error('Incorrect confirmation code');
+      throw DomainException.badRequest('Code is not correct!');
     }
     this.emailConfirmation.isConfirmed = true;
   }
+
   updateCodeConfirmationWithExpiresTimeForEmail(
     newCode: string,
     newExpiresAt: Date,
   ): void {
-    //TODO: replace to exception filter soon
-    if (this.emailConfirmation.isConfirmed) {
-      throw new Error('Email already confirmed');
+    if (!this.emailConfirmation) {
+      this.emailConfirmation = {
+        confirmationCode: null,
+        expiresAt: null,
+        isConfirmed: false,
+      };
     }
+
+    if (this.emailConfirmation.isConfirmed) {
+      throw DomainException.badRequest('Email already confirmed');
+    }
+
     this.emailConfirmation.confirmationCode = newCode;
     this.emailConfirmation.expiresAt = newExpiresAt;
-    this.emailConfirmation.isConfirmed = false; //still not confirmed
   }
+
   updateRecoverPasswordCodeAndExpiresTime(
     newCode: string,
     newExpiresAt: Date,
   ): void {
-    //TODO: replace to exception filter soon
     this.recoverPasswordInfo.code = newCode;
     this.recoverPasswordInfo.expiresAt = newExpiresAt;
   }
+
   updatePassword(
     code: string,
     new_passwordHash: string,
     new_passwordSalt: string,
   ): void {
     const now = new Date();
+    if (!this.recoverPasswordInfo.expiresAt) {
+      throw DomainException.badRequest(
+        'Confirmation code has no expiration date',
+      );
+    }
     if (this.passwordHash == new_passwordHash) {
-      throw new Error('Password is the same!');
+      DomainException.badRequest('Password is the same!');
     }
     if (now > this.recoverPasswordInfo.expiresAt) {
-      throw new Error('Confirmation code expired');
+      DomainException.badRequest('Confirmation code expired');
     }
     if (code != this.recoverPasswordInfo.code) {
-      throw new Error('Incorrect confirmation code');
+      DomainException.badRequest('Incorrect confirmation code');
     }
     this.passwordHash = new_passwordHash;
     this.passwordSalt = new_passwordSalt;

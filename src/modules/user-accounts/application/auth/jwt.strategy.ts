@@ -3,16 +3,20 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from '../../infrastructure/users.repository';
 import { UserViewDto } from '../../api/view-dto/users.view-dto';
-import { UnauthorizedException } from '@nestjs/common';
 import { JwtPayload } from './payload/JwtPayload';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly usersRepository: UsersRepository) {
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly configService: ConfigService, // Добавьте
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_ACCESS_SECRET_KEY!,
+      secretOrKey: configService.get('JWT_ACCESS_SECRET_KEY')!,
     });
   }
 
@@ -20,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.usersRepository.findById(payload.userId);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw DomainException.unauthorized('Invalid credentials');
     }
 
     return UserViewDto.mapToView(user);

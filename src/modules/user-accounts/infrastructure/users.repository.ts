@@ -19,6 +19,12 @@ export class UsersRepository {
       deletedAt: null,
     });
   }
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {
+    const user = await this.UserModel.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
+    return user;
+  }
 
   async save(user: UserDocument): Promise<UserDocument> {
     return await user.save();
@@ -39,14 +45,6 @@ export class UsersRepository {
     }
     return user.passwordHash;
   }
-
-  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {
-    const user = await this.UserModel.findOne({
-      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
-    });
-    return user;
-  }
-
   async findByCodeConfirmation(
     confirmation_code: string,
   ): Promise<UserDocument | null> {
