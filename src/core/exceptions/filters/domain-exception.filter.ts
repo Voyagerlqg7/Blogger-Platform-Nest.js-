@@ -25,29 +25,30 @@ export class DomainHttpExceptionsFilter implements ExceptionFilter {
   private mapToHttpStatus(code: DomainExceptionCode): number {
     switch (code) {
       // 4xx Client Errors
-      case DomainExceptionCode.NotFound:
-        return HttpStatus.NOT_FOUND;
+      case DomainExceptionCode.NotFound: // 1 - Resource not found
+        return HttpStatus.NOT_FOUND; // 404 Not Found
 
-      case DomainExceptionCode.BadRequest:
-      case DomainExceptionCode.ValidationError:
-      case DomainExceptionCode.ConfirmationCodeExpired:
-      case DomainExceptionCode.EmailNotConfirmed:
-      case DomainExceptionCode.PasswordRecoveryCodeExpired:
-        return HttpStatus.BAD_REQUEST;
+      case DomainExceptionCode.BadRequest: // 2 - Bad request
+      case DomainExceptionCode.ValidationError: // 5 - Validation failed
+      case DomainExceptionCode.ConfirmationCodeExpired: // 13 - Confirmation code expired
+      case DomainExceptionCode.EmailNotConfirmed: // 12 - Email not confirmed
+      case DomainExceptionCode.PasswordRecoveryCodeExpired: // 14 - Password recovery code expired
+        return HttpStatus.BAD_REQUEST; // 400 Bad Request
 
-      case DomainExceptionCode.Forbidden:
-        return HttpStatus.FORBIDDEN;
+      case DomainExceptionCode.Forbidden: // 4 - Access denied
+        return HttpStatus.FORBIDDEN; // 403 Forbidden
 
-      case DomainExceptionCode.Unauthorized:
-      case DomainExceptionCode.InvalidCredentials:
-        return HttpStatus.UNAUTHORIZED;
+      case DomainExceptionCode.Unauthorized: // 11 - Not authenticated
+      case DomainExceptionCode.InvalidCredentials: // 16 - Invalid credentials
+        return HttpStatus.UNAUTHORIZED; // 401 Unauthorized
 
       // 5xx Server Errors
-      case DomainExceptionCode.InternalServerError:
-        return HttpStatus.INTERNAL_SERVER_ERROR;
+      case DomainExceptionCode.InternalServerError: // 3 - Internal server error
+        return HttpStatus.INTERNAL_SERVER_ERROR; // 500 Internal Server Error
 
       default:
-        return HttpStatus.INTERNAL_SERVER_ERROR;
+        // Unknown error code - default to 500 Internal Server Error
+        return HttpStatus.INTERNAL_SERVER_ERROR; // 500 Internal Server Error
     }
   }
 

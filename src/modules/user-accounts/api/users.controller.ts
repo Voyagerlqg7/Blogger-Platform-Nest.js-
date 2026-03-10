@@ -37,8 +37,8 @@ export class UsersController {
     return this.usersQueryRepository.getAll(query);
   }
 
-  @UseGuards(BasicAuthGuard)
   @Post()
+  @UseGuards(BasicAuthGuard)
   async createUser(@Body() body: CreateUserDto): Promise<UserViewDto> {
     return this.usersService.createUser(body);
   }

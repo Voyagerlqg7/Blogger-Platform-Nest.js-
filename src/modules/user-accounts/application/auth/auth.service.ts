@@ -14,6 +14,7 @@ import { SessionRepository } from '../../infrastructure/sessions.repository';
 import { Session } from '../../domain/session.entity';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayload } from './payload/JwtPayload';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class AuthService {
@@ -59,7 +60,7 @@ export class AuthService {
       passwordHash,
     );
     if (!isValid) {
-      throw new UnauthorizedException('Invalid password');
+      DomainException.unauthorized();
     }
     return true;
   }
@@ -71,11 +72,8 @@ export class AuthService {
     const existingEmail = await this.usersRepository.findByLoginOrEmail(
       dto.email,
     );
-
     if (existingUser || existingEmail) {
-      throw new UnauthorizedException(
-        'User with this login or email already exists',
-      );
+      DomainException.badRequest('User already exist');
     }
     const salt = await this.passwordService.generatePasswordSalt();
     const hash = await this.passwordService.generateHash(dto.password, salt);

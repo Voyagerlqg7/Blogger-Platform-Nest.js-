@@ -1,8 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
-import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exception.filter';
-import { AllHttpExceptionsFilter } from './core/exceptions/filters/all-exceptions';
 import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
@@ -24,11 +22,6 @@ async function bootstrap() {
         });
       },
     }),
-  );
-
-  app.useGlobalFilters(
-    new DomainHttpExceptionsFilter(),
-    new AllHttpExceptionsFilter(),
   );
 
   app.use(cookieParser());

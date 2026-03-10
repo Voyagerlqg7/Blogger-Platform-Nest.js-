@@ -20,7 +20,9 @@ import { TokensRepository } from './infrastructure/tokens.repository';
 import { Token, TokenSchema } from './domain/token.entity';
 import { BasicStrategy } from './application/auth/basic.strategy';
 import { APP_FILTER } from '@nestjs/core';
-import { Base } from '../../core/exceptions/filters/base';
+import { DomainHttpExceptionsFilter } from '../../core/exceptions/filters/domain-exception.filter';
+import { AllHttpExceptionsFilter } from '../../core/exceptions/filters/all-exceptions';
+import { ValidationExceptionFilter } from '../../core/exceptions/filters/validation-exception.filter';
 
 @Module({
   imports: [
@@ -41,7 +43,15 @@ import { Base } from '../../core/exceptions/filters/base';
   providers: [
     {
       provide: APP_FILTER,
-      useClass: Base,
+      useClass: AllHttpExceptionsFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: DomainHttpExceptionsFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ValidationExceptionFilter,
     },
     UsersService,
     UsersQueryRepository,

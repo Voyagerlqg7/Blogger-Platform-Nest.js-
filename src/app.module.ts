@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { APP_FILTER } from '@nestjs/core';
 import { AllHttpExceptionsFilter } from './core/exceptions/filters/all-exceptions';
 import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exception.filter';
+import { ValidationExceptionFilter } from './core/exceptions/filters/validation-exception.filter';
 
 @Module({
   imports: [
@@ -32,12 +33,12 @@ import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exc
         return { uri };
       },
     }),
-    AppService,
     UserAccountsModule,
     BloggerPlatform,
     TestingModule,
   ],
   providers: [
+    AppService,
     {
       provide: APP_FILTER,
       useClass: AllHttpExceptionsFilter,
@@ -45,6 +46,10 @@ import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exc
     {
       provide: APP_FILTER,
       useClass: DomainHttpExceptionsFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ValidationExceptionFilter,
     },
   ],
 })

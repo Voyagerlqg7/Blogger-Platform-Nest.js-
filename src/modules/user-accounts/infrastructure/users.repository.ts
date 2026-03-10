@@ -3,16 +3,7 @@ import { User, UserDocument } from '../domain/user.entity';
 import type { UserModelType } from '../domain/user.entity';
 import { Injectable } from '@nestjs/common';
 import { DomainException } from '../../../core/exceptions/domain-exceptions';
-import { DomainExceptionCode } from '../../../core/exceptions/domain-exceptions-codes';
-import { Error as MongooseError } from 'mongoose';
-import { Extension } from '../../../core/exceptions/domain-exceptions';
 import { Types } from 'mongoose';
-
-function isMongooseValidationError(
-  error: unknown,
-): error is MongooseError.ValidationError {
-  return error instanceof MongooseError.ValidationError;
-}
 
 @Injectable()
 export class UsersRepository {
@@ -30,25 +21,7 @@ export class UsersRepository {
   }
 
   async save(user: UserDocument): Promise<UserDocument> {
-    try {
-      return await user.save();
-    } catch (error) {
-      if (isMongooseValidationError(error)) {
-        const extensions: Extension[] = Object.values(error.errors).map(
-          (err) => ({
-            message: err.message,
-            key: err.path,
-          }),
-        );
-
-        throw new DomainException({
-          code: DomainExceptionCode.ValidationError,
-          message: error.message,
-          extensions,
-        });
-      }
-      throw error;
-    }
+    return await user.save();
   }
 
   async findOrNotFoundFail(id: string): Promise<UserDocument> {
@@ -67,19 +40,16 @@ export class UsersRepository {
     return user.passwordHash;
   }
 
-  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument> {
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {
     const user = await this.UserModel.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
-    if (!user) {
-      throw DomainException.notFound('User');
-    }
     return user;
   }
 
   async findByCodeConfirmation(
     confirmation_code: string,
-  ): Promise<UserDocument> {
+  ): Promise<UserDocument | null> {
     const user = await this.UserModel.findOne({
       'emailConfirmation.code': confirmation_code,
     });
@@ -89,13 +59,12 @@ export class UsersRepository {
     return user;
   }
 
-  async findByRecoverPasswordCode(recover_code: string): Promise<UserDocument> {
+  async findByRecoverPasswordCode(
+    recover_code: string,
+  ): Promise<UserDocument | null> {
     const user = await this.UserModel.findOne({
       'recoverPasswordInfo.code': recover_code,
     });
-    if (!user) {
-      throw DomainException.notFound('User');
-    }
     return user;
   }
 }
