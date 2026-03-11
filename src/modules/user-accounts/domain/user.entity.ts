@@ -12,11 +12,6 @@ import {
 } from './schemas/recover-password.schema';
 import { DomainException } from '../../../core/exceptions/domain-exceptions';
 
-/**
- * User Entity Schema
- * This class represents the schema and behavior of a User entity.
- */
-// timestamps auto create createdAt & updateAt
 @Schema({ timestamps: true })
 export class User {
   @Prop({ type: String, required: true })
@@ -27,11 +22,9 @@ export class User {
   passwordSalt: string;
   @Prop({ type: String, required: true })
   email: string;
-  // @Prop(NameSchema) this variant from doc. doesn't make validation for inner object
   @Prop({ type: NameSchema })
   name: Name;
   createdAt: Date;
-  updatedAt: Date;
   @Prop({ type: Date, nullable: true })
   deletedAt: Date | null;
 
