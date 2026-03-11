@@ -8,6 +8,7 @@ import {
 import { Request, Response } from 'express';
 import { ErrorResponseBody } from './error-response-body';
 import { DomainExceptionCode } from '../domain-exceptions-codes';
+import { DomainException } from '../domain-exceptions';
 
 interface UnknownException {
   message?: string;
@@ -19,10 +20,14 @@ interface UnknownException {
 
 @Catch()
 export class AllHttpExceptionsFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost): void {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
+    if (exception instanceof DomainException) {
+      return;
+    }
 
     const unknownException = exception as UnknownException;
 
@@ -33,10 +38,19 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
       name: unknownException.name,
     });
 
+    // HttpException
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-
     if (exception instanceof HttpException) {
       status = exception.getStatus();
+
+      // for ValidationPipe
+      const exceptionResponse = exception.getResponse();
+      if (
+        typeof exceptionResponse === 'object' &&
+        'errorsMessages' in exceptionResponse
+      ) {
+        return response.status(status).json(exceptionResponse);
+      }
     }
 
     const responseBody = this.buildResponseBody(

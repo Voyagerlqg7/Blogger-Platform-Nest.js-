@@ -51,6 +51,13 @@ export class User {
       passwordHash: dto.passwordHash,
       passwordSalt: dto.passwordSalt,
     });
+
+    user.emailConfirmation = {
+      confirmationCode: null,
+      expiresAt: null,
+      isConfirmed: dto.isConfirmed,
+    };
+
     return user;
   }
 
@@ -86,11 +93,7 @@ export class User {
     newExpiresAt: Date,
   ): void {
     if (!this.emailConfirmation) {
-      this.emailConfirmation = {
-        confirmationCode: null,
-        expiresAt: null,
-        isConfirmed: false,
-      };
+      throw DomainException.badRequest('Email confirmation not initialized');
     }
 
     if (this.emailConfirmation.isConfirmed) {

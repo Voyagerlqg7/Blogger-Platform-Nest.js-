@@ -19,6 +19,7 @@ export class UsersRepository {
       deletedAt: null,
     });
   }
+
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDocument | null> {
     const user = await this.UserModel.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
@@ -45,16 +46,15 @@ export class UsersRepository {
     }
     return user.passwordHash;
   }
+
   async findByCodeConfirmation(
-    confirmation_code: string,
+    confirmationCode: string,
   ): Promise<UserDocument | null> {
-    const user = await this.UserModel.findOne({
-      'emailConfirmation.code': confirmation_code,
+    return this.UserModel.findOne({
+      'emailConfirmation.confirmationCode': confirmationCode,
+      'emailConfirmation.isConfirmed': false,
+      deletedAt: null,
     });
-    if (!user) {
-      throw DomainException.notFound('User');
-    }
-    return user;
   }
 
   async findByRecoverPasswordCode(

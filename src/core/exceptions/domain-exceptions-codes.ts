@@ -4,14 +4,12 @@ export enum DomainExceptionCode {
   InternalServerError = 3,
   Forbidden = 4,
   ValidationError = 5,
-
-  //auth errors
   Unauthorized = 11,
   EmailNotConfirmed = 12,
   ConfirmationCodeExpired = 13,
   PasswordRecoveryCodeExpired = 14,
-  WrongPasswordRecoveryCode = 15,
   InvalidCredentials = 16,
+  ValidationFailed = 17,
 }
 
 // 1–10    — domain

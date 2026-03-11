@@ -3,7 +3,10 @@ import { PasswordService } from './password.service';
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { UsersRepository } from '../../infrastructure/users.repository';
-import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import {
+  DomainException,
+  Extension,
+} from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class UserConfirmationService {
@@ -19,7 +22,7 @@ export class UserConfirmationService {
   ): Promise<boolean> {
     const code = randomUUID();
     const now = new Date();
-    now.setSeconds(now.getSeconds() + 10);
+    now.setSeconds(now.getSeconds() + 20);
     const user = await this.userRepository.findOrNotFoundFail(userId);
     if (!user.emailConfirmation) {
       user.emailConfirmation = {
@@ -54,22 +57,32 @@ export class UserConfirmationService {
 
   async resendCodeConfirmation(email: string): Promise<boolean> {
     const user = await this.userRepository.findByLoginOrEmail(email);
-    if (!user) {
-      throw DomainException.badRequest('Cannot send code confirmation!');
+    if (
+      !user ||
+      !user.emailConfirmation ||
+      user.emailConfirmation.isConfirmed
+    ) {
+      throw DomainException.badRequest(
+        'Cannot resend confirmation code',
+        'email',
+        [
+          new Extension(
+            'User does not exist or email already confirmed',
+            'email',
+          ),
+        ],
+      );
     }
     const code = randomUUID();
     const now = new Date();
     now.setSeconds(now.getSeconds() + 10);
-    if (!user.emailConfirmation) {
-      user.emailConfirmation = {
-        confirmationCode: null,
-        expiresAt: null,
-        isConfirmed: false,
-      };
-    }
     user.updateCodeConfirmationWithExpiresTimeForEmail(code, now);
     await this.userRepository.save(user);
-    return await this.emailService.sendMassage(email, code);
+    const emailSent = await this.emailService.sendMassage(email, code);
+    if (!emailSent) {
+      console.error(`Failed to send email to ${email}`);
+    }
+    return emailSent;
   }
 
   async checkCodeConfirmation(code: string): Promise<boolean> {

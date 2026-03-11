@@ -11,10 +11,19 @@ import { DomainException } from '../domain-exceptions';
 
 @Catch(DomainException)
 export class DomainHttpExceptionsFilter implements ExceptionFilter {
-  catch(exception: DomainException, host: ArgumentsHost): void {
+  catch(exception: DomainException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
+    if (exception.code === DomainExceptionCode.ValidationFailed) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        errorsMessages: exception.extensions.map((ext) => ({
+          message: ext.message,
+          field: ext.field,
+        })),
+      });
+    }
 
     const status = this.mapToHttpStatus(exception.code);
     const responseBody = this.buildResponseBody(exception, request);

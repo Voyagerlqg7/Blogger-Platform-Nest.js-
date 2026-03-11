@@ -4,10 +4,11 @@ import type { UserModelType } from '../../domain/user.entity';
 import { UserViewDto } from '../../api/view-dto/users.view-dto';
 import { SortDirection } from '../../../../core/dto/base.query-params.input-dto';
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetUsersQueryParams } from '../../api/input-dto/get-users-query-params.input-dto';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 type FilterQuery<T> = {
   [P in keyof T]?: any;
@@ -27,7 +28,7 @@ export class UsersQueryRepository {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw DomainException.notFound('User');
     }
     return UserViewDto.mapToView(user);
   }

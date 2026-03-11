@@ -22,7 +22,6 @@ import { BasicStrategy } from './application/auth/basic.strategy';
 import { APP_FILTER } from '@nestjs/core';
 import { DomainHttpExceptionsFilter } from '../../core/exceptions/filters/domain-exception.filter';
 import { AllHttpExceptionsFilter } from '../../core/exceptions/filters/all-exceptions';
-import { ValidationExceptionFilter } from '../../core/exceptions/filters/validation-exception.filter';
 
 @Module({
   imports: [
@@ -48,10 +47,6 @@ import { ValidationExceptionFilter } from '../../core/exceptions/filters/validat
     {
       provide: APP_FILTER,
       useClass: DomainHttpExceptionsFilter,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: ValidationExceptionFilter,
     },
     UsersService,
     UsersQueryRepository,

@@ -2,13 +2,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({ _id: false })
 export class EmailConfirmation {
-  @Prop({ type: String, required: true, default: null })
+  @Prop({ type: String, default: null })
   confirmationCode: string | null;
 
-  @Prop({ type: Date, required: true, default: null })
+  @Prop({ type: Date, default: null })
   expiresAt: Date | null;
 
-  @Prop({ type: Boolean, required: true, default: false })
+  @Prop({ type: Boolean, default: false })
   isConfirmed: boolean | null;
 }
 

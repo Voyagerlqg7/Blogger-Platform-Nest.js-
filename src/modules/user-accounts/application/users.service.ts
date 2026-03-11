@@ -27,6 +27,7 @@ export class UsersService {
       login: dto.login,
       passwordHash: hash,
       passwordSalt: salt,
+      isConfirmed: true,
     });
     await this.usersRepository.save(user);
     return UserViewDto.mapToView(user);

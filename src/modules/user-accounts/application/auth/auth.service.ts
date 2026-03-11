@@ -13,8 +13,10 @@ import { SessionRepository } from '../../infrastructure/sessions.repository';
 import { Session } from '../../domain/session.entity';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayload } from './payload/JwtPayload';
-import { DomainException } from '../../../../core/exceptions/domain-exceptions';
-import { BadRequestException } from '@nestjs/common';
+import {
+  DomainException,
+  Extension,
+} from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class AuthService {
@@ -68,30 +70,28 @@ export class AuthService {
   }
 
   async registerUser(dto: registrationUserDTO): Promise<UserViewDto> {
-    const errors: Array<{ message: string; field: string }> = [];
+    const errors: Extension[] = [];
 
     const existingUser = await this.usersRepository.findByLoginOrEmail(
       dto.login,
     );
     if (existingUser) {
-      errors.push({
-        message: 'User with this login already exists',
-        field: 'login',
-      });
+      errors.push(
+        new Extension('User with this login already exists', 'login'),
+      );
     }
+
     const existingEmail = await this.usersRepository.findByLoginOrEmail(
       dto.email,
     );
     if (existingEmail) {
-      errors.push({
-        message: 'User with this email already exists',
-        field: 'email',
-      });
+      errors.push(
+        new Extension('User with this email already exists', 'email'),
+      );
     }
+
     if (errors.length > 0) {
-      throw new BadRequestException({
-        errorsMessages: errors,
-      });
+      throw DomainException.validationFailed(errors);
     }
     const salt = await this.passwordService.generatePasswordSalt();
     const hash = await this.passwordService.generateHash(dto.password, salt);
@@ -100,6 +100,7 @@ export class AuthService {
       login: dto.login,
       passwordHash: hash,
       passwordSalt: salt,
+      isConfirmed: false,
     });
 
     await this.usersRepository.save(user);

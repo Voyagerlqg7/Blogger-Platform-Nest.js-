@@ -22,15 +22,23 @@ export class EmailService {
     html: string,
   ): Promise<boolean> {
     try {
+      console.log('Attempting to send email to:', to);
+      console.log('Using GMAIL:', this.configService.get('GMAIL'));
+
       await this.transporter.sendMail({
         from: this.configService.get('GMAIL'),
         to,
         subject,
         html,
       });
+      console.log('Email sent successfully');
       return true;
     } catch (err) {
-      console.error('Email sending error:', err);
+      console.error('Email sending error details:', {
+        message: err.message,
+        code: err.code,
+        command: err.command,
+      });
       return false;
     }
   }
