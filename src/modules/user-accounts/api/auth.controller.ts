@@ -64,12 +64,11 @@ export class AuthController {
     return { accessToken: tokens.accessToken };
   }
 
-  @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() dto: registrationUserDTO) {
-    const user: UserViewDto = await this.authService.registerUser(dto);
-    await this.confirmationService.sendConfirmationMessage(user.id, user.email);
+    const user = await this.authService.registerUser(dto);
+    this.confirmationService.sendConfirmationMessage(user.id, user.email);
   }
 
   @Throttle({ default: { limit: 5, ttl: 10 } })
@@ -95,6 +94,7 @@ export class AuthController {
 
   @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('registration-email-resending')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async registration_email_resending(@Body() dto: EmailDTO) {
     await this.confirmationService.resendCodeConfirmation(dto.email);
   }

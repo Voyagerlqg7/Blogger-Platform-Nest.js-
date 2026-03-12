@@ -48,7 +48,7 @@ export class EmailService {
                   <p>To finish registration please follow the link below:
                   <a href='https://somesite.com/confirm-email?code=${code}'>complete registration</a>
                   </p>`;
-    return this.send(email, 'Verification Code Confirmation', html);
+    return await this.send(email, 'Verification Code Confirmation', html);
   }
 
   async sendPasswordReset(email: string, code: string) {
@@ -56,6 +56,6 @@ export class EmailService {
                   <p>To finish password recovery please follow the link below:
                   <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>
                   </p>`;
-    return this.send(email, 'Password recovery code', html);
+    return await this.send(email, 'Password recovery code', html);
   }
 }

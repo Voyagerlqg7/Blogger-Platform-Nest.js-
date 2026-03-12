@@ -16,13 +16,10 @@ export class UserConfirmationService {
     private readonly userRepository: UsersRepository,
   ) {}
 
-  async sendConfirmationMessage(
-    userId: string,
-    email: string,
-  ): Promise<boolean> {
+  async sendConfirmationMessage(userId: string, email: string): Promise<void> {
     const code = randomUUID();
     const now = new Date();
-    now.setSeconds(now.getMinutes() + 60);
+    now.setMinutes(now.getMinutes() + 60);
     const user = await this.userRepository.findOrNotFoundFail(userId);
     if (!user.emailConfirmation) {
       user.emailConfirmation = {
@@ -33,7 +30,7 @@ export class UserConfirmationService {
     }
     user.updateCodeConfirmationWithExpiresTimeForEmail(code, now);
     await this.userRepository.save(user);
-    return this.emailService.sendMassage(email, code);
+    this.emailService.sendMassage(email, code).catch(console.error);
   }
 
   async sendRecoverPasswordCode(email: string): Promise<void> {
@@ -43,7 +40,7 @@ export class UserConfirmationService {
     }
     const code = randomUUID();
     const now = new Date();
-    now.setSeconds(now.getSeconds() + 10);
+    now.setMinutes(now.getMinutes() + 60);
     if (!user.recoverPasswordInfo) {
       user.recoverPasswordInfo = {
         code: null,
@@ -55,7 +52,7 @@ export class UserConfirmationService {
     await this.emailService.sendPasswordReset(email, code);
   }
 
-  async resendCodeConfirmation(email: string): Promise<boolean> {
+  async resendCodeConfirmation(email: string): Promise<void> {
     const user = await this.userRepository.findByLoginOrEmail(email);
     if (
       !user ||
@@ -75,14 +72,10 @@ export class UserConfirmationService {
     }
     const code = randomUUID();
     const now = new Date();
-    now.setSeconds(now.getSeconds() + 10);
+    now.setMinutes(now.getMinutes() + 60);
     user.updateCodeConfirmationWithExpiresTimeForEmail(code, now);
     await this.userRepository.save(user);
-    const emailSent = await this.emailService.sendMassage(email, code);
-    if (!emailSent) {
-      console.error(`Failed to send email to ${email}`);
-    }
-    return emailSent;
+    this.emailService.sendMassage(email, code).catch(console.error);
   }
 
   async checkCodeConfirmation(code: string): Promise<boolean> {
