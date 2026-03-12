@@ -37,8 +37,8 @@ export class DomainException extends Error {
   static badRequest(message: string, field?: string, extensions?: Extension[]) {
     return new DomainException({
       code: DomainExceptionCode.BadRequest,
-      message,
-      field,
+      message: message,
+      field: field,
       extensions,
     });
   }
@@ -46,16 +46,16 @@ export class DomainException extends Error {
   static unauthorized(message: string = 'Unauthorized', field?: string) {
     return new DomainException({
       code: DomainExceptionCode.Unauthorized,
-      message,
-      field,
+      message: message,
+      field: field,
     });
   }
 
   static forbidden(message: string = 'Forbidden', field?: string) {
     return new DomainException({
       code: DomainExceptionCode.Forbidden,
-      message,
-      field,
+      message: message,
+      field: field,
     });
   }
 
@@ -69,8 +69,8 @@ export class DomainException extends Error {
   static validationFieldError(message: string, field?: string) {
     return new DomainException({
       code: DomainExceptionCode.ValidationError,
-      message,
-      field,
+      message: message,
+      field: field,
     });
   }
 }

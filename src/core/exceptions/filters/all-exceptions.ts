@@ -9,6 +9,7 @@ import { Request, Response } from 'express';
 import { ErrorResponseBody } from './error-response-body';
 import { DomainExceptionCode } from '../domain-exceptions-codes';
 import { DomainException } from '../domain-exceptions';
+import { DomainHttpExceptionsFilter } from './domain-exception.filter';
 
 interface UnknownException {
   message?: string;
@@ -26,7 +27,8 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     if (exception instanceof DomainException) {
-      return;
+      const domainFilter = new DomainHttpExceptionsFilter();
+      return domainFilter.catch(exception, host);
     }
 
     const unknownException = exception as UnknownException;

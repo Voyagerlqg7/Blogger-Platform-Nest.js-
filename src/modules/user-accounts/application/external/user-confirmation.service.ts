@@ -59,16 +59,12 @@ export class UserConfirmationService {
       !user.emailConfirmation ||
       user.emailConfirmation.isConfirmed
     ) {
-      throw DomainException.badRequest(
-        'Cannot resend confirmation code',
-        'email',
-        [
-          new Extension(
-            'User does not exist or email already confirmed',
-            'email',
-          ),
-        ],
-      );
+      throw DomainException.validationFailed([
+        new Extension(
+          'User does not exist or email already confirmed',
+          'email',
+        ),
+      ]);
     }
     const code = randomUUID();
     const now = new Date();
@@ -81,7 +77,9 @@ export class UserConfirmationService {
   async checkCodeConfirmation(code: string): Promise<boolean> {
     const user = await this.userRepository.findByCodeConfirmation(code);
     if (!user) {
-      throw DomainException.badRequest('Cannot send code confirmation!');
+      throw DomainException.validationFailed([
+        new Extension('User does not exist or incorrect code', 'code'),
+      ]);
     }
     user.confirmEmail(code);
     await this.userRepository.save(user);
@@ -94,7 +92,12 @@ export class UserConfirmationService {
   ): Promise<boolean> {
     const user = await this.userRepository.findByRecoverPasswordCode(code);
     if (!user) {
-      throw DomainException.badRequest('Cannot check recover password code!');
+      throw DomainException.validationFailed([
+        new Extension(
+          'Recover password code doesnt exist or incorrect',
+          'recover password code',
+        ),
+      ]);
     }
     const salt: string = await this.passwordService.generatePasswordSalt();
     const hash: string = await this.passwordService.generateHash(

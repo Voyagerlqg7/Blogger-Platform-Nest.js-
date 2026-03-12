@@ -7,11 +7,17 @@ import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: AuthService) {
-    super();
+    super({
+      usernameField: 'loginOrEmail',
+    });
   }
 
-  async validate(userLogin: string, password: string) {
-    const user = await this.authService.checkCredentials(userLogin, password);
+  async validate(loginOrEmail: string, password: string) {
+    const user = await this.authService.checkCredentials(
+      loginOrEmail,
+      password,
+    );
+
     if (!user) {
       throw DomainException.unauthorized('Invalid credentials');
     }

@@ -17,8 +17,7 @@ export class TokensRepository {
   }
 
   async saveToken(token: string): Promise<string | null> {
-    const doc = await this.tokenModel.create({ _id: token, token });
-    console.log('SAVED TOKEN', doc.token);
+    const doc = await this.tokenModel.create({ token });
     return doc.token;
   }
 

@@ -33,6 +33,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   async login(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -88,6 +89,7 @@ export class AuthController {
 
   @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('registration-confirmation')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async registration_confirmation(@Body() dto: codeDto) {
     await this.confirmationService.checkCodeConfirmation(dto.code);
   }
