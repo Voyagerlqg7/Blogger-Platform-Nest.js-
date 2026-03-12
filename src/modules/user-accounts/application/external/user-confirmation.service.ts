@@ -22,7 +22,7 @@ export class UserConfirmationService {
   ): Promise<boolean> {
     const code = randomUUID();
     const now = new Date();
-    now.setSeconds(now.getSeconds() + 20);
+    now.setSeconds(now.getMinutes() + 60);
     const user = await this.userRepository.findOrNotFoundFail(userId);
     if (!user.emailConfirmation) {
       user.emailConfirmation = {
