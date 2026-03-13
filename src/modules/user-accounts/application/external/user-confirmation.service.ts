@@ -1,111 +1,43 @@
-import { EmailService } from './email.service';
-import { PasswordService } from './password.service';
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import { UsersRepository } from '../../infrastructure/users.repository';
-import {
-  DomainException,
-  Extension,
-} from '../../../../core/exceptions/domain-exceptions';
+import { UseCase_CheckEmailCodeConfirmation } from '../UseCases/Confirmation/UseCase_CheckEmailCodeConfirmation';
+import { UseCase_CheckRecoverCodePassword } from '../UseCases/Confirmation/UseCase_CheckRecoverCodePassword';
+import { UseCase_SendConfirmationMessage } from '../UseCases/Confirmation/UseCase_SendConfirmationMessage';
+import { UseCase_SendRecoverPasswordCode } from '../UseCases/Confirmation/UseCase_SendRecoverPasswordCode';
+import { UseCase_ResendCodeConfirmation } from '../UseCases/Confirmation/UseCase_ResendCodeConfirmation';
 
 @Injectable()
 export class UserConfirmationService {
   constructor(
-    private readonly emailService: EmailService,
-    private readonly passwordService: PasswordService,
-    private readonly userRepository: UsersRepository,
+    private readonly sendConfirmationMessageUseCase: UseCase_SendConfirmationMessage,
+    private readonly sendRecoverPasswordCodeUseCase: UseCase_SendRecoverPasswordCode,
+    private readonly resendCodeConfirmationUseCase: UseCase_ResendCodeConfirmation,
+    private readonly checkRecoverCodePasswordUseCase: UseCase_CheckRecoverCodePassword,
+    private readonly checkEmailCodeConfirmationUseCase: UseCase_CheckEmailCodeConfirmation,
   ) {}
 
   async sendConfirmationMessage(userId: string, email: string): Promise<void> {
-    const code = randomUUID();
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 60);
-    const user = await this.userRepository.findOrNotFoundFail(userId);
-    if (!user.emailConfirmation) {
-      user.emailConfirmation = {
-        confirmationCode: null,
-        expiresAt: null,
-        isConfirmed: false,
-      };
-    }
-    user.updateCodeConfirmationWithExpiresTimeForEmail(code, now);
-    await this.userRepository.save(user);
-    this.emailService.sendMassage(email, code).catch(console.error);
+    await this.sendConfirmationMessageUseCase.execute(userId, email);
   }
 
   async sendRecoverPasswordCode(email: string): Promise<void> {
-    const user = await this.userRepository.findByLoginOrEmail(email);
-    if (!user) {
-      throw DomainException.badRequest('Cannot send recover password code!');
-    }
-    const code = randomUUID();
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 60);
-    if (!user.recoverPasswordInfo) {
-      user.recoverPasswordInfo = {
-        code: null,
-        expiresAt: null,
-      };
-    }
-    user.updateRecoverPasswordCodeAndExpiresTime(code, now);
-    await this.userRepository.save(user);
-    await this.emailService.sendPasswordReset(email, code);
+    await this.sendRecoverPasswordCodeUseCase.execute(email);
   }
 
   async resendCodeConfirmation(email: string): Promise<void> {
-    const user = await this.userRepository.findByLoginOrEmail(email);
-    if (
-      !user ||
-      !user.emailConfirmation ||
-      user.emailConfirmation.isConfirmed
-    ) {
-      throw DomainException.validationFailed([
-        new Extension(
-          'User does not exist or email already confirmed',
-          'email',
-        ),
-      ]);
-    }
-    const code = randomUUID();
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 60);
-    user.updateCodeConfirmationWithExpiresTimeForEmail(code, now);
-    await this.userRepository.save(user);
-    this.emailService.sendMassage(email, code).catch(console.error);
+    await this.resendCodeConfirmationUseCase.execute(email);
   }
 
   async checkCodeConfirmation(code: string): Promise<boolean> {
-    const user = await this.userRepository.findByCodeConfirmation(code);
-    if (!user) {
-      throw DomainException.validationFailed([
-        new Extension('User does not exist or incorrect code', 'code'),
-      ]);
-    }
-    user.confirmEmail(code);
-    await this.userRepository.save(user);
-    return true;
+    return await this.checkEmailCodeConfirmationUseCase.execute(code);
   }
 
   async checkCodeRecoverPassword(
     code: string,
     new_password: string,
   ): Promise<boolean> {
-    const user = await this.userRepository.findByRecoverPasswordCode(code);
-    if (!user) {
-      throw DomainException.validationFailed([
-        new Extension(
-          'Recover password code doesnt exist or incorrect',
-          'recover password code',
-        ),
-      ]);
-    }
-    const salt: string = await this.passwordService.generatePasswordSalt();
-    const hash: string = await this.passwordService.generateHash(
+    return await this.checkRecoverCodePasswordUseCase.execute(
+      code,
       new_password,
-      salt,
     );
-    user.updatePassword(code, hash, salt);
-    await this.userRepository.save(user);
-    return true;
   }
 }

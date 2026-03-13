@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from '../../infrastructure/users.repository';
 import { UserViewDto } from '../../api/view-dto/users.view-dto';
-import { JwtPayload } from './payload/JwtPayload';
+import { JwtPayload } from '../auth/payload/JwtPayload';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { ConfigService } from '@nestjs/config';
 
