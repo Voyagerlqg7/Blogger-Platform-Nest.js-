@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { APP_FILTER } from '@nestjs/core';
 import { AllHttpExceptionsFilter } from './core/exceptions/filters/all-exceptions';
 import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exception.filter';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exc
         return { uri };
       },
     }),
+    CqrsModule.forRoot(),
     UserAccountsModule,
     BloggerPlatform,
     TestingModule,
