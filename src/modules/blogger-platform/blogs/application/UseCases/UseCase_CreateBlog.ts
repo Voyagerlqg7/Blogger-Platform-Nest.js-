@@ -5,15 +5,22 @@ import { Blog } from '../../domain/blogs.entity';
 import type { BlogModelType } from '../../domain/blogs.entity';
 import { CreateBlogDto } from '../../dto/create-blog.dto';
 import { BlogsViewDto } from '../../api/view-dto/blogs.view-dto';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-@Injectable()
-export class UseCase_CreateBlog {
+export class CreateBlogCommand {
+  constructor(public dto: CreateBlogDto) {}
+}
+
+@CommandHandler(CreateBlogCommand)
+export class UseCase_CreateBlog
+  implements ICommandHandler<CreateBlogCommand, BlogsViewDto>
+{
   constructor(
     @InjectModel(Blog.name) private readonly blogModel: BlogModelType,
     private readonly blogRepository: BlogsRepository,
   ) {}
 
-  async execute(dto: CreateBlogDto): Promise<BlogsViewDto> {
+  async execute({ dto }: CreateBlogCommand): Promise<BlogsViewDto> {
     const blog = this.blogModel.createInstance({
       name: dto.name,
       description: dto.description,

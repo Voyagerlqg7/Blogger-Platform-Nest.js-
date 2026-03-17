@@ -1,12 +1,18 @@
 import { BlogsRepository } from '../../infrastructure/blogs.repository';
-import { Injectable } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-@Injectable()
-export class UseCase_DeleteBlog {
+export class DeleteBlogCommand {
+  constructor(public blogId: string) {}
+}
+
+@CommandHandler(DeleteBlogCommand)
+export class UseCase_DeleteBlog
+  implements ICommandHandler<DeleteBlogCommand, void>
+{
   constructor(private readonly blogRepository: BlogsRepository) {}
 
-  async execute(id: string): Promise<void> {
-    const blog = await this.blogRepository.findOrNotFoundFail(id);
+  async execute(command: DeleteBlogCommand): Promise<void> {
+    const blog = await this.blogRepository.findOrNotFoundFail(command.blogId);
     blog.makeDeleted();
     await this.blogRepository.saveBlog(blog);
   }

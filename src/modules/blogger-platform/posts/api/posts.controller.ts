@@ -17,12 +17,16 @@ import { PostsQueryRepository } from '../infrastructure/query/posts.query-reposi
 import { PostsViewDto } from './view-dto/posts.view-dto';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetPostsQueryParams } from './input-dto/get-posts-query-params.input-dto';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreatePostCommand } from '../application/UseCases/UseCase_CreatePost';
+import { DeletePostCommand } from '../application/UseCases/UseCase_DeletePost';
+import { UpdatePostCommand } from '../application/UseCases/UseCase_UpdatePost';
 
 @Controller('posts')
 export class PostsController {
   constructor(
-    private postService: PostService,
-    private postsQueryRepository: PostsQueryRepository,
+    private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly commandBus: CommandBus,
   ) {}
 
   @Get()
@@ -38,20 +42,24 @@ export class PostsController {
   }
 
   /*@Get(':id/comments')
-        async getAllCommentsFromSpecificPost(
-          @Param('id') postId: string,
-          @Query() query: any,
-        ) {}*/
+              async getAllCommentsFromSpecificPost(
+                @Param('id') postId: string,
+                @Query() query: any,
+              ) {}*/
 
   @Post()
   async createPost(@Body() newPost: CreatePostDto): Promise<PostsViewDto> {
-    return this.postService.createPost(newPost);
+    return this.commandBus.execute<CreatePostCommand, PostsViewDto>(
+      new CreatePostCommand(newPost),
+    );
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(@Param('id') postId: string): Promise<void> {
-    return this.postService.deletePost(postId);
+    await this.commandBus.execute<DeletePostCommand, void>(
+      new DeletePostCommand(postId),
+    );
   }
 
   @Put(':id')
@@ -60,6 +68,8 @@ export class PostsController {
     @Param('id') postId: string,
     @Body() updatePostDto: UpdatePostDto,
   ): Promise<void> {
-    return this.postService.updatePost(postId, updatePostDto);
+    await this.commandBus.execute<UpdatePostCommand, void>(
+      new UpdatePostCommand(postId, updatePostDto),
+    );
   }
 }

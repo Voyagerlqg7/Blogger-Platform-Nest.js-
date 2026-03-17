@@ -1,14 +1,23 @@
 import { BlogsRepository } from '../../infrastructure/blogs.repository';
-import { Injectable } from '@nestjs/common';
 import { UpdateBlogDto } from '../../dto/update-blog.dto';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-@Injectable()
-export class UseCase_UpdateBlog {
+export class UpdateBlogCommand {
+  constructor(
+    public blogId: string,
+    public dto: UpdateBlogDto,
+  ) {}
+}
+
+@CommandHandler(UpdateBlogCommand)
+export class UseCase_UpdateBlog
+  implements ICommandHandler<UpdateBlogCommand, void>
+{
   constructor(private readonly blogRepository: BlogsRepository) {}
 
-  async execute(id: string, dto: UpdateBlogDto): Promise<void> {
-    const blog = await this.blogRepository.findOrNotFoundFail(id);
-    blog.update(dto);
+  async execute(command: UpdateBlogCommand): Promise<void> {
+    const blog = await this.blogRepository.findOrNotFoundFail(command.blogId);
+    blog.update(command.dto);
     await this.blogRepository.saveBlog(blog);
   }
 }

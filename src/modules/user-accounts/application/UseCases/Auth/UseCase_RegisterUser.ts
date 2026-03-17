@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { UsersRepository } from '../../../infrastructure/users.repository';
 import { PasswordService } from '../../external/password.service';
@@ -10,9 +9,16 @@ import {
 } from '../../../../../core/exceptions/domain-exceptions';
 import type { UserModelType } from '../../../domain/user.entity';
 import { User } from '../../../domain/user.entity';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-@Injectable()
-export class UseCase_RegisterUser {
+export class CreateUserCommand {
+  constructor(public dto: registrationUserDTO) {}
+}
+
+@CommandHandler(CreateUserCommand)
+export class UseCase_RegisterUser
+  implements ICommandHandler<CreateUserCommand, UserViewDto>
+{
   constructor(
     private usersRepository: UsersRepository,
     private passwordService: PasswordService,
@@ -20,7 +26,7 @@ export class UseCase_RegisterUser {
     private readonly userModel: UserModelType,
   ) {}
 
-  async execute(dto: registrationUserDTO): Promise<UserViewDto> {
+  async execute({ dto }: CreateUserCommand): Promise<UserViewDto> {
     const errors: Extension[] = [];
 
     const existingUser = await this.usersRepository.findByLoginOrEmail(

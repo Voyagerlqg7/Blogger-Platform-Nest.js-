@@ -22,6 +22,15 @@ import { randomUUID } from 'crypto';
 import { CreateSessionDto } from '../dto/auth_dto/create-session.dto';
 import { HttpException, HttpCode, HttpStatus } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateUserCommand } from '../application/UseCases/Auth/UseCase_RegisterUser';
+import { GenerateTokensCommand } from '../application/UseCases/Auth/UseCase_GenerateTokens';
+import { CreateSessionCommand } from '../application/UseCases/Auth/UseCase_CreateSession';
+
+interface TokenType {
+  accessToken: string;
+  refreshToken: string;
+}
 
 @Controller('auth')
 export class AuthController {
@@ -29,6 +38,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly confirmationService: UserConfirmationService,
     private readonly tokenRepository: TokensRepository,
+    private readonly commandBus: CommandBus,
   ) {}
 
   @UseGuards(LocalAuthGuard)
@@ -39,9 +49,8 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string }> {
     const user = req.user as UserViewDto;
-    const tokens = await this.authService.generateTokens(
-      user.id.toString(),
-      user.login,
+    const tokens: TokenType = await this.commandBus.execute(
+      new GenerateTokensCommand(user.id.toString(), user.login),
     );
     if (!req.ip) {
       throw new HttpException('ip address is empty!', 400);
@@ -60,16 +69,23 @@ export class AuthController {
       ip: req.ip,
       title: req.headers['user-agent'] ?? 'Unknown device',
     };
-    await this.authService.createSession(dto);
+    await this.commandBus.execute<CreateSessionCommand, void>(
+      new CreateSessionCommand(dto),
+    );
     await this.tokenRepository.saveToken(tokens.refreshToken);
     return { accessToken: tokens.accessToken };
   }
 
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async registration(@Body() dto: registrationUserDTO) {
-    const user = await this.authService.registerUser(dto);
-    this.confirmationService.sendConfirmationMessage(user.id, user.email);
+  async registration(@Body() body: registrationUserDTO): Promise<void> {
+    const user = await this.commandBus.execute<CreateUserCommand, UserViewDto>(
+      new CreateUserCommand(body),
+    );
+    return this.confirmationService.sendConfirmationMessage(
+      user.id,
+      user.email,
+    );
   }
 
   @Throttle({ default: { limit: 5, ttl: 10 } })

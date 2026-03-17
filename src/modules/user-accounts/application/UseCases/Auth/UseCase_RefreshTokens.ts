@@ -1,33 +1,40 @@
-import { Injectable } from '@nestjs/common';
 import { JwtPayload } from '../../auth/payload/JwtPayload';
 import { JwtService } from '@nestjs/jwt';
 
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 import { ConfigService } from '@nestjs/config';
-import { UseCase_GenerateTokens } from './UseCase_GenerateTokens';
+import { CommandHandler, ICommandHandler, CommandBus } from '@nestjs/cqrs';
+import { GenerateTokensCommand } from './UseCase_GenerateTokens';
 
-@Injectable()
-export class UseCase_RefreshTokens {
+export class RefreshTokenCommand {
+  constructor(public _refreshToken: string) {}
+}
+
+@CommandHandler(RefreshTokenCommand)
+export class UseCase_RefreshTokens
+  implements
+    ICommandHandler<
+      RefreshTokenCommand,
+      {
+        accessToken: string;
+        refreshToken: string;
+      }
+    >
+{
   constructor(
+    private readonly commandBus: CommandBus,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly generateTokenUseCase: UseCase_GenerateTokens,
   ) {}
 
-  async execute(refreshToken: string) {
-    try {
-      const payload = await this.jwtService.verifyAsync<JwtPayload>(
-        refreshToken,
-        {
-          secret: this.configService.get('JWT_REFRESH_SECRET_KEY'),
-        },
-      );
-      return this.generateTokenUseCase.execute(
-        payload.userId,
-        payload.userLogin,
-      );
-    } catch (e) {
-      throw DomainException.unauthorized('Invalid refresh token');
-    }
+  async execute(command: RefreshTokenCommand): Promise<any> {
+    const payload = await this.jwtService.verifyAsync<JwtPayload>(
+      command._refreshToken,
+      { secret: this.configService.get('JWT_REFRESH_SECRET_KEY') },
+    );
+
+    return this.commandBus.execute(
+      new GenerateTokensCommand(payload.userId, payload.userLogin),
+    );
   }
 }

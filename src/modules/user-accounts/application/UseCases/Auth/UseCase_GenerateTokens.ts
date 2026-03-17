@@ -1,19 +1,35 @@
-import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../../auth/payload/JwtPayload';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-@Injectable()
-export class UseCase_GenerateTokens {
+export class GenerateTokensCommand {
+  constructor(
+    public userId: string,
+    public login: string,
+  ) {}
+}
+
+@CommandHandler(GenerateTokensCommand)
+export class UseCase_GenerateTokens
+  implements
+    ICommandHandler<
+      GenerateTokensCommand,
+      {
+        accessToken: string;
+        refreshToken: string;
+      }
+    >
+{
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute(userId: string, login: string) {
+  async execute(command: GenerateTokensCommand) {
     const payload: JwtPayload = {
-      userId: userId,
-      userLogin: login,
+      userId: command.userId,
+      userLogin: command.login,
     };
 
     const accessToken = await this.jwtService.signAsync(payload, {
