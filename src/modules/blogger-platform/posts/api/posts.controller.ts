@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { PostService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
 import { PostsViewDto } from './view-dto/posts.view-dto';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';

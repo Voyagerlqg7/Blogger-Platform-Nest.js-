@@ -9,7 +9,8 @@ import {
 } from '../../../../../core/exceptions/domain-exceptions';
 import type { UserModelType } from '../../../domain/user.entity';
 import { User } from '../../../domain/user.entity';
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
+import { UserCreatedEvent } from '../../Events/SendConfirmationMessage';
 
 export class CreateUserCommand {
   constructor(public dto: registrationUserDTO) {}
@@ -24,6 +25,7 @@ export class UseCase_RegisterUser
     private passwordService: PasswordService,
     @InjectModel(User.name)
     private readonly userModel: UserModelType,
+    private eventBus: EventBus,
   ) {}
 
   async execute({ dto }: CreateUserCommand): Promise<UserViewDto> {
@@ -61,6 +63,11 @@ export class UseCase_RegisterUser
     });
 
     await this.usersRepository.save(user);
+
+    this.eventBus.publish(
+      new UserCreatedEvent(user._id.toString(), user.email),
+    );
+
     return UserViewDto.mapToView(user);
   }
 }

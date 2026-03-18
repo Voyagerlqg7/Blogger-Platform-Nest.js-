@@ -22,10 +22,10 @@ import { randomUUID } from 'crypto';
 import { CreateSessionDto } from '../dto/auth_dto/create-session.dto';
 import { HttpException, HttpCode, HttpStatus } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/UseCases/Auth/UseCase_RegisterUser';
 import { GenerateTokensCommand } from '../application/UseCases/Auth/UseCase_GenerateTokens';
-import { CreateSessionCommand } from '../application/UseCases/Auth/UseCase_CreateSession';
+import { UserLoggedInEvent } from '../application/Events/CreateSession';
 
 interface TokenType {
   accessToken: string;
@@ -39,6 +39,7 @@ export class AuthController {
     private readonly confirmationService: UserConfirmationService,
     private readonly tokenRepository: TokensRepository,
     private readonly commandBus: CommandBus,
+    private readonly eventBus: EventBus,
   ) {}
 
   @UseGuards(LocalAuthGuard)
@@ -69,9 +70,8 @@ export class AuthController {
       ip: req.ip,
       title: req.headers['user-agent'] ?? 'Unknown device',
     };
-    await this.commandBus.execute<CreateSessionCommand, void>(
-      new CreateSessionCommand(dto),
-    );
+
+    this.eventBus.publish(new UserLoggedInEvent(dto));
     await this.tokenRepository.saveToken(tokens.refreshToken);
     return { accessToken: tokens.accessToken };
   }
@@ -79,12 +79,8 @@ export class AuthController {
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() body: registrationUserDTO): Promise<void> {
-    const user = await this.commandBus.execute<CreateUserCommand, UserViewDto>(
+    await this.commandBus.execute<CreateUserCommand, UserViewDto>(
       new CreateUserCommand(body),
-    );
-    return this.confirmationService.sendConfirmationMessage(
-      user.id,
-      user.email,
     );
   }
 
