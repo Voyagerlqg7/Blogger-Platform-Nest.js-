@@ -4,12 +4,17 @@ import type { BlogModelType } from '../domain/blogs.entity';
 import { Injectable } from '@nestjs/common';
 import { PostDocument } from '../../posts/domain/posts.entity';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class BlogsRepository {
   constructor(@InjectModel(Blog.name) private BlogModel: BlogModelType) {}
 
   async findById(id: string): Promise<BlogDocument | null> {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
     return this.BlogModel.findOne({
       _id: id,
       deletedAt: null,

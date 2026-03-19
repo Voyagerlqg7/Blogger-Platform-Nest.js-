@@ -67,4 +67,6 @@ BlogSchema.statics.createInstance = function(dto: CreateBlogDomainDto): BlogDocu
 export const BlogSchema = SchemaFactory.createForClass(Blog);
 BlogSchema.loadClass(Blog);
 export type BlogDocument = HydratedDocument<Blog>;
-export type BlogModelType = Model<BlogDocument> & typeof Blog;
+export type BlogModelType = Model<BlogDocument> & {
+  createInstance(dto: CreateBlogDomainDto): BlogDocument;
+};

@@ -14,7 +14,6 @@ import {
 import { CreateBlogDto } from '../dto/create-blog.dto';
 import { UpdateBlogDto } from '../dto/update-blog.dto';
 import { CreatePostForBlogDto } from '../dto/create-post-for-blog.dto';
-import { BlogService } from '../application/blog.service';
 import { BlogsQueryRepository } from '../infrastructure/query/blogs.query-repository';
 import { BlogsViewDto } from './view-dto/blogs.view-dto';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';

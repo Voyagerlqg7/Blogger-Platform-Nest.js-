@@ -20,6 +20,8 @@ import { CommandBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/UseCases/UseCase_CreatePost';
 import { DeletePostCommand } from '../application/UseCases/UseCase_DeletePost';
 import { UpdatePostCommand } from '../application/UseCases/UseCase_UpdatePost';
+import { LikeStatusDto } from '../../comments/dto/like-status.dto';
+import { CreateCommentDto } from '../dto/create-comment.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -39,12 +41,6 @@ export class PostsController {
   async getPostById(@Param('id') postId: string): Promise<PostsViewDto> {
     return this.postsQueryRepository.getByIdOrNotFoundFail(postId);
   }
-
-  /*@Get(':id/comments')
-              async getAllCommentsFromSpecificPost(
-                @Param('id') postId: string,
-                @Query() query: any,
-              ) {}*/
 
   @Post()
   async createPost(@Body() newPost: CreatePostDto): Promise<PostsViewDto> {
@@ -71,4 +67,16 @@ export class PostsController {
       new UpdatePostCommand(postId, updatePostDto),
     );
   }
+
+  @Put(':id')
+  async ratePost(@Param('id') postId: string, @Body() dto: LikeStatusDto) {}
+
+  @Post(':id')
+  async createCommentForPost(
+    @Param('id') postId: string,
+    @Body() dto: CreateCommentDto,
+  ) {}
+
+  @Get(':id')
+  async getAllCommentsForPost(@Param('id') postId: string) {}
 }

@@ -17,30 +17,25 @@ export class Post {
   blogId: string;
   @Prop({ type: String, required: true })
   blogName: string;
-  @Prop({ type: Number, required: true })
-  likesCount: number;
-  @Prop({ type: Number, required: true })
-  dislikesCount: number;
-
+  @Prop({ type: Date })
   createdAt: Date;
+  @Prop({ type: Date })
   updatedAt: Date;
-
-  @Prop({ type: Date, nullable: true })
+  @Prop({ type: Date, nullable: true, default: null })
   deletedAt: Date | null;
 
   static createInstance(
     this: PostModelType,
     dto: CreatePostsDomainDto,
   ): PostDocument {
-    return new this({
+    const post = new this({
       title: dto.title,
       shortDescription: dto.shortDescription,
       content: dto.content,
       blogId: dto.blogId,
       blogName: dto.blogName,
-      likesCount: dto.likesCount,
-      dislikesCount: dto.dislikesCount,
     });
+    return post as PostDocument;
   }
 
   makeDeleted() {
@@ -49,21 +44,23 @@ export class Post {
 
   update(dto: UpdatePostDomainDto) {
     if (
-      dto.blogId == this.blogId &&
-      dto.content == this.content &&
-      dto.shortDescription == this.shortDescription &&
-      dto.title == this.title
+      dto.title === this.title &&
+      dto.shortDescription === this.shortDescription &&
+      dto.content === this.content &&
+      dto.blogId === this.blogId
     ) {
       throw new Error('Nothing to update POST');
     }
-    this.blogId = dto.blogId;
-    this.content = dto.content;
-    this.shortDescription = dto.shortDescription;
     this.title = dto.title;
+    this.shortDescription = dto.shortDescription;
+    this.content = dto.content;
+    this.blogId = dto.blogId;
   }
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
 PostSchema.loadClass(Post);
 export type PostDocument = HydratedDocument<Post>;
-export type PostModelType = Model<PostDocument> & typeof Post;
+export type PostModelType = Model<PostDocument> & {
+  createInstance(dto: CreatePostsDomainDto): PostDocument;
+};
