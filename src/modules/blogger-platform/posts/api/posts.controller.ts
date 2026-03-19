@@ -76,7 +76,4 @@ export class PostsController {
     @Param('id') postId: string,
     @Body() dto: CreateCommentDto,
   ) {}
-
-  @Get(':id')
-  async getAllCommentsForPost(@Param('id') postId: string) {}
 }

@@ -26,4 +26,7 @@ export class CommentsController {
 
   @Delete(':id')
   async deleteComment(@Param() commentId: string) {}
+
+  @Get(':id')
+  async getAllCommentsForPost(@Param('id') postId: string) {}
 }
