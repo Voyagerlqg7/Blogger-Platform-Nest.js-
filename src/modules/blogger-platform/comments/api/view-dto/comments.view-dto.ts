@@ -15,17 +15,15 @@ export class CommentsViewDto {
     comment: CommentDocument,
     likesInfo: LikesInfoViewDto,
   ): CommentsViewDto {
-    const dto = new CommentsViewDto();
-
-    dto.id = comment._id.toString();
-    dto.content = comment.content;
-    dto.commentatorInfo = {
-      userId: comment.commentatorInfo.userId,
-      userLogin: comment.commentatorInfo.userLogin,
+    return {
+      id: comment._id.toString(),
+      content: comment.content,
+      commentatorInfo: {
+        userId: comment.commentatorInfo.userId,
+        userLogin: comment.commentatorInfo.userLogin,
+      },
+      createdAt: comment.createdAt.toISOString(),
+      likesInfo,
     };
-    dto.createdAt = comment.createdAt.toISOString();
-    dto.likesInfo = likesInfo;
-
-    return dto;
   }
 }

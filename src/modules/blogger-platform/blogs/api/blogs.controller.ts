@@ -9,6 +9,7 @@ import {
   HttpStatus,
   Query,
   Body,
+  UseGuards,
 } from '@nestjs/common';
 
 import { CreateBlogDto } from '../dto/create-blog.dto';
@@ -25,6 +26,7 @@ import { CreatePostForBlogCommand } from '../application/UseCases/UseCase_Create
 import { DeleteBlogCommand } from '../application/UseCases/UseCase_DeleteBlog';
 import { UpdateBlogCommand } from '../application/UseCases/UseCase_UpdateBlog';
 import { CreateBlogCommand } from '../application/UseCases/UseCase_CreateBlog';
+import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -54,6 +56,7 @@ export class BlogsController {
   }
 
   @Post(':id/posts')
+  @UseGuards(JwtAuthGuard)
   async createPostsForSpecificBlog(
     @Param('id') blogId: string,
     @Body() dto: CreatePostForBlogDto,
@@ -64,6 +67,7 @@ export class BlogsController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param('id') blogId: string): Promise<void> {
     await this.commandBus.execute<DeleteBlogCommand, void>(
@@ -72,6 +76,7 @@ export class BlogsController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(
     @Param('id') blogId: string,
@@ -83,6 +88,7 @@ export class BlogsController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async createBlog(
     @Body() createBlogDto: CreateBlogDto,
   ): Promise<BlogsViewDto> {

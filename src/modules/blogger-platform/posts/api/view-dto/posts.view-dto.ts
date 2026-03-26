@@ -1,5 +1,5 @@
-import { PostDocument } from '../../domain/posts.entity';
 import { ExtendedLikesInfoView } from './post-likes.view-dto';
+import { PostDocument } from '../../domain/posts.entity';
 
 export class PostsViewDto {
   id: string;
@@ -15,17 +15,15 @@ export class PostsViewDto {
     post: PostDocument,
     extendedLikesInfo: ExtendedLikesInfoView,
   ): PostsViewDto {
-    const dto = new PostsViewDto();
-
-    dto.id = post._id.toString();
-    dto.title = post.title;
-    dto.shortDescription = post.shortDescription;
-    dto.content = post.content;
-    dto.blogId = post.blogId;
-    dto.blogName = post.blogName;
-    dto.createdAt = post.createdAt.toISOString();
-    dto.extendedLikesInfo = extendedLikesInfo;
-
-    return dto;
+    return {
+      id: post._id.toString(),
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: post.blogId,
+      blogName: post.blogName,
+      createdAt: post.createdAt.toISOString(),
+      extendedLikesInfo,
+    };
   }
 }

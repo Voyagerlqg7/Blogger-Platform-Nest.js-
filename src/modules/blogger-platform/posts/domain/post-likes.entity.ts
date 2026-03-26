@@ -10,35 +10,27 @@ export enum LikeStatus {
 
 @Schema({ timestamps: true })
 export class PostLikes {
-  @Prop({ type: String, required: true })
+  @Prop({ required: true })
   userId: string;
-  @Prop({ type: String, required: true })
+  @Prop({ required: true })
   postId: string;
-  @Prop({ type: String, required: true })
+  @Prop({ required: true })
   login: string;
-  @Prop({
-    type: String,
-    required: true,
-    enum: LikeStatus,
-    default: LikeStatus.NONE,
-  })
+  @Prop({ required: true, enum: LikeStatus, default: LikeStatus.NONE })
   status: string;
-  @Prop({ type: Date })
+  @Prop({ default: null })
   createdAt: Date;
-  @Prop({ type: Date })
-  updatedAt: Date;
 
   static createInstance(dto: RatePostDomainDto): PostLikeDocument {
-    const postLike = new this();
-    postLike.postId = dto.postId;
-    postLike.userId = dto.userId;
-    postLike.status = dto.likeStatus;
-    postLike.login = dto.login;
-
-    return postLike as PostLikeDocument;
+    const instance = new this();
+    instance.userId = dto.userId;
+    instance.postId = dto.postId;
+    instance.status = dto.likeStatus;
+    instance.login = dto.login;
+    return instance as PostLikeDocument;
   }
 
-  updateStatus(newStatus: string) {
+  updateStatus(newStatus: string): void {
     this.status = newStatus;
   }
 }
