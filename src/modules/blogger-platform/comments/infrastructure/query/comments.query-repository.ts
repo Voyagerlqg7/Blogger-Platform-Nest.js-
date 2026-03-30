@@ -9,6 +9,8 @@ import { LikeStatus } from '../../../posts/domain/post-likes.entity';
 import { CommentsViewDto } from '../../api/view-dto/comments.view-dto';
 import { CommentDocument } from '../../domain/comment.entity';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
+import { GetCommentsQueryParams } from '../../api/input-dto/get-comments-query-params.input-dto';
+import { SortDirection } from '../../../../../core/dto/base.query-params.input-dto';
 
 @Injectable()
 export class CommentsQueryRepository {
@@ -67,19 +69,17 @@ export class CommentsQueryRepository {
 
   async getAllByPostId(
     postId: string,
-    query: any,
+    query: GetCommentsQueryParams,
     userId?: string,
   ): Promise<PaginatedViewDto<CommentsViewDto[]>> {
     const filter = { postId, deletedAt: null };
 
-    const sortOptions: Record<string, 1 | -1> = {
-      [query.sortBy || 'createdAt']: query.sortDirection === 'asc' ? 1 : -1,
-    };
+    const sortDirection = query.sortDirection || SortDirection.Desc;
 
     const [comments, totalCount] = await Promise.all([
       this.commentModel
         .find(filter)
-        .sort(sortOptions)
+        .sort(sortDirection)
         .skip(query.calculateSkip())
         .limit(query.pageSize)
         .lean(),
@@ -96,12 +96,12 @@ export class CommentsQueryRepository {
       }),
     );
 
-    return {
+    return PaginatedViewDto.mapToView({
       pagesCount: Math.ceil(totalCount / query.pageSize),
       page: query.pageNumber,
       size: query.pageSize,
       totalCount,
       items,
-    };
+    });
   }
 }
