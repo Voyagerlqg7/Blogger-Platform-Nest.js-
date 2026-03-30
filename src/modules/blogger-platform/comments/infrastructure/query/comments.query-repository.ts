@@ -8,6 +8,7 @@ import type { CommentLikeModelType } from '../../domain/Schema/commentatorLikeIn
 import { LikeStatus } from '../../../posts/domain/post-likes.entity';
 import { CommentsViewDto } from '../../api/view-dto/comments.view-dto';
 import { CommentDocument } from '../../domain/comment.entity';
+import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 
 @Injectable()
 export class CommentsQueryRepository {
@@ -68,7 +69,7 @@ export class CommentsQueryRepository {
     postId: string,
     query: any,
     userId?: string,
-  ): Promise<any> {
+  ): Promise<PaginatedViewDto<CommentsViewDto[]>> {
     const filter = { postId, deletedAt: null };
 
     const sortOptions: Record<string, 1 | -1> = {

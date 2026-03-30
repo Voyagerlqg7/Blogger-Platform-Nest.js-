@@ -26,6 +26,7 @@ import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/UseCases/Auth/UseCase_RegisterUser';
 import { GenerateTokensCommand } from '../application/UseCases/Auth/UseCase_GenerateTokens';
 import { UserLoggedInEvent } from '../application/Events/CreateSession';
+import { CurrentUser } from '../../../core/decorators/current-user.decorator';
 
 interface TokenType {
   accessToken: string;
@@ -47,9 +48,9 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(
     @Req() req: Request,
+    @CurrentUser() user: UserViewDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string }> {
-    const user = req.user as UserViewDto;
     const tokens: TokenType = await this.commandBus.execute(
       new GenerateTokensCommand(user.id.toString(), user.login),
     );
