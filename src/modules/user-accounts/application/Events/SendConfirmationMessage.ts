@@ -9,7 +9,7 @@ export class UserCreatedEvent {
 }
 
 @EventsHandler(UserCreatedEvent)
-export class SendConfirmationEmailHandler
+export class UseCase_SendConfirmationEmailHandler
   implements IEventHandler<UserCreatedEvent>
 {
   constructor(private emailService: EmailService) {}

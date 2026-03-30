@@ -25,7 +25,7 @@ export class Post {
   @Prop({ default: null })
   createdAt: Date;
 
-  @Prop({ default: null })
+  @Prop({ type: Date, default: null })
   deletedAt: Date | null;
 
   static createInstance(

@@ -6,10 +6,12 @@ import { PostsViewDto } from '../../../posts/api/view-dto/posts.view-dto';
 import { Post } from '../../../posts/domain/posts.entity';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
 
 export class CreatePostForBlogCommand {
   constructor(
     public blogId: string,
+    public userId: string,
     public dto: CreatePostForBlogDto,
   ) {}
 }
@@ -22,6 +24,7 @@ export class UseCase_CreatePostForBlog
     @InjectModel(Post.name)
     private postModel: PostModelType,
     private readonly blogRepository: BlogsRepository,
+    private readonly postsRepository: PostsRepository,
   ) {}
 
   async execute(command: CreatePostForBlogCommand): Promise<PostsViewDto> {
@@ -35,10 +38,12 @@ export class UseCase_CreatePostForBlog
       content: command.dto.content,
       blogId: command.blogId,
       blogName: blog.name,
-      likesCount: 0,
-      dislikesCount: 0,
     });
     await this.blogRepository.savePostForSpecificBlog(post);
-    return PostsViewDto.mapToView(post);
+    const extendedLikesInfo = await this.postsRepository.getExtendedLikesInfo(
+      post._id.toString(),
+      command.userId,
+    );
+    return PostsViewDto.mapToView(post, extendedLikesInfo);
   }
 }

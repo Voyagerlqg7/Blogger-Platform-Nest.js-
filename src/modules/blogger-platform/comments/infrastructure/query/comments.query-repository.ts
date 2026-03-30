@@ -7,7 +7,7 @@ import { CommentLike } from '../../domain/Schema/commentatorLikeInfo.schema';
 import type { CommentLikeModelType } from '../../domain/Schema/commentatorLikeInfo.schema';
 import { LikeStatus } from '../../../posts/domain/post-likes.entity';
 import { CommentsViewDto } from '../../api/view-dto/comments.view-dto';
-import { CommentDocument } from '../../domain/comment.entity';
+import { CommentDocument, Comment } from '../../domain/comment.entity';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { GetCommentsQueryParams } from '../../api/input-dto/get-comments-query-params.input-dto';
 import { SortDirection } from '../../../../../core/dto/base.query-params.input-dto';

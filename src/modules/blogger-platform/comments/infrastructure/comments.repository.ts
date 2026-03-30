@@ -2,7 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import type { CommentModelType } from '../domain/comment.entity';
-import { CommentDocument } from '../domain/comment.entity';
+import { CommentDocument, Comment } from '../domain/comment.entity';
 import { Types } from 'mongoose';
 import { CommentLike } from '../domain/Schema/commentatorLikeInfo.schema';
 import type { CommentLikeModelType } from '../domain/Schema/commentatorLikeInfo.schema';

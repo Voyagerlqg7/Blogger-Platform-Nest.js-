@@ -10,7 +10,6 @@ import {
   Query,
   Body,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
@@ -25,10 +24,10 @@ import { UpdatePostCommand } from '../application/UseCases/UseCase_UpdatePost';
 import { LikeStatusDto } from '../../comments/dto/like-status.dto';
 import { CreateCommentDto } from '../dto/create-comment.dto';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
-import type { Request } from 'express';
 import { UserViewDto } from '../../../user-accounts/api/view-dto/users.view-dto';
 import { UpdatePostLikeStatusCommand } from '../application/UseCases/UseCase_RatePost';
 import { CreateCommentForPostCommand } from '../application/UseCases/UseCase_CreateCommentForPost';
+import { CurrentUser } from '../../../../core/decorators/current-user.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -53,9 +52,8 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   async createPost(
     @Body() newPost: CreatePostDto,
-    @Req() req: Request,
+    @CurrentUser() user: UserViewDto,
   ): Promise<PostsViewDto> {
-    const user = req.user as UserViewDto;
     const command = new CreatePostCommand(newPost, user.id);
     return this.commandBus.execute(command);
   }
@@ -86,10 +84,8 @@ export class PostsController {
   async updateLikeStatus(
     @Param('id') postId: string,
     @Body() dto: LikeStatusDto,
-    @Req() req: Request,
+    @CurrentUser() user: UserViewDto,
   ) {
-    const user = req.user as UserViewDto;
-
     await this.commandBus.execute(
       new UpdatePostLikeStatusCommand(
         postId,
@@ -105,9 +101,8 @@ export class PostsController {
   async createCommentForPost(
     @Param('id') postId: string,
     @Body() dto: CreateCommentDto,
-    @Req() req: Request,
+    @CurrentUser() user: UserViewDto,
   ) {
-    const user = req.user as UserViewDto;
     await this.commandBus.execute(
       new CreateCommentForPostCommand(postId, dto, user),
     );

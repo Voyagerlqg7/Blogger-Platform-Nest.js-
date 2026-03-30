@@ -9,7 +9,9 @@ export class UserLoggedInEvent {
 }
 
 @EventsHandler(UserLoggedInEvent)
-export class CreateSessionHandler implements IEventHandler<UserLoggedInEvent> {
+export class UseCase_CreateSessionHandler
+  implements IEventHandler<UserLoggedInEvent>
+{
   constructor(
     private readonly sessionRepository: SessionRepository,
     @InjectModel(Session.name)

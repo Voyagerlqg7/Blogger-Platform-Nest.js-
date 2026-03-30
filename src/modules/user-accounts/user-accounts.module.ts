@@ -22,6 +22,10 @@ import { BasicStrategy } from './application/strategy/basic.strategy';
 import { APP_FILTER } from '@nestjs/core';
 import { DomainHttpExceptionsFilter } from '../../core/exceptions/filters/domain-exception.filter';
 import { AllHttpExceptionsFilter } from '../../core/exceptions/filters/all-exceptions';
+import {
+  userAccountsEvents,
+  userAccountsUseCases,
+} from './user-accounts.all-use-cases';
 
 @Module({
   imports: [
@@ -60,6 +64,8 @@ import { AllHttpExceptionsFilter } from '../../core/exceptions/filters/all-excep
     EmailService,
     UserConfirmationService,
     BasicStrategy,
+    ...userAccountsEvents,
+    ...userAccountsUseCases,
   ],
   exports: [
     UsersService,
@@ -68,6 +74,8 @@ import { AllHttpExceptionsFilter } from '../../core/exceptions/filters/all-excep
     SessionRepository,
     PasswordService,
     JwtModule,
+    ...userAccountsEvents,
+    ...userAccountsUseCases,
   ],
 })
 export class UserAccountsModule {}

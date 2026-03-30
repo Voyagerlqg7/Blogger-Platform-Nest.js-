@@ -27,6 +27,8 @@ import { DeleteBlogCommand } from '../application/UseCases/UseCase_DeleteBlog';
 import { UpdateBlogCommand } from '../application/UseCases/UseCase_UpdateBlog';
 import { CreateBlogCommand } from '../application/UseCases/UseCase_CreateBlog';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
+import { CurrentUser } from '../../../../core/decorators/current-user.decorator';
+import { UserViewDto } from '../../../user-accounts/api/view-dto/users.view-dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -50,19 +52,25 @@ export class BlogsController {
   @Get(':id/posts')
   async getAllPostsFromBlog(
     @Param('id') blogId: string,
+    @CurrentUser() user: UserViewDto,
     @Query() query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
-    return this.blogsQueryRepository.getAllPostsFromSpecialBlog(blogId, query);
+    return this.blogsQueryRepository.getAllPostsFromSpecialBlog(
+      blogId,
+      user.id,
+      query,
+    );
   }
 
   @Post(':id/posts')
   @UseGuards(JwtAuthGuard)
   async createPostsForSpecificBlog(
     @Param('id') blogId: string,
+    @CurrentUser() user: UserViewDto,
     @Body() dto: CreatePostForBlogDto,
   ): Promise<PostsViewDto> {
     return this.commandBus.execute<CreatePostForBlogCommand, PostsViewDto>(
-      new CreatePostForBlogCommand(blogId, dto),
+      new CreatePostForBlogCommand(blogId, user.id, dto),
     );
   }
 

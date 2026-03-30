@@ -6,7 +6,7 @@ export class DeleteCommentCommand {
 }
 
 @CommandHandler(DeleteCommentCommand)
-export class DeleteCommandHandler
+export class UseCase_DeleteComment
   implements ICommandHandler<DeleteCommentCommand, void>
 {
   constructor(private readonly commentsRepository: CommentsRepository) {}

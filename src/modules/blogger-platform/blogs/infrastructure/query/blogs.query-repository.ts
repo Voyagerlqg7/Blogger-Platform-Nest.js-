@@ -14,12 +14,14 @@ import type {
   PostDocument,
 } from '../../../posts/domain/posts.entity';
 import { Post } from '../../../posts/domain/posts.entity';
+import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
 
 @Injectable()
 export class BlogsQueryRepository {
   constructor(
     @InjectModel(Blog.name) private blogModel: BlogModelType,
     @InjectModel(Post.name) private postModel: PostModelType,
+    private readonly postsRepository: PostsRepository,
   ) {}
 
   async getByIdOrNotFoundFail(id: string): Promise<BlogsViewDto> {
@@ -74,13 +76,17 @@ export class BlogsQueryRepository {
 
   async getAllPostsFromSpecialBlog(
     blogId: string,
+    userId: string,
     query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
+    // Проверяем существование блога
     await this.getByIdOrNotFoundFail(blogId);
+
     const filter: QueryFilter<PostDocument> = {
       blogId: blogId,
       deletedAt: null,
     };
+
     const allowedSortFields = ['title', 'createdAt'];
     const sortBy =
       query.sortBy && allowedSortFields.includes(query.sortBy)
@@ -88,15 +94,29 @@ export class BlogsQueryRepository {
         : 'createdAt';
     const sortDirection = query.sortDirection || SortDirection.Desc;
 
-    const posts = await this.postModel
-      .find(filter)
-      .sort({ [sortBy]: sortDirection })
-      .skip(query.calculateSkip())
-      .limit(query.pageSize)
-      .lean();
+    // Параллельно получаем посты и общее количество
+    const [posts, totalCount] = await Promise.all([
+      this.postModel
+        .find(filter)
+        .sort({ [sortBy]: sortDirection })
+        .skip(query.calculateSkip())
+        .limit(query.pageSize)
+        .lean(),
+      this.postModel.countDocuments(filter),
+    ]);
 
-    const totalCount = await this.postModel.countDocuments(filter);
-    const items = posts.map((post) => PostsViewDto.mapToView(post));
+    // Параллельно получаем информацию о лайках для всех постов
+    const items = await Promise.all(
+      posts.map(async (post) => {
+        const extendedLikesInfo =
+          await this.postsRepository.getExtendedLikesInfo(
+            post._id.toString(),
+            userId,
+          );
+        return PostsViewDto.mapToView(post, extendedLikesInfo);
+      }),
+    );
+
     return PaginatedViewDto.mapToView({
       pagesCount: Math.ceil(totalCount / query.pageSize),
       page: query.pageNumber,
