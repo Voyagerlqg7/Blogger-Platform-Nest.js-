@@ -23,6 +23,14 @@ import {
   CommentLikeSchema,
 } from '../modules/blogger-platform/comments/domain/Schema/commentatorLikeInfo.schema';
 import { User, UserSchema } from '../modules/user-accounts/domain/user.entity';
+import {
+  Token,
+  TokenSchema,
+} from '../modules/user-accounts/domain/token.entity';
+import {
+  Session,
+  SessionSchema,
+} from '../modules/user-accounts/domain/session.entity';
 
 @Module({
   imports: [
@@ -33,6 +41,8 @@ import { User, UserSchema } from '../modules/user-accounts/domain/user.entity';
       { name: Comment.name, schema: CommentSchema },
       { name: PostLikes.name, schema: PostLikeSchema },
       { name: CommentLike.name, schema: CommentLikeSchema },
+      { name: Token.name, schema: TokenSchema },
+      { name: Session.name, schema: SessionSchema },
     ]),
   ],
   controllers: [TestingController],
