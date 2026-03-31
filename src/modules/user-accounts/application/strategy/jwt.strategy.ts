@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly configService: ConfigService, // Добавьте
+    private readonly configService: ConfigService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

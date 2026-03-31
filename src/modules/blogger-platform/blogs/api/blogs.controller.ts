@@ -26,9 +26,9 @@ import { CreatePostForBlogCommand } from '../application/UseCases/UseCase_Create
 import { DeleteBlogCommand } from '../application/UseCases/UseCase_DeleteBlog';
 import { UpdateBlogCommand } from '../application/UseCases/UseCase_UpdateBlog';
 import { CreateBlogCommand } from '../application/UseCases/UseCase_CreateBlog';
-import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { CurrentUser } from '../../../../core/decorators/current-user.decorator';
 import { UserViewDto } from '../../../user-accounts/api/view-dto/users.view-dto';
+import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 
 @Controller('blogs')
 export class BlogsController {
@@ -63,7 +63,7 @@ export class BlogsController {
   }
 
   @Post(':id/posts')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async createPostsForSpecificBlog(
     @Param('id') blogId: string,
     @CurrentUser() user: UserViewDto,
@@ -75,7 +75,7 @@ export class BlogsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlog(@Param('id') blogId: string): Promise<void> {
     await this.commandBus.execute<DeleteBlogCommand, void>(
@@ -84,7 +84,7 @@ export class BlogsController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlog(
     @Param('id') blogId: string,
@@ -96,7 +96,7 @@ export class BlogsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async createBlog(
     @Body() createBlogDto: CreateBlogDto,
   ): Promise<BlogsViewDto> {

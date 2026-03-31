@@ -31,6 +31,7 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(BasicAuthGuard)
   async getAll(
     @Query() query: GetUsersQueryParams,
   ): Promise<PaginatedViewDto<UserViewDto[]>> {

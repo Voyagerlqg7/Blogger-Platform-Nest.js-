@@ -34,8 +34,12 @@ export class CommentsController {
   @Get(':id')
   async getCommentById(
     @Param('id') commentId: string,
+    @CurrentUser() user?: UserViewDto,
   ): Promise<CommentsViewDto> {
-    return this.commentQueryRepository.getByIdOrNotFoundFail(commentId);
+    return this.commentQueryRepository.getByIdOrNotFoundFail(
+      commentId,
+      user?.id,
+    );
   }
 
   @Put(':id')
@@ -50,12 +54,13 @@ export class CommentsController {
   }
 
   @Put(':id/like-status')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   async updateLikeStatus(
     @Param('id') commentId: string,
     @Body() dto: LikeStatusDto,
     @CurrentUser() user: UserViewDto,
-  ) {
+  ): Promise<void> {
     await this.commandBus.execute(
       new UpdateCommentLikeStatusCommand(commentId, user.id, dto.likeStatus),
     );

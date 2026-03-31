@@ -2,30 +2,53 @@ import { Controller, Delete, HttpCode } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { BlogDocument } from '../modules/blogger-platform/blogs/domain/blogs.entity';
-import { PostDocument } from '../modules/blogger-platform/posts/domain/posts.entity';
-import { UserDocument } from '../modules/user-accounts/domain/user.entity';
-import { CommentDocument } from '../modules/blogger-platform/comments/domain/comment.entity';
-import { PostLikeDocument } from '../modules/blogger-platform/posts/domain/post-likes.entity';
-import { CommentLikeDocument } from '../modules/blogger-platform/comments/domain/Schema/commentatorLikeInfo.schema';
-import { TokenDocument } from '../modules/user-accounts/domain/token.entity';
-import { SessionDocument } from '../modules/user-accounts/domain/session.entity';
+import {
+  Blog,
+  BlogDocument,
+} from '../modules/blogger-platform/blogs/domain/blogs.entity';
+import {
+  Post,
+  PostDocument,
+} from '../modules/blogger-platform/posts/domain/posts.entity';
+import {
+  User,
+  UserDocument,
+} from '../modules/user-accounts/domain/user.entity';
+import {
+  Comment,
+  CommentDocument,
+} from '../modules/blogger-platform/comments/domain/comment.entity';
+import {
+  PostLikes,
+  PostLikeDocument,
+} from '../modules/blogger-platform/posts/domain/post-likes.entity';
+import {
+  CommentLike,
+  CommentLikeDocument,
+} from '../modules/blogger-platform/comments/domain/Schema/commentatorLikeInfo.schema';
+import {
+  Token,
+  TokenDocument,
+} from '../modules/user-accounts/domain/token.entity';
+import {
+  Session,
+  SessionDocument,
+} from '../modules/user-accounts/domain/session.entity';
 
 @Controller('testing')
 export class TestingController {
   constructor(
-    @InjectModel('Blog') private readonly blogModel: Model<BlogDocument>,
-    @InjectModel('Post') private readonly postModel: Model<PostDocument>,
-    @InjectModel('User') private readonly userModel: Model<UserDocument>,
-    @InjectModel('Comment')
+    @InjectModel(Blog.name) private readonly blogModel: Model<BlogDocument>,
+    @InjectModel(Post.name) private readonly postModel: Model<PostDocument>,
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Comment.name)
     private readonly commentModel: Model<CommentDocument>,
-    @InjectModel('PostLikes')
+    @InjectModel(PostLikes.name)
     private readonly postLikeModel: Model<PostLikeDocument>,
-    @InjectModel('CommentLike')
+    @InjectModel(CommentLike.name)
     private readonly commentLikeModel: Model<CommentLikeDocument>,
-    @InjectModel('Token')
-    private readonly tokenModel: Model<TokenDocument>,
-    @InjectModel('Session')
+    @InjectModel(Token.name) private readonly tokenModel: Model<TokenDocument>,
+    @InjectModel(Session.name)
     private readonly sessionModel: Model<SessionDocument>,
   ) {}
 

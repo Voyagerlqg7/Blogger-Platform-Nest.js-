@@ -28,6 +28,7 @@ import { UserViewDto } from '../../../user-accounts/api/view-dto/users.view-dto'
 import { UpdatePostLikeStatusCommand } from '../application/UseCases/UseCase_RatePost';
 import { CreateCommentForPostCommand } from '../application/UseCases/UseCase_CreateCommentForPost';
 import { CurrentUser } from '../../../../core/decorators/current-user.decorator';
+import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -44,12 +45,15 @@ export class PostsController {
   }
 
   @Get(':id')
-  async getPostById(@Param('id') postId: string): Promise<PostsViewDto> {
-    return this.postsQueryRepository.getByIdOrNotFoundFail(postId);
+  async getPostById(
+    @Param('id') postId: string,
+    @CurrentUser() user?: UserViewDto,
+  ): Promise<PostsViewDto> {
+    return this.postsQueryRepository.getByIdOrNotFoundFail(postId, user?.id);
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async createPost(
     @Body() newPost: CreatePostDto,
     @CurrentUser() user: UserViewDto,
@@ -59,7 +63,7 @@ export class PostsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(@Param('id') postId: string): Promise<void> {
     await this.commandBus.execute<DeletePostCommand, void>(
@@ -68,7 +72,7 @@ export class PostsController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updatePost(
     @Param('id') postId: string,
@@ -81,11 +85,12 @@ export class PostsController {
 
   @Put(':id/like-status')
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async updateLikeStatus(
     @Param('id') postId: string,
     @Body() dto: LikeStatusDto,
     @CurrentUser() user: UserViewDto,
-  ) {
+  ): Promise<void> {
     await this.commandBus.execute(
       new UpdatePostLikeStatusCommand(
         postId,

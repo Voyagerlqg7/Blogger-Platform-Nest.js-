@@ -14,14 +14,14 @@ import type {
   PostDocument,
 } from '../../../posts/domain/posts.entity';
 import { Post } from '../../../posts/domain/posts.entity';
-import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
+import { PostsQueryRepository } from '../../../posts/infrastructure/query/posts.query-repository';
 
 @Injectable()
 export class BlogsQueryRepository {
   constructor(
     @InjectModel(Blog.name) private blogModel: BlogModelType,
     @InjectModel(Post.name) private postModel: PostModelType,
-    private readonly postsRepository: PostsRepository,
+    private readonly postsQueryRepository: PostsQueryRepository,
   ) {}
 
   async getByIdOrNotFoundFail(id: string): Promise<BlogsViewDto> {
@@ -109,7 +109,7 @@ export class BlogsQueryRepository {
     const items = await Promise.all(
       posts.map(async (post) => {
         const extendedLikesInfo =
-          await this.postsRepository.getExtendedLikesInfo(
+          await this.postsQueryRepository.getExtendedLikesInfo(
             post._id.toString(),
             userId,
           );
