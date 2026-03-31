@@ -21,7 +21,7 @@ import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetBlogsQueryParams } from './input-dto/get-blogs-query-params.input-dto';
 import { PostsViewDto } from '../../posts/api/view-dto/posts.view-dto';
 import { GetPostsQueryParams } from '../../posts/api/input-dto/get-posts-query-params.input-dto';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostForBlogCommand } from '../application/UseCases/UseCase_CreatePostForBlog';
 import { DeleteBlogCommand } from '../application/UseCases/UseCase_DeleteBlog';
 import { UpdateBlogCommand } from '../application/UseCases/UseCase_UpdateBlog';
@@ -29,24 +29,27 @@ import { CreateBlogCommand } from '../application/UseCases/UseCase_CreateBlog';
 import { CurrentUser } from '../../../../core/decorators/current-user.decorator';
 import { UserViewDto } from '../../../user-accounts/api/view-dto/users.view-dto';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
+import { GetAllBlogsQuery } from '../infrastructure/query/UseCases/UseCase_GetAllBlogs';
+import { GetBlogByIdQuery } from '../infrastructure/query/UseCases/UseCase_GetBlogById';
 
 @Controller('blogs')
 export class BlogsController {
   constructor(
     private readonly blogsQueryRepository: BlogsQueryRepository,
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Get()
   async getAllBlogs(
-    @Query() query: GetBlogsQueryParams,
+    @Query() queryParams: GetBlogsQueryParams,
   ): Promise<PaginatedViewDto<BlogsViewDto[]>> {
-    return this.blogsQueryRepository.getAll(query);
+    return this.queryBus.execute(new GetAllBlogsQuery(queryParams));
   }
 
   @Get(':id')
   async getBlog(@Param('id') blogId: string): Promise<BlogsViewDto> {
-    return this.blogsQueryRepository.getByIdOrNotFoundFail(blogId);
+    return this.queryBus.execute(new GetBlogByIdQuery(blogId));
   }
 
   @Get(':id/posts')

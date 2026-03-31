@@ -24,54 +24,34 @@ export class BlogsQueryRepository {
     private readonly postsQueryRepository: PostsQueryRepository,
   ) {}
 
-  async getByIdOrNotFoundFail(id: string): Promise<BlogsViewDto> {
+  async getByIdOrNotFoundFail(id: string): Promise<BlogDocument | null> {
     const blog = await this.blogModel.findOne({
       _id: id,
       deletedAt: null,
     } as QueryFilter<BlogDocument>);
-
-    if (!blog) throw new NotFoundException('Blog not found');
-
-    return BlogsViewDto.mapToView(blog);
+    return blog;
   }
 
-  async getAll(
-    query: GetBlogsQueryParams,
-  ): Promise<PaginatedViewDto<BlogsViewDto[]>> {
-    const filter: QueryFilter<BlogDocument> = {
-      deletedAt: null,
-    };
-
-    if (query.searchNameTerm) {
-      filter.$or = [{ name: { $regex: query.searchNameTerm, $options: 'i' } }];
-    }
-
-    const allowedSortFields = ['name', 'createdAt', 'websiteUrl'];
-    const sortBy =
-      query.sortBy && allowedSortFields.includes(query.sortBy)
-        ? query.sortBy
-        : 'createdAt';
-
-    const sortDirection = query.sortDirection || SortDirection.Desc;
-
-    const blogs = await this.blogModel
+  async findWithPagination(
+    filter: QueryFilter<BlogDocument>,
+    sort: Record<string, 1 | -1>,
+    skip: number,
+    limit: number,
+  ): Promise<BlogDocument[]> {
+    return this.blogModel
       .find(filter)
-      .sort({ [sortBy]: sortDirection })
-      .skip(query.calculateSkip())
-      .limit(query.pageSize)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
       .lean();
+  }
 
-    const totalCount = await this.blogModel.countDocuments(filter);
+  async count(filter: QueryFilter<BlogDocument>): Promise<number> {
+    return this.blogModel.countDocuments(filter);
+  }
 
-    const items = blogs.map((blog) => BlogsViewDto.mapToView(blog));
-
-    return PaginatedViewDto.mapToView({
-      pagesCount: Math.ceil(totalCount / query.pageSize),
-      page: query.pageNumber,
-      size: query.pageSize,
-      totalCount,
-      items,
-    });
+  async findById(id: string): Promise<BlogDocument | null> {
+    return this.blogModel.findById(id).lean();
   }
 
   async getAllPostsFromSpecialBlog(
