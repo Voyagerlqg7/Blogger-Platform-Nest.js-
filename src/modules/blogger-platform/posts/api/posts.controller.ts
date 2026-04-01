@@ -13,11 +13,10 @@ import {
 } from '@nestjs/common';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { PostsQueryRepository } from '../infrastructure/query/posts.query-repository';
 import { PostsViewDto } from './view-dto/posts.view-dto';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetPostsQueryParams } from './input-dto/get-posts-query-params.input-dto';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/UseCases/UseCase_CreatePost';
 import { DeletePostCommand } from '../application/UseCases/UseCase_DeletePost';
 import { UpdatePostCommand } from '../application/UseCases/UseCase_UpdatePost';
@@ -29,19 +28,22 @@ import { UpdatePostLikeStatusCommand } from '../application/UseCases/UseCase_Rat
 import { CreateCommentForPostCommand } from '../application/UseCases/UseCase_CreateCommentForPost';
 import { CurrentUser } from '../../../../core/decorators/current-user.decorator';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
+import { GetAllPostsQuery } from '../infrastructure/query/UseCase/UseCase_GetAllPosts';
+import { GetPostByIdQuery } from '../infrastructure/query/UseCase/UseCase_GetPostById';
 
 @Controller('posts')
 export class PostsController {
   constructor(
-    private readonly postsQueryRepository: PostsQueryRepository,
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Get()
   async getAllPosts(
     @Query() query: GetPostsQueryParams,
+    @CurrentUser() user?: UserViewDto,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
-    return this.postsQueryRepository.getAll(query);
+    return this.queryBus.execute(new GetAllPostsQuery(query, user?.id));
   }
 
   @Get(':id')
@@ -49,7 +51,7 @@ export class PostsController {
     @Param('id') postId: string,
     @CurrentUser() user?: UserViewDto,
   ): Promise<PostsViewDto> {
-    return this.postsQueryRepository.getByIdOrNotFoundFail(postId, user?.id);
+    return this.queryBus.execute(new GetPostByIdQuery(postId, user?.id));
   }
 
   @Post()

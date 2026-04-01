@@ -21,6 +21,7 @@ import {
   CommentLikeSchema,
 } from './comments/domain/Schema/commentatorLikeInfo.schema';
 import { CommentsRepository } from './comments/infrastructure/comments.repository';
+import { LikesQueryRepository } from './posts/infrastructure/query/likes.query-repository';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { CommentsRepository } from './comments/infrastructure/comments.repositor
     CommentsRepository,
     BlogsQueryRepository,
     PostsQueryRepository,
+    LikesQueryRepository,
     CommentsQueryRepository,
     ...bloggerPlatformUseCases,
   ],

@@ -14,21 +14,22 @@ import { UpdateCommentDto } from '../dto/update-comment.dto';
 import { LikeStatusDto } from '../dto/like-status.dto';
 import { CommentsViewDto } from './view-dto/comments.view-dto';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateCommentLikeStatusCommand } from '../application/UseCases/UseCase_RateComment';
 import { UserViewDto } from '../../../user-accounts/api/view-dto/users.view-dto';
-import { CommentsQueryRepository } from '../infrastructure/query/comments.query-repository';
 import { DeleteCommentCommand } from '../application/UseCases/UseCase_DeleteComment';
 import { GetCommentsQueryParams } from './input-dto/get-comments-query-params.input-dto';
 import { CurrentUser } from '../../../../core/decorators/current-user.decorator';
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { UpdateCommentCommand } from '../application/UseCases/UseCase_UpdateComment';
+import { GetAllCommentsQuery } from '../infrastructure/query/UseCases/UseCase_GetAllComments';
+import { GetCommentByIdQuery } from '../infrastructure/query/UseCases/UseCase_GetCommentById';
 
 @Controller('comments')
 export class CommentsController {
   constructor(
-    private readonly commentQueryRepository: CommentsQueryRepository,
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Get(':id')
@@ -36,9 +37,8 @@ export class CommentsController {
     @Param('id') commentId: string,
     @CurrentUser() user?: UserViewDto,
   ): Promise<CommentsViewDto> {
-    return this.commentQueryRepository.getByIdOrNotFoundFail(
-      commentId,
-      user?.id,
+    return await this.commandBus.execute(
+      new GetCommentByIdQuery(commentId, user?.id),
     );
   }
 
@@ -78,8 +78,10 @@ export class CommentsController {
   async getAllCommentsForPost(
     @Param('id') postId: string,
     @Query() query: GetCommentsQueryParams,
-    @CurrentUser() user: UserViewDto,
+    @CurrentUser() user?: UserViewDto,
   ): Promise<PaginatedViewDto<CommentsViewDto[]>> {
-    return this.commentQueryRepository.getAllByPostId(postId, query, user.id);
+    return await this.queryBus.execute(
+      new GetAllCommentsQuery(postId, query, user?.id),
+    );
   }
 }

@@ -8,7 +8,7 @@ export class GetBlogByIdQuery {
 }
 
 @QueryHandler(GetBlogByIdQuery)
-export class GetHeroHandler
+export class GetBlogHandler
   implements IQueryHandler<GetBlogByIdQuery, BlogsViewDto>
 {
   constructor(private blogsQueryRepository: BlogsQueryRepository) {}

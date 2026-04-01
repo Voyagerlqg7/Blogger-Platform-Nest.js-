@@ -55,12 +55,12 @@ export class BlogsController {
   @Get(':id/posts')
   async getAllPostsFromBlog(
     @Param('id') blogId: string,
-    @CurrentUser() user: UserViewDto,
     @Query() query: GetPostsQueryParams,
+    @CurrentUser() user?: UserViewDto,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
     return this.blogsQueryRepository.getAllPostsFromSpecialBlog(
       blogId,
-      user.id,
+      user?.id,
       query,
     );
   }

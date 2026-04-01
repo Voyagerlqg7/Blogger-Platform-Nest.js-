@@ -1,11 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { QueryFilter } from 'mongoose';
 import { Blog, BlogDocument } from '../../domain/blogs.entity';
 import type { BlogModelType } from '../../domain/blogs.entity';
-import { BlogsViewDto } from '../../api/view-dto/blogs.view-dto';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
-import { GetBlogsQueryParams } from '../../api/input-dto/get-blogs-query-params.input-dto';
 import { PostsViewDto } from '../../../posts/api/view-dto/posts.view-dto';
 import { GetPostsQueryParams } from '../../../posts/api/input-dto/get-posts-query-params.input-dto';
 import { SortDirection } from '../../../../../core/dto/base.query-params.input-dto';
@@ -50,13 +48,9 @@ export class BlogsQueryRepository {
     return this.blogModel.countDocuments(filter);
   }
 
-  async findById(id: string): Promise<BlogDocument | null> {
-    return this.blogModel.findById(id).lean();
-  }
-
   async getAllPostsFromSpecialBlog(
     blogId: string,
-    userId: string,
+    userId?: string,
     query: GetPostsQueryParams,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
     // Проверяем существование блога

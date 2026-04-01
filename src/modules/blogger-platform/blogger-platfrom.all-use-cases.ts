@@ -11,11 +11,15 @@ import { UseCase_DeletePost } from './posts/application/UseCases/UseCase_DeleteP
 import { UseCase_UpdatePost } from './posts/application/UseCases/UseCase_UpdatePost';
 import { UseCase_UpdatePostLikeStatus } from './posts/application/UseCases/UseCase_RatePost';
 import { UseCase_CreateCommentForPost } from './posts/application/UseCases/UseCase_CreateCommentForPost';
+import { GetAllPostsHandler } from './posts/infrastructure/query/UseCase/UseCase_GetAllPosts';
+import { GetPostByIdHandler } from './posts/infrastructure/query/UseCase/UseCase_GetPostById';
 
 //Comments
 import { UseCase_DeleteComment } from './comments/application/UseCases/UseCase_DeleteComment';
 import { UseCase_UpdateCommentLikeStatus } from './comments/application/UseCases/UseCase_RateComment';
 import { UseCase_UpdateComment } from './comments/application/UseCases/UseCase_UpdateComment';
+import { GetAllCommentsHandler } from './comments/infrastructure/query/UseCases/UseCase_GetAllComments';
+import { GetCommentHandler } from './comments/infrastructure/query/UseCases/UseCase_GetCommentById';
 
 export const bloggerPlatformUseCases = [
   //Blogs
@@ -32,9 +36,13 @@ export const bloggerPlatformUseCases = [
   UseCase_UpdatePost,
   UseCase_UpdatePostLikeStatus,
   UseCase_CreateCommentForPost,
+  GetAllPostsHandler,
+  GetPostByIdHandler,
 
   //Comments
   UseCase_DeleteComment,
   UseCase_UpdateCommentLikeStatus,
   UseCase_UpdateComment,
+  GetAllCommentsHandler,
+  GetCommentHandler,
 ];
