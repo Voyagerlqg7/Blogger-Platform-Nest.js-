@@ -6,7 +6,7 @@ import { PostsRepository } from '../../infrastructure/posts.repository';
 import { PostsViewDto } from '../../api/view-dto/posts.view-dto';
 import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsQueryRepository } from '../../infrastructure/query/posts.query-repository';
+import { LikesQueryRepository } from '../../infrastructure/query/likes.query-repository';
 
 export class CreatePostCommand {
   constructor(
@@ -22,8 +22,8 @@ export class UseCase_CreatePost
   constructor(
     @InjectModel(Post.name) private postModel: PostModelType,
     private postsRepository: PostsRepository,
-    private postQueryRepository: PostsQueryRepository,
     private blogsRepository: BlogsRepository,
+    private readonly likesQueryRepository: LikesQueryRepository,
   ) {}
 
   async execute(command: CreatePostCommand): Promise<PostsViewDto> {
@@ -42,7 +42,7 @@ export class UseCase_CreatePost
     await this.postsRepository.save(post);
 
     const extendedLikesInfo =
-      await this.postQueryRepository.getExtendedLikesInfo(
+      await this.likesQueryRepository.getExtendedLikesInfo(
         post._id.toString(),
         command.userId,
       );

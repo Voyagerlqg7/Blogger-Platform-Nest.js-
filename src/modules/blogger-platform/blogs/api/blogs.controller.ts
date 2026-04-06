@@ -60,8 +60,8 @@ export class BlogsController {
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
     return this.blogsQueryRepository.getAllPostsFromSpecialBlog(
       blogId,
-      user?.id,
       query,
+      user?.id,
     );
   }
 

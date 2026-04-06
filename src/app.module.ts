@@ -10,6 +10,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { AllHttpExceptionsFilter } from './core/exceptions/filters/all-exceptions';
 import { DomainHttpExceptionsFilter } from './core/exceptions/filters/domain-exception.filter';
 import { CqrsModule } from '@nestjs/cqrs';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -49,5 +50,6 @@ import { CqrsModule } from '@nestjs/cqrs';
       useClass: DomainHttpExceptionsFilter,
     },
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

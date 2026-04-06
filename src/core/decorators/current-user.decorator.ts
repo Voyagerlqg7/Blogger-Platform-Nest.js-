@@ -2,8 +2,10 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { UserViewDto } from '../../modules/user-accounts/api/view-dto/users.view-dto';
 
 export const CurrentUser = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext): UserViewDto => {
+  (data: unknown, ctx: ExecutionContext): UserViewDto | null => {
     const request = ctx.switchToHttp().getRequest();
-    return request.user;
+    // OptionalJwtAuthGuard возвращает null если пользователь не аутентифицирован
+    // JwtAuthGuard всегда возвращает пользователя
+    return request.user || null;
   },
 );

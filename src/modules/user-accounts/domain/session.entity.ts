@@ -10,8 +10,8 @@ export class Session {
   @Prop({ type: String, required: true, unique: true })
   deviceId: string;
 
-  @Prop({ type: String, required: true })
-  ip: string;
+  @Prop({ type: String, default: null })
+  ip: string | null;
 
   @Prop({ type: String, required: true })
   title: string;

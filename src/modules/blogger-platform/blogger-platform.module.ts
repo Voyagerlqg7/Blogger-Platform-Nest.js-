@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CqrsModule } from '@nestjs/cqrs';
 import { Blog, BlogSchema } from './blogs/domain/blogs.entity';
 import { Post, PostSchema } from './posts/domain/posts.entity';
 import { Comment, CommentSchema } from './comments/domain/comment.entity';
@@ -25,6 +26,7 @@ import { LikesQueryRepository } from './posts/infrastructure/query/likes.query-r
 
 @Module({
   imports: [
+    CqrsModule,
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },

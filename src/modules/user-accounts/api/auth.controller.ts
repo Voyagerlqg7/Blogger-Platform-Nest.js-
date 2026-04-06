@@ -54,9 +54,9 @@ export class AuthController {
     const tokens: TokenType = await this.commandBus.execute(
       new GenerateTokensCommand(user.id.toString(), user.login),
     );
-    if (!req.ip) {
+    /*if (!req.ip) {
       throw new HttpException('ip address is empty!', 400);
-    }
+    }*/
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
@@ -68,7 +68,7 @@ export class AuthController {
     const dto: CreateSessionDto = {
       userId: user.id,
       deviceId: deviceId,
-      ip: req.ip,
+      ip: null,
       title: req.headers['user-agent'] ?? 'Unknown device',
     };
 

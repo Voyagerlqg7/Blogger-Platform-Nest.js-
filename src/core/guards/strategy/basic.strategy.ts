@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { BasicStrategy as PassportBasicStrategy } from 'passport-http';
 import { ConfigService } from '@nestjs/config';
-import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import { DomainException } from '../../exceptions/domain-exceptions';
 
 @Injectable()
 export class BasicStrategy extends PassportStrategy(PassportBasicStrategy) {
@@ -13,7 +13,6 @@ export class BasicStrategy extends PassportStrategy(PassportBasicStrategy) {
   validate(username: string, password: string): any {
     const validUsername = this.configService.get('BASIC_AUTH_USERNAME');
     const validPassword = this.configService.get('BASIC_AUTH_PASSWORD');
-
     if (username !== validUsername || password !== validPassword) {
       throw DomainException.unauthorized('Invalid credentials');
     }

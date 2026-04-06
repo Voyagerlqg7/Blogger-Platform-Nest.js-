@@ -23,7 +23,7 @@ export class GetPostByIdHandler
   async execute(query: GetPostByIdQuery): Promise<PostsViewDto> {
     const { postId, userId } = query;
 
-    const post = await this.postsQueryRepository.findByIdNotDeleted(postId);
+    const post = await this.postsQueryRepository.getByIdOrNotFoundFail(postId);
 
     if (!post) {
       throw DomainException.notFound('Post');

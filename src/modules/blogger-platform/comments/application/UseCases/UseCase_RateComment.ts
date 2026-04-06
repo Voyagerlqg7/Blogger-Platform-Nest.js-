@@ -9,7 +9,7 @@ export class UpdateCommentLikeStatusCommand {
   constructor(
     public commentId: string,
     public userId: string,
-    public likeStatus: string,
+    public likeStatus: LikeStatus,
   ) {}
 }
 

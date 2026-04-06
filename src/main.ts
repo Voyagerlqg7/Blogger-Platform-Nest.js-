@@ -23,6 +23,21 @@ async function bootstrap() {
       },
     }),
   );
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('\x1b[31m', '=== UNHANDLED REJECTION ===', '\x1b[0m');
+    console.error('Reason:', reason);
+    console.error('Promise:', promise);
+    console.error(
+      'Stack:',
+      reason instanceof Error ? reason.stack : 'No stack trace',
+    );
+  });
+
+  process.on('uncaughtException', (error) => {
+    console.error('\x1b[31m', '=== UNCAUGHT EXCEPTION ===', '\x1b[0m');
+    console.error('Error:', error);
+    console.error('Stack:', error.stack);
+  });
 
   app.use(cookieParser());
 

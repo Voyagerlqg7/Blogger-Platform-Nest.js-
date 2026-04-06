@@ -1,11 +1,7 @@
-import { IsNotEmpty, IsString, IsIn } from 'class-validator';
+import { IsEnum } from 'class-validator';
+import { LikeStatus } from '../domain/Schema/commentatorLikeInfo.schema';
 
 export class LikeStatusDto {
-  @IsString()
-  @IsNotEmpty()
-  @IsIn(['None', 'Like', 'Dislike'], {
-    message:
-      'likeStatus must be one of the following values: None, Like, Dislike',
-  })
-  likeStatus: string;
+  @IsEnum(LikeStatus)
+  likeStatus: LikeStatus;
 }

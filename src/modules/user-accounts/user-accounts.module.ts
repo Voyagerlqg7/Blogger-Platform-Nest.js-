@@ -10,15 +10,15 @@ import { UsersQueryRepository } from './infrastructure/query/users.query-reposit
 import { UsersRepository } from './infrastructure/users.repository';
 import { SessionRepository } from './infrastructure/sessions.repository';
 import { AuthController } from './api/auth.controller';
-import { JwtStrategy } from './application/strategy/jwt.strategy';
-import { LocalStrategy } from './application/strategy/local.strategy';
+import { JwtStrategy } from '../../core/guards/strategy/jwt.strategy';
+import { LocalStrategy } from '../../core/guards/strategy/local.strategy';
 import { PasswordService } from './application/external/password.service';
 import { AuthService } from './application/auth/auth.service';
 import { EmailService } from './application/external/email.service';
 import { UserConfirmationService } from './application/external/user-confirmation.service';
 import { TokensRepository } from './infrastructure/tokens.repository';
 import { Token, TokenSchema } from './domain/token.entity';
-import { BasicStrategy } from './application/strategy/basic.strategy';
+import { BasicStrategy } from '../../core/guards/strategy/basic.strategy';
 import { APP_FILTER } from '@nestjs/core';
 import { DomainHttpExceptionsFilter } from '../../core/exceptions/filters/domain-exception.filter';
 import { AllHttpExceptionsFilter } from '../../core/exceptions/filters/all-exceptions';
@@ -26,9 +26,11 @@ import {
   userAccountsEvents,
   userAccountsUseCases,
 } from './user-accounts.all-use-cases';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
+    CqrsModule,
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Session.name, schema: SessionSchema },

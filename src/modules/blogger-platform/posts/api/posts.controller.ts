@@ -30,6 +30,7 @@ import { CurrentUser } from '../../../../core/decorators/current-user.decorator'
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { GetAllPostsQuery } from '../infrastructure/query/UseCase/UseCase_GetAllPosts';
 import { GetPostByIdQuery } from '../infrastructure/query/UseCase/UseCase_GetPostById';
+import { OptionalJwtAuthGuard } from '../../../../core/guards/optional-jwt-auth.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -47,6 +48,7 @@ export class PostsController {
   }
 
   @Get(':id')
+  @UseGuards(OptionalJwtAuthGuard)
   async getPostById(
     @Param('id') postId: string,
     @CurrentUser() user?: UserViewDto,

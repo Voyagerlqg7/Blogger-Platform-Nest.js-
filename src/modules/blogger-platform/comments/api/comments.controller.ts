@@ -24,6 +24,7 @@ import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { UpdateCommentCommand } from '../application/UseCases/UseCase_UpdateComment';
 import { GetAllCommentsQuery } from '../infrastructure/query/UseCases/UseCase_GetAllComments';
 import { GetCommentByIdQuery } from '../infrastructure/query/UseCases/UseCase_GetCommentById';
+import { OptionalJwtAuthGuard } from '../../../../core/guards/optional-jwt-auth.guard';
 
 @Controller('comments')
 export class CommentsController {
@@ -33,6 +34,7 @@ export class CommentsController {
   ) {}
 
   @Get(':id')
+  @UseGuards(OptionalJwtAuthGuard)
   async getCommentById(
     @Param('id') commentId: string,
     @CurrentUser() user?: UserViewDto,
@@ -61,9 +63,12 @@ export class CommentsController {
     @Body() dto: LikeStatusDto,
     @CurrentUser() user: UserViewDto,
   ): Promise<void> {
-    await this.commandBus.execute(
-      new UpdateCommentLikeStatusCommand(commentId, user.id, dto.likeStatus),
+    const command = new UpdateCommentLikeStatusCommand(
+      commentId,
+      user.id,
+      dto.likeStatus,
     );
+    await this.commandBus.execute(command);
   }
 
   @Delete(':id')

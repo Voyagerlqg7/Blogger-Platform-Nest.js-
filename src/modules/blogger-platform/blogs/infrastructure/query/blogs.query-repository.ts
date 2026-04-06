@@ -12,21 +12,25 @@ import type {
   PostDocument,
 } from '../../../posts/domain/posts.entity';
 import { Post } from '../../../posts/domain/posts.entity';
-import { PostsQueryRepository } from '../../../posts/infrastructure/query/posts.query-repository';
+import { LikesQueryRepository } from '../../../posts/infrastructure/query/likes.query-repository';
+import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class BlogsQueryRepository {
   constructor(
     @InjectModel(Blog.name) private blogModel: BlogModelType,
     @InjectModel(Post.name) private postModel: PostModelType,
-    private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly likesQueryRepository: LikesQueryRepository,
   ) {}
 
-  async getByIdOrNotFoundFail(id: string): Promise<BlogDocument | null> {
+  async getByIdOrNotFoundFail(id: string): Promise<BlogDocument> {
     const blog = await this.blogModel.findOne({
       _id: id,
       deletedAt: null,
-    } as QueryFilter<BlogDocument>);
+    });
+    if (!blog) {
+      throw DomainException.notFound('Blog');
+    }
     return blog;
   }
 
@@ -50,8 +54,8 @@ export class BlogsQueryRepository {
 
   async getAllPostsFromSpecialBlog(
     blogId: string,
-    userId?: string,
     query: GetPostsQueryParams,
+    userId?: string,
   ): Promise<PaginatedViewDto<PostsViewDto[]>> {
     // Проверяем существование блога
     await this.getByIdOrNotFoundFail(blogId);
@@ -83,7 +87,7 @@ export class BlogsQueryRepository {
     const items = await Promise.all(
       posts.map(async (post) => {
         const extendedLikesInfo =
-          await this.postsQueryRepository.getExtendedLikesInfo(
+          await this.likesQueryRepository.getExtendedLikesInfo(
             post._id.toString(),
             userId,
           );

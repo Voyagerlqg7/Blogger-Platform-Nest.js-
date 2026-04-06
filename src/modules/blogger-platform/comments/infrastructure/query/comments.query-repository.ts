@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { QueryFilter, Types } from 'mongoose';
+import { QueryFilter } from 'mongoose';
 import type { CommentModelType } from '../../domain/comment.entity';
 import { LikesInfoViewDto } from '../../api/view-dto/comments-likes.view-dto';
 import { CommentLike } from '../../domain/Schema/commentatorLikeInfo.schema';
@@ -42,14 +42,14 @@ export class CommentsQueryRepository {
     };
   }
 
-  async getByIdOrNotFoundFail(id: string): Promise<CommentDocument | null> {
-    if (!Types.ObjectId.isValid(id)) {
-      throw DomainException.badRequest('Invalid comment id');
-    }
+  async getByIdOrNotFoundFail(id: string): Promise<CommentDocument> {
     const comment = await this.commentModel.findOne({
       _id: id,
       deletedAt: null,
     });
+    if (!comment) {
+      throw DomainException.notFound('Comment');
+    }
     return comment;
   }
 

@@ -27,11 +27,13 @@ export class PostLikes {
     instance.postId = dto.postId;
     instance.status = dto.likeStatus;
     instance.login = dto.login;
+    instance.createdAt = new Date();
     return instance as PostLikeDocument;
   }
 
   updateStatus(newStatus: string): void {
     this.status = newStatus;
+    this.createdAt = new Date();
   }
 }
 

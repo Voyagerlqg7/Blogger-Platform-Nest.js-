@@ -6,7 +6,7 @@ import { PostsViewDto } from '../../../posts/api/view-dto/posts.view-dto';
 import { Post } from '../../../posts/domain/posts.entity';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsQueryRepository } from '../../../posts/infrastructure/query/posts.query-repository';
+import { LikesQueryRepository } from '../../../posts/infrastructure/query/likes.query-repository';
 
 export class CreatePostForBlogCommand {
   constructor(
@@ -24,14 +24,11 @@ export class UseCase_CreatePostForBlog
     @InjectModel(Post.name)
     private postModel: PostModelType,
     private readonly blogRepository: BlogsRepository,
-    private readonly postQueryRepository: PostsQueryRepository,
+    private readonly likesQueryRepository: LikesQueryRepository,
   ) {}
 
   async execute(command: CreatePostForBlogCommand): Promise<PostsViewDto> {
     const blog = await this.blogRepository.findOrNotFoundFail(command.blogId);
-    if (!blog) {
-      throw DomainException.notFound('Blog');
-    }
     const post = this.postModel.createInstance({
       title: command.dto.title,
       shortDescription: command.dto.shortDescription,
@@ -41,7 +38,7 @@ export class UseCase_CreatePostForBlog
     });
     await this.blogRepository.savePostForSpecificBlog(post);
     const extendedLikesInfo =
-      await this.postQueryRepository.getExtendedLikesInfo(
+      await this.likesQueryRepository.getExtendedLikesInfo(
         post._id.toString(),
         command.userId,
       );

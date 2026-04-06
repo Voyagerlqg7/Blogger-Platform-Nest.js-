@@ -25,6 +25,16 @@ export class AllHttpExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    console.log('\n' + '='.repeat(80));
+    console.log('📌 URL:', request.method, request.url);
+    console.log('📌 Headers:', request.headers);
+    console.log('📌 Body:', request.body);
+    console.log('📌 Exception type:', exception?.constructor?.name);
+
+    if (exception instanceof Error) {
+      console.log('📌 Error message:', exception.message);
+      console.log('📌 Stack trace:', exception.stack);
+    }
 
     if (exception instanceof DomainException) {
       const domainFilter = new DomainHttpExceptionsFilter();

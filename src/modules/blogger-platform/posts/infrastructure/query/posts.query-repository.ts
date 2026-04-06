@@ -7,13 +7,12 @@ import { PostDocument, Post } from '../../domain/posts.entity';
 export class PostsQueryRepository {
   constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {}
 
-  async findByIdNotDeleted(id: string): Promise<PostDocument | null> {
-    return this.postModel
-      .findOne({
-        _id: id,
-        deletedAt: null,
-      })
-      .lean();
+  async getByIdOrNotFoundFail(id: string): Promise<PostDocument | null> {
+    const post = await this.postModel.findOne({
+      _id: id,
+      deletedAt: null,
+    });
+    return post;
   }
 
   async findWithPagination(

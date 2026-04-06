@@ -3,8 +3,8 @@ import { UseCase_CreateBlog } from './blogs/application/UseCases/UseCase_CreateB
 import { UseCase_CreatePostForBlog } from './blogs/application/UseCases/UseCase_CreatePostForBlog';
 import { UseCase_DeleteBlog } from './blogs/application/UseCases/UseCase_DeleteBlog';
 import { UseCase_UpdateBlog } from './blogs/application/UseCases/UseCase_UpdateBlog';
-import { GetAllBlogsQuery } from './blogs/infrastructure/query/UseCases/UseCase_GetAllBlogs';
-import { GetBlogByIdQuery } from './blogs/infrastructure/query/UseCases/UseCase_GetBlogById';
+import { GetBlogByIdHandler } from './blogs/infrastructure/query/UseCases/UseCase_GetBlogById';
+import { GetAllBlogsHandler } from './blogs/infrastructure/query/UseCases/UseCase_GetAllBlogs';
 //Posts
 import { UseCase_CreatePost } from './posts/application/UseCases/UseCase_CreatePost';
 import { UseCase_DeletePost } from './posts/application/UseCases/UseCase_DeletePost';
@@ -27,8 +27,8 @@ export const bloggerPlatformUseCases = [
   UseCase_CreatePostForBlog,
   UseCase_DeleteBlog,
   UseCase_UpdateBlog,
-  GetAllBlogsQuery,
-  GetBlogByIdQuery,
+  GetBlogByIdHandler,
+  GetAllBlogsHandler,
 
   //Posts
   UseCase_CreatePost,

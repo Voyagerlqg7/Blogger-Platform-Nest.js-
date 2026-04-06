@@ -20,9 +20,6 @@ export class GetCommentHandler
     const comment = await this.commentQueryRepository.getByIdOrNotFoundFail(
       query.commentId,
     );
-    if (!comment) {
-      throw DomainException.notFound('Comment');
-    }
     const likesInfo = await this.commentQueryRepository.getLikesInfo(
       query.commentId,
       query.userId,

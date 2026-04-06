@@ -1,10 +1,10 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../../infrastructure/users.repository';
-import { UserViewDto } from '../../api/view-dto/users.view-dto';
-import { JwtPayload } from '../auth/payload/JwtPayload';
-import { DomainException } from '../../../../core/exceptions/domain-exceptions';
+import { UsersRepository } from '../../../modules/user-accounts/infrastructure/users.repository';
+import { UserViewDto } from '../../../modules/user-accounts/api/view-dto/users.view-dto';
+import { JwtPayload } from '../../../modules/user-accounts/application/auth/payload/JwtPayload';
+import { DomainException } from '../../exceptions/domain-exceptions';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
