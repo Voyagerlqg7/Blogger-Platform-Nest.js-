@@ -31,6 +31,9 @@ import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { GetAllPostsQuery } from '../infrastructure/query/UseCase/UseCase_GetAllPosts';
 import { GetPostByIdQuery } from '../infrastructure/query/UseCase/UseCase_GetPostById';
 import { OptionalJwtAuthGuard } from '../../../../core/guards/optional-jwt-auth.guard';
+import { CommentsViewDto } from '../../comments/api/view-dto/comments.view-dto';
+import { GetCommentsQueryParams } from '../../comments/api/input-dto/get-comments-query-params.input-dto';
+import { GetAllCommentsQuery } from '../../comments/infrastructure/query/UseCases/UseCase_GetAllComments';
 
 @Controller('posts')
 export class PostsController {
@@ -40,6 +43,7 @@ export class PostsController {
   ) {}
 
   @Get()
+  @UseGuards(OptionalJwtAuthGuard)
   async getAllPosts(
     @Query() query: GetPostsQueryParams,
     @CurrentUser() user?: UserViewDto,
@@ -111,9 +115,21 @@ export class PostsController {
     @Param('id') postId: string,
     @Body() dto: CreateCommentDto,
     @CurrentUser() user: UserViewDto,
-  ) {
-    await this.commandBus.execute(
+  ): Promise<CommentsViewDto> {
+    return await this.commandBus.execute(
       new CreateCommentForPostCommand(postId, dto, user),
+    );
+  }
+
+  @Get(':id/comments')
+  @UseGuards(OptionalJwtAuthGuard)
+  async getAllCommentsForPost(
+    @Param('id') postId: string,
+    @Query() query: GetCommentsQueryParams,
+    @CurrentUser() user?: UserViewDto,
+  ): Promise<PaginatedViewDto<CommentsViewDto[]>> {
+    return await this.queryBus.execute(
+      new GetAllCommentsQuery(postId, query, user?.id),
     );
   }
 }

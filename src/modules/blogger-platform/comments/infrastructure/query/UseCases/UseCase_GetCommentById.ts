@@ -1,5 +1,4 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
-import { DomainException } from '../../../../../../core/exceptions/domain-exceptions';
 import { CommentsQueryRepository } from '../comments.query-repository';
 import { CommentsViewDto } from '../../../api/view-dto/comments.view-dto';
 

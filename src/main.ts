@@ -12,10 +12,27 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
       transform: true,
       exceptionFactory: (errors) => {
-        const errorMessages = errors.map((error) => ({
-          message: Object.values(error.constraints || {}).join(', '),
-          field: error.property,
-        }));
+        const errorMessages = errors
+          .filter((error) => !error.constraints?.whitelistValidation)
+          .map((error) => {
+            let message = '';
+            if (error.constraints?.isNotEmpty) {
+              message = `${error.property} is required`;
+            } else if (error.constraints?.isString) {
+              message = `${error.property} must be a string`;
+            } else if (error.constraints?.maxLength) {
+              message = `${error.property} must be shorter than or equal to ${error.constraints.maxLength.match(/\d+/)} characters`;
+            } else if (error.constraints?.isUrl) {
+              message = `${error.property} must be a valid URL`;
+            } else {
+              message = Object.values(error.constraints || {})[0];
+            }
+
+            return {
+              message,
+              field: error.property,
+            };
+          });
 
         return new BadRequestException({
           errorsMessages: errorMessages,

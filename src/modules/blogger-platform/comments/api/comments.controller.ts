@@ -18,11 +18,8 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { UpdateCommentLikeStatusCommand } from '../application/UseCases/UseCase_RateComment';
 import { UserViewDto } from '../../../user-accounts/api/view-dto/users.view-dto';
 import { DeleteCommentCommand } from '../application/UseCases/UseCase_DeleteComment';
-import { GetCommentsQueryParams } from './input-dto/get-comments-query-params.input-dto';
 import { CurrentUser } from '../../../../core/decorators/current-user.decorator';
-import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { UpdateCommentCommand } from '../application/UseCases/UseCase_UpdateComment';
-import { GetAllCommentsQuery } from '../infrastructure/query/UseCases/UseCase_GetAllComments';
 import { GetCommentByIdQuery } from '../infrastructure/query/UseCases/UseCase_GetCommentById';
 import { OptionalJwtAuthGuard } from '../../../../core/guards/optional-jwt-auth.guard';
 
@@ -39,7 +36,7 @@ export class CommentsController {
     @Param('id') commentId: string,
     @CurrentUser() user?: UserViewDto,
   ): Promise<CommentsViewDto> {
-    return await this.commandBus.execute(
+    return await this.queryBus.execute(
       new GetCommentByIdQuery(commentId, user?.id),
     );
   }
@@ -56,8 +53,8 @@ export class CommentsController {
   }
 
   @Put(':id/like-status')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async updateLikeStatus(
     @Param('id') commentId: string,
     @Body() dto: LikeStatusDto,
@@ -77,16 +74,5 @@ export class CommentsController {
   async deleteComment(@Param() commentId: string): Promise<void> {
     const command = new DeleteCommentCommand(commentId);
     await this.commandBus.execute(command);
-  }
-
-  @Get(':id')
-  async getAllCommentsForPost(
-    @Param('id') postId: string,
-    @Query() query: GetCommentsQueryParams,
-    @CurrentUser() user?: UserViewDto,
-  ): Promise<PaginatedViewDto<CommentsViewDto[]>> {
-    return await this.queryBus.execute(
-      new GetAllCommentsQuery(postId, query, user?.id),
-    );
   }
 }

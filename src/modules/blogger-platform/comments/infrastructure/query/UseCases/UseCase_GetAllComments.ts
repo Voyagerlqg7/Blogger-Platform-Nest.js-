@@ -23,11 +23,12 @@ export class GetAllCommentsHandler
   constructor(private commentsQueryRepository: CommentsQueryRepository) {}
 
   async execute(
-    query: GetAllCommentsQuery,
+    _query: GetAllCommentsQuery,
   ): Promise<PaginatedViewDto<CommentsViewDto[]>> {
-    const { params } = query;
+    const { params } = _query;
 
     const filter: QueryFilter<CommentDocument> = {
+      postId: _query.postId,
       deletedAt: null,
     };
 
@@ -56,9 +57,9 @@ export class GetAllCommentsHandler
       comments.map(async (comment) => {
         const likesInfo = await this.commentsQueryRepository.getLikesInfo(
           comment._id.toString(),
-          query.userId,
+          _query.userId,
         );
-        return CommentsViewDto.mapToView(comment as CommentDocument, likesInfo);
+        return CommentsViewDto.mapToView(comment, likesInfo);
       }),
     );
 

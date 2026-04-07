@@ -31,6 +31,7 @@ import { UserViewDto } from '../../../user-accounts/api/view-dto/users.view-dto'
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { GetAllBlogsQuery } from '../infrastructure/query/UseCases/UseCase_GetAllBlogs';
 import { GetBlogByIdQuery } from '../infrastructure/query/UseCases/UseCase_GetBlogById';
+import {OptionalJwtAuthGuard} from "../../../../core/guards/optional-jwt-auth.guard";
 
 @Controller('blogs')
 export class BlogsController {
@@ -53,6 +54,7 @@ export class BlogsController {
   }
 
   @Get(':id/posts')
+  @UseGuards(OptionalJwtAuthGuard)
   async getAllPostsFromBlog(
     @Param('id') blogId: string,
     @Query() query: GetPostsQueryParams,

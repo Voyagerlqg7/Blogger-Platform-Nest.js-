@@ -49,6 +49,7 @@ export class Comment {
 
   updateComment(dto: UpdateCommentDto) {
     this.content = dto.content;
+    this.updatedAt = new Date();
   }
 }
 

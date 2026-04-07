@@ -20,5 +20,6 @@ export class UseCase_UpdateComment
       command.commentId,
     );
     comment.updateComment(command.dto);
+    await this.commentRepository.save(comment);
   }
 }

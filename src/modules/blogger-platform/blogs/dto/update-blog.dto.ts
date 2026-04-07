@@ -1,18 +1,20 @@
 import { IsNotEmpty, IsString, IsUrl, MaxLength } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateBlogDto {
+  @Transform(({ value }) => value?.trim())
+  @IsNotEmpty({ message: 'Name is required' })
   @IsString()
-  @IsNotEmpty()
   @MaxLength(15)
   name: string;
-
+  @Transform(({ value }) => value?.trim())
+  @IsNotEmpty({ message: 'Description is required' })
   @IsString()
-  @IsNotEmpty()
   @MaxLength(500)
   description: string;
-
+  @Transform(({ value }) => value?.trim())
+  @IsNotEmpty({ message: 'websiteUrl is required' })
   @IsString()
-  @IsNotEmpty()
   @IsUrl()
   @MaxLength(100)
   websiteUrl: string;
