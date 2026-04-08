@@ -6,7 +6,6 @@ import {
   Body,
   Delete,
   UseGuards,
-  Query,
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
@@ -47,8 +46,9 @@ export class CommentsController {
   async updateComment(
     @Param('id') commentId: string,
     @Body() dto: UpdateCommentDto,
+    @CurrentUser() user: UserViewDto,
   ): Promise<void> {
-    const command = new UpdateCommentCommand(commentId, dto);
+    const command = new UpdateCommentCommand(commentId, dto, user.id);
     await this.commandBus.execute(command);
   }
 
@@ -71,8 +71,11 @@ export class CommentsController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteComment(@Param() commentId: string): Promise<void> {
-    const command = new DeleteCommentCommand(commentId);
+  async deleteComment(
+    @Param('id') commentId: string,
+    @CurrentUser() user: UserViewDto,
+  ): Promise<void> {
+    const command = new DeleteCommentCommand(commentId, user.id);
     await this.commandBus.execute(command);
   }
 }

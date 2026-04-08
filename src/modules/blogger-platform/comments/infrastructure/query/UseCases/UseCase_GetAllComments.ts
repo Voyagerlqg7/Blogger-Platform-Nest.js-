@@ -6,6 +6,8 @@ import { GetCommentsQueryParams } from '../../../api/input-dto/get-comments-quer
 import { CommentsViewDto } from '../../../api/view-dto/comments.view-dto';
 import { CommentsQueryRepository } from '../comments.query-repository';
 import { CommentDocument } from '../../../domain/comment.entity';
+import { PostsQueryRepository } from '../../../../posts/infrastructure/query/posts.query-repository';
+import { DomainException } from '../../../../../../core/exceptions/domain-exceptions';
 
 export class GetAllCommentsQuery {
   constructor(
@@ -20,13 +22,22 @@ export class GetAllCommentsHandler
   implements
     IQueryHandler<GetAllCommentsQuery, PaginatedViewDto<CommentsViewDto[]>>
 {
-  constructor(private commentsQueryRepository: CommentsQueryRepository) {}
+  constructor(
+    private commentsQueryRepository: CommentsQueryRepository,
+    private postsQueryRepository: PostsQueryRepository,
+  ) {}
 
   async execute(
     _query: GetAllCommentsQuery,
   ): Promise<PaginatedViewDto<CommentsViewDto[]>> {
     const { params } = _query;
 
+    const post = await this.postsQueryRepository.getByIdOrNotFoundFail(
+      _query.postId,
+    );
+    if (post.deletedAt !== null) {
+      throw DomainException.notFound('Post');
+    }
     const filter: QueryFilter<CommentDocument> = {
       postId: _query.postId,
       deletedAt: null,

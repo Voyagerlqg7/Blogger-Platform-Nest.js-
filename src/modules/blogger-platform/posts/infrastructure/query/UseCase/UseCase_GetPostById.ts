@@ -2,7 +2,6 @@ import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { PostsQueryRepository } from '../posts.query-repository';
 import { LikesQueryRepository } from '../likes.query-repository';
 import { PostsViewDto } from '../../../api/view-dto/posts.view-dto';
-import { DomainException } from '../../../../../../core/exceptions/domain-exceptions';
 
 export class GetPostByIdQuery {
   constructor(
@@ -24,10 +23,6 @@ export class GetPostByIdHandler
     const { postId, userId } = query;
 
     const post = await this.postsQueryRepository.getByIdOrNotFoundFail(postId);
-
-    if (!post) {
-      throw DomainException.notFound('Post');
-    }
 
     const extendedLikesInfo =
       await this.likesQueryRepository.getExtendedLikesInfo(postId, userId);

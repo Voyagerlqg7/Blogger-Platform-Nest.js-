@@ -2,16 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter } from 'mongoose';
 import { PostDocument, Post } from '../../domain/posts.entity';
+import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class PostsQueryRepository {
   constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {}
 
-  async getByIdOrNotFoundFail(id: string): Promise<PostDocument | null> {
+  async getByIdOrNotFoundFail(id: string): Promise<PostDocument> {
     const post = await this.postModel.findOne({
       _id: id,
       deletedAt: null,
     });
+    if (!post) {
+      throw DomainException.notFound('Post');
+    }
     return post;
   }
 
