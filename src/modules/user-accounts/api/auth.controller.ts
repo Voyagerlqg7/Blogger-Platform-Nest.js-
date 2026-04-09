@@ -27,8 +27,9 @@ import { CreateUserCommand } from '../application/UseCases/Auth/UseCase_Register
 import { GenerateTokensCommand } from '../application/UseCases/Auth/UseCase_GenerateTokens';
 import { UserLoggedInEvent } from '../application/Events/CreateSession';
 import { CurrentUser } from '../../../core/decorators/current-user.decorator';
+import { RefreshTokensCommand } from '../application/UseCases/Auth/UseCase_RefreshTokens';
 
-interface TokenType {
+export interface TokenType {
   accessToken: string;
   refreshToken: string;
 }
@@ -51,24 +52,23 @@ export class AuthController {
     @CurrentUser() user: UserViewDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string }> {
+    const deviceId: string = randomUUID();
     const tokens: TokenType = await this.commandBus.execute(
-      new GenerateTokensCommand(user.id.toString(), user.login),
+      new GenerateTokensCommand(user.id.toString(), deviceId),
     );
-    /*if (!req.ip) {
+    if (!req.ip) {
       throw new HttpException('ip address is empty!', 400);
-    }*/
+    }
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 10,
     });
-
-    const deviceId: string = randomUUID();
     const dto: CreateSessionDto = {
       userId: user.id,
       deviceId: deviceId,
-      ip: null,
+      ip: req.ip,
       title: req.headers['user-agent'] ?? 'Unknown device',
     };
 
@@ -118,5 +118,27 @@ export class AuthController {
   @Get('me')
   getMe(@Req() req: Request) {
     return req.user;
+  }
+
+  @Post('logout')
+  logOut(@Req() req: Request) {}
+
+  @Post('refresh-token')
+  async refreshTokens(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const oldToken = req.refreshToken!;
+    const tokens: TokenType = await this.commandBus.execute(
+      new RefreshTokensCommand(oldToken),
+    );
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 10,
+    });
+    await this.tokenRepository.saveToken(tokens.refreshToken);
+    return { accessToken: tokens.accessToken };
   }
 }

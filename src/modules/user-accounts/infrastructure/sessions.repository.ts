@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import type { SessionModelType } from '../domain/session.entity';
+import { SessionDocument } from '../domain/session.entity';
 import { Session } from '../domain/session.entity';
+import { DomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class SessionRepository {
@@ -13,12 +15,21 @@ export class SessionRepository {
     await this.sessionModel.insertOne(session);
   }
 
-  async findByUserId(userId: string) {
-    return await this.sessionModel.find({ userId }).lean();
+  async findSessionsByUserId(userId: string): Promise<SessionDocument[]> {
+    const sessions = await this.sessionModel.find({ userId }).lean();
+
+    if (!sessions || sessions.length === 0) {
+      throw DomainException.notFound('Session', 'Cannot find by userId');
+    }
+    return sessions as SessionDocument[];
   }
 
-  async findByDeviceId(deviceId: string) {
-    return await this.sessionModel.findOne({ deviceId });
+  async findByDeviceId(deviceId: string): Promise<SessionDocument> {
+    const session = await this.sessionModel.findOne({ deviceId });
+    if (!session) {
+      throw DomainException.notFound('Session', 'Cannot find by deviceId');
+    }
+    return session;
   }
 
   async deleteDeviceById(deviceId: string) {

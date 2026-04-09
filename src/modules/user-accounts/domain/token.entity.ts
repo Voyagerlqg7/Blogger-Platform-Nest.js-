@@ -7,10 +7,6 @@ export class Token {
   token: string;
   @Prop({ type: Date, nullable: true })
   deletedAt: Date | null;
-
-  makeDeleted() {
-    this.deletedAt = new Date();
-  }
 }
 
 export const TokenSchema = SchemaFactory.createForClass(Token);

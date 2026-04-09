@@ -4,6 +4,8 @@ declare global {
   namespace Express {
     interface Request {
       user: UserViewDto;
+      refreshToken?: string;
+      deviceId?: string;
     }
   }
 }

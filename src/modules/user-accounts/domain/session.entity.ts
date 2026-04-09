@@ -36,12 +36,11 @@ export class Session {
     });
   }
 
-  updateActivity(): void {
+  updateActivityForDevice(ttlMs: number): void {
+    const now = new Date();
     this.lastActiveDate = new Date();
-  }
-
-  prolongSession(ttlMs: number): void {
-    this.sessionExpiresAt = new Date(Date.now() + ttlMs);
+    this.lastActiveDate = now;
+    this.sessionExpiresAt = new Date(now.getTime() + ttlMs);
   }
 }
 
