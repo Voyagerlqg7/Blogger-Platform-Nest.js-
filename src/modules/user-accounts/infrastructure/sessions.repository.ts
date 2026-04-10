@@ -36,7 +36,18 @@ export class SessionRepository {
     await this.sessionModel.deleteOne({ deviceId });
   }
 
-  async deleteExpired(now: Date) {
-    await this.sessionModel.deleteMany({ expirationDate: { $lt: now } });
+  async deleteAllDevicesExceptOne(
+    userId: string,
+    currentDeviceId: string,
+  ): Promise<void> {
+    const deleteResult = await this.sessionModel.deleteMany({
+      userId: userId,
+      deviceId: { $ne: currentDeviceId },
+    });
+
+    if (deleteResult.deletedCount === 0) {
+      // если нет других сессий
+      console.log(`No other sessions found for user ${userId}`);
+    }
   }
 }

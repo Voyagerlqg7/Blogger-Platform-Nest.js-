@@ -28,6 +28,7 @@ import { GenerateTokensCommand } from '../application/UseCases/Auth/UseCase_Gene
 import { UserLoggedInEvent } from '../application/Events/CreateSession';
 import { CurrentUser } from '../../../core/decorators/current-user.decorator';
 import { RefreshTokensCommand } from '../application/UseCases/Auth/UseCase_RefreshTokens';
+import { RefreshTokenGuard } from '../../../core/guards/refresh-token.guard';
 
 export interface TokenType {
   accessToken: string;
@@ -121,9 +122,11 @@ export class AuthController {
   }
 
   @Post('logout')
+  @UseGuards(RefreshTokenGuard)
   logOut(@Req() req: Request) {}
 
   @Post('refresh-token')
+  @UseGuards(RefreshTokenGuard)
   async refreshTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,

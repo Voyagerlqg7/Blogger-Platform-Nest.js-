@@ -19,7 +19,7 @@ export class UseCase_CreateSessionHandler
   ) {}
 
   async handle({ dto }: UserLoggedInEvent): Promise<void> {
-    const session = this.sessionModel.createInstance(dto, 20_000);
+    const session = this.sessionModel.createInstance(dto, 50_000);
     await this.sessionRepository.save(session);
   }
 }

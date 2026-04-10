@@ -16,13 +16,19 @@ export class TokensRepository {
     return tokenInD;
   }
 
-  async saveToken(token: string): Promise<string | null> {
+  async saveToken(token: string): Promise<string> {
     const doc = await this.tokenModel.create({ token });
     return doc.token;
   }
 
-  async deleteToken(token: string): Promise<true | null> {
-    const result = await this.tokenModel.deleteOne({ token });
-    return result ? true : null;
+  async deleteToken(token: string): Promise<void> {
+    await this.tokenModel.deleteOne({ token });
+  }
+
+  async deleteAllTokensExceptOne(currentToken: string): Promise<number> {
+    const result = await this.tokenModel.deleteMany({
+      token: { $ne: currentToken },
+    });
+    return result.deletedCount;
   }
 }

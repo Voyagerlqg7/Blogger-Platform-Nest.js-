@@ -11,7 +11,7 @@ export class Session {
   deviceId: string;
 
   @Prop({ type: String, default: null })
-  ip: string | null;
+  ip: string;
 
   @Prop({ type: String, required: true })
   title: string;
