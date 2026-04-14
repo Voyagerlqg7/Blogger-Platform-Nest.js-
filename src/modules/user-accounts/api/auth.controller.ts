@@ -29,6 +29,7 @@ import { UserLoggedInEvent } from '../application/Events/CreateSession';
 import { CurrentUser } from '../../../core/decorators/current-user.decorator';
 import { RefreshTokensCommand } from '../application/UseCases/Auth/UseCase_RefreshTokens';
 import { RefreshTokenGuard } from '../../../core/guards/refresh-token.guard';
+import { LogoutCommand } from '../application/UseCases/Auth/UseCase_Logout';
 
 export interface TokenType {
   accessToken: string;
@@ -64,7 +65,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      maxAge: 10,
+      maxAge: 10 * 1000,
     });
     const dto: CreateSessionDto = {
       userId: user.id,
@@ -115,18 +116,32 @@ export class AuthController {
     await this.confirmationService.resendCodeConfirmation(dto.email);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('me')
+  @UseGuards(RefreshTokenGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
   getMe(@Req() req: Request) {
     return req.user;
   }
 
   @Post('logout')
   @UseGuards(RefreshTokenGuard)
-  logOut(@Req() req: Request) {}
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async logOut(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    const command = new LogoutCommand(req.refreshToken!, req.deviceId!);
+    await this.commandBus.execute(command);
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+  }
 
   @Post('refresh-token')
   @UseGuards(RefreshTokenGuard)
+  @HttpCode(HttpStatus.OK)
   async refreshTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,

@@ -27,6 +27,7 @@ import {
   userAccountsUseCases,
 } from './user-accounts.all-use-cases';
 import { CqrsModule } from '@nestjs/cqrs';
+import { SecurityController } from './api/security-devices.controller';
 
 @Module({
   imports: [
@@ -44,7 +45,7 @@ import { CqrsModule } from '@nestjs/cqrs';
       }),
     }),
   ],
-  controllers: [UsersController, AuthController],
+  controllers: [UsersController, AuthController, SecurityController],
   providers: [
     {
       provide: APP_FILTER,
@@ -74,6 +75,7 @@ import { CqrsModule } from '@nestjs/cqrs';
     UsersRepository,
     UsersQueryRepository,
     SessionRepository,
+    TokensRepository,
     PasswordService,
     JwtModule,
     ...userAccountsEvents,

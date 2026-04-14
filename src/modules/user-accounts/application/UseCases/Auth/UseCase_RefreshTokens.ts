@@ -6,11 +6,9 @@ import { GenerateTokensCommand } from './UseCase_GenerateTokens';
 import { TokensRepository } from '../../../infrastructure/tokens.repository';
 import { SessionRepository } from '../../../infrastructure/sessions.repository';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
-import { AST } from 'eslint';
-import TokenType = AST.TokenType;
 
 export class RefreshTokensCommand {
-  constructor(public _OldRefreshToken: string) {}
+  constructor(public oldRefreshToken: string) {} // Убрал нижнее подчеркивание
 }
 
 @CommandHandler(RefreshTokensCommand)
@@ -18,10 +16,7 @@ export class UseCase_RefreshTokens
   implements
     ICommandHandler<
       RefreshTokensCommand,
-      {
-        accessToken: string;
-        refreshToken: string;
-      }
+      { accessToken: string; refreshToken: string }
     >
 {
   constructor(
@@ -32,41 +27,53 @@ export class UseCase_RefreshTokens
     private readonly sessionRepository: SessionRepository,
   ) {}
 
-  async execute(command: RefreshTokensCommand): Promise<any> {
+  async execute(
+    command: RefreshTokensCommand,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    let payload: JwtPayload;
+
     try {
-      const payload = await this.jwtService.verifyAsync<JwtPayload>(
-        command._OldRefreshToken,
+      payload = await this.jwtService.verifyAsync<JwtPayload>(
+        command.oldRefreshToken,
         { secret: this.configService.get('JWT_REFRESH_SECRET_KEY') },
       );
-
-      await this.tokenRepository.findToken(command._OldRefreshToken);
-      // 3. Находим сессию
-      const session = await this.sessionRepository.findByDeviceId(
-        payload.deviceId,
-      );
-
-      // 4. Проверяем, что сессия активна
-      if (session.sessionExpiresAt < new Date()) {
-        await this.tokenRepository.deleteToken(command._OldRefreshToken);
-        throw DomainException.unauthorized('Session expired');
-      }
-
-      // 5. Удаляем СТАРЫЙ refresh token (только после всех проверок)
-      await this.tokenRepository.deleteToken(command._OldRefreshToken);
-
-      // 6. Обновляем активность сессии
-      session.updateActivityForDevice(20_000); // TTL в миллисекундах
-      await this.sessionRepository.save(session);
-
-      // 7. Генерируем НОВЫЕ токены
-      const tokens: TokenType = await this.commandBus.execute(
-        new GenerateTokensCommand(payload.userId, payload.deviceId),
-      );
-      return tokens;
     } catch (error) {
-      //(security first)
-      await this.tokenRepository.deleteToken(command._OldRefreshToken);
-      return error;
+      throw DomainException.unauthorized('Invalid or expired refresh token');
     }
+
+    try {
+      const tokenDoc = await this.tokenRepository.findToken(
+        command.oldRefreshToken,
+      );
+    } catch (error) {
+      throw DomainException.unauthorized('Refresh token not found');
+    }
+
+    let session;
+    try {
+      session = await this.sessionRepository.findByDeviceId(payload.deviceId);
+    } catch (error) {
+      throw DomainException.unauthorized('Session not found');
+    }
+
+    if (session.sessionExpiresAt < new Date()) {
+      await this.tokenRepository.deleteToken(command.oldRefreshToken);
+      throw DomainException.unauthorized('Session expired');
+    }
+
+    if (session.userId !== payload.userId) {
+      throw DomainException.unauthorized('Invalid session owner');
+    }
+
+    await this.tokenRepository.deleteToken(command.oldRefreshToken);
+
+    session.updateActivityForDevice(20_000);
+    await this.sessionRepository.save(session);
+
+    const tokens = await this.commandBus.execute(
+      new GenerateTokensCommand(payload.userId, payload.deviceId),
+    );
+
+    return tokens;
   }
 }

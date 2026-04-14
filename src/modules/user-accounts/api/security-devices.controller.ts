@@ -16,6 +16,7 @@ import { DeleteDeviceCommand } from '../application/UseCases/Security/UseCase_De
 import { DeleteAllDevicesCommand } from '../application/UseCases/Security/UseCase_DeleteAllSessionsExcludeCurrent';
 import { RefreshTokenGuard } from '../../../core/guards/refresh-token.guard';
 import { SessionViewDto } from './view-dto/session.view-dto';
+import { DeviceId } from '../../../core/decorators/device-id.decorator';
 
 @Controller('security')
 @UseGuards(RefreshTokenGuard)
@@ -25,7 +26,7 @@ export class SecurityController {
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Get()
+  @Get('devices')
   async getAllDevices(
     @RefreshToken() refreshToken: string,
     @CurrentUser() user: UserViewDto,
@@ -39,8 +40,13 @@ export class SecurityController {
   async terminateAllDevicesExceptCurrent(
     @RefreshToken() refreshToken: string,
     @CurrentUser() user: UserViewDto,
+    @DeviceId() deviceId: string,
   ) {
-    const command = new DeleteAllDevicesCommand(refreshToken, user.id);
+    const command = new DeleteAllDevicesCommand(
+      refreshToken,
+      user.id,
+      deviceId,
+    );
     await this.commandBus.execute(command);
   }
 
@@ -48,10 +54,16 @@ export class SecurityController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async terminateDeviceById(
     @RefreshToken() refreshToken: string,
-    @Param('deviceId') deviceId: string,
+    @Param('deviceId') deviceIdToDelete: string,
     @CurrentUser() user: UserViewDto,
+    @DeviceId() currentDeviceId: string,
   ) {
-    const command = new DeleteDeviceCommand(refreshToken, deviceId, user.id);
+    const command = new DeleteDeviceCommand(
+      refreshToken,
+      deviceIdToDelete,
+      user.id,
+      currentDeviceId,
+    );
     await this.commandBus.execute(command);
   }
 }
