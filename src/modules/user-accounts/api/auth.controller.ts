@@ -12,16 +12,13 @@ import type { Request, Response } from 'express';
 import { newPasswordDTO } from '../dto/auth_dto/new_password.dto';
 import { registrationUserDTO } from '../dto/auth_dto/registration.dto';
 import { codeDto } from '../dto/auth_dto/registration_confirmation.dto';
-import { AuthService } from '../application/auth/auth.service';
 import { LocalAuthGuard } from '../../../core/guards/local-auth.guard';
-import { JwtAuthGuard } from '../../../core/guards/jwt-auth.guard';
 import { TokensRepository } from '../infrastructure/tokens.repository';
 import { UserConfirmationService } from '../application/external/user-confirmation.service';
 import { UserViewDto } from './view-dto/users.view-dto';
 import { randomUUID } from 'crypto';
 import { CreateSessionDto } from '../dto/auth_dto/create-session.dto';
 import { HttpException, HttpCode, HttpStatus } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
 import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/UseCases/Auth/UseCase_RegisterUser';
 import { GenerateTokensCommand } from '../application/UseCases/Auth/UseCase_GenerateTokens';
@@ -30,6 +27,8 @@ import { CurrentUser } from '../../../core/decorators/current-user.decorator';
 import { RefreshTokensCommand } from '../application/UseCases/Auth/UseCase_RefreshTokens';
 import { RefreshTokenGuard } from '../../../core/guards/refresh-token.guard';
 import { LogoutCommand } from '../application/UseCases/Auth/UseCase_Logout';
+import { SimpleIpThrottlerGuard } from '../../../core/guards/simple-ip-throttler.guard';
+import { AccessTokenGuard } from '../../../core/guards/access-token.guard';
 
 export interface TokenType {
   accessToken: string;
@@ -39,14 +38,13 @@ export interface TokenType {
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
     private readonly confirmationService: UserConfirmationService,
     private readonly tokenRepository: TokensRepository,
     private readonly commandBus: CommandBus,
     private readonly eventBus: EventBus,
   ) {}
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(SimpleIpThrottlerGuard, LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(
@@ -79,6 +77,7 @@ export class AuthController {
     return { accessToken: tokens.accessToken };
   }
 
+  @UseGuards(SimpleIpThrottlerGuard)
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() body: registrationUserDTO): Promise<void> {
@@ -87,13 +86,13 @@ export class AuthController {
     );
   }
 
-  @Throttle({ default: { limit: 5, ttl: 10 } })
   @Post('password-recovery')
+  @UseGuards(SimpleIpThrottlerGuard)
   async password_recovery(@Body() dto: EmailDTO) {
     await this.confirmationService.sendRecoverPasswordCode(dto.email);
   }
 
-  @Throttle({ default: { limit: 5, ttl: 10 } })
+  @UseGuards(SimpleIpThrottlerGuard)
   @Post('new-password')
   async new_password(@Body() dto: newPasswordDTO): Promise<void> {
     await this.confirmationService.checkCodeRecoverPassword(
@@ -102,14 +101,14 @@ export class AuthController {
     );
   }
 
-  @Throttle({ default: { limit: 5, ttl: 10 } })
+  @UseGuards(SimpleIpThrottlerGuard)
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration_confirmation(@Body() dto: codeDto) {
     await this.confirmationService.checkCodeConfirmation(dto.code);
   }
 
-  @Throttle({ default: { limit: 5, ttl: 10 } })
+  @UseGuards(SimpleIpThrottlerGuard)
   @Post('registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration_email_resending(@Body() dto: EmailDTO) {
@@ -117,10 +116,14 @@ export class AuthController {
   }
 
   @Get('me')
-  @UseGuards(RefreshTokenGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  getMe(@Req() req: Request) {
-    return req.user;
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  getMe(@CurrentUser() user: UserViewDto) {
+    return {
+      email: user.email,
+      login: user.login,
+      userId: user.id,
+    };
   }
 
   @Post('logout')

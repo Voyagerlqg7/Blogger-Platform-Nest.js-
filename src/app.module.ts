@@ -4,7 +4,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserAccountsModule } from './modules/user-accounts/user-accounts.module';
 import { BloggerPlatform } from './modules/blogger-platform/blogger-platform.module';
 import { TestingModule } from './testing/testing.module';
-import { ThrottlerModule } from '@nestjs/throttler';
 import { AppService } from './app.service';
 import { APP_FILTER } from '@nestjs/core';
 import { AllHttpExceptionsFilter } from './core/exceptions/filters/all-exceptions';
@@ -14,14 +13,6 @@ import { AppController } from './app.controller';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          ttl: 10,
-          limit: 5,
-        },
-      ],
-    }),
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
