@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { User } from '../domain/user.entity';
-import type { UserModelType } from '../domain/user.entity';
+import { User } from '../domain/Mongo/user.mongo.entity';
+import type { UserModelType } from '../domain/Mongo/user.mongo.entity';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { UserViewDto } from '../api/view-dto/users.view-dto';
 import { PasswordService } from './external/password.service';

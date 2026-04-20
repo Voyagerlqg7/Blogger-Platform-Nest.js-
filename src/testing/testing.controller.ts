@@ -5,35 +5,35 @@ import { Model } from 'mongoose';
 import {
   Blog,
   BlogDocument,
-} from '../modules/blogger-platform/blogs/domain/blogs.entity';
+} from '../modules/blogger-platform/blogs/domain/Mongo/blogs.mongo.entity';
 import {
   Post,
   PostDocument,
-} from '../modules/blogger-platform/posts/domain/posts.entity';
+} from '../modules/blogger-platform/posts/domain/Mongo/posts.mongo.entity';
 import {
   User,
   UserDocument,
-} from '../modules/user-accounts/domain/user.entity';
+} from '../modules/user-accounts/domain/Mongo/user.mongo.entity';
 import {
   Comment,
   CommentDocument,
-} from '../modules/blogger-platform/comments/domain/comment.entity';
+} from '../modules/blogger-platform/comments/domain/Mongo/comment.mongo.entity';
 import {
   PostLikes,
   PostLikeDocument,
-} from '../modules/blogger-platform/posts/domain/post-likes.entity';
+} from '../modules/blogger-platform/posts/domain/Mongo/post-likes.mongo.entity';
 import {
   CommentLike,
   CommentLikeDocument,
-} from '../modules/blogger-platform/comments/domain/Schema/commentatorLikeInfo.schema';
+} from '../modules/blogger-platform/comments/domain/Mongo/Schema/commentatorLikeInfo.schema';
 import {
   Token,
   TokenDocument,
-} from '../modules/user-accounts/domain/token.entity';
+} from '../modules/user-accounts/domain/Mongo/token.mongo.entity';
 import {
   Session,
   SessionDocument,
-} from '../modules/user-accounts/domain/session.entity';
+} from '../modules/user-accounts/domain/Mongo/session.mongo.entity';
 
 @Controller('testing')
 export class TestingController {

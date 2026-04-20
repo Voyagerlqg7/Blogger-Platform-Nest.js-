@@ -1,12 +1,12 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { QueryFilter } from 'mongoose';
-import type { CommentModelType } from '../../domain/comment.entity';
+import type { CommentModelType } from '../../domain/Mongo/comment.mongo.entity';
 import { LikesInfoViewDto } from '../../api/view-dto/comments-likes.view-dto';
-import { CommentLike } from '../../domain/Schema/commentatorLikeInfo.schema';
-import type { CommentLikeModelType } from '../../domain/Schema/commentatorLikeInfo.schema';
-import { LikeStatus } from '../../../posts/domain/post-likes.entity';
-import { CommentDocument, Comment } from '../../domain/comment.entity';
+import { CommentLike } from '../../domain/Mongo/Schema/commentatorLikeInfo.schema';
+import type { CommentLikeModelType } from '../../domain/Mongo/Schema/commentatorLikeInfo.schema';
+import { LikeStatus } from '../../../posts/domain/Mongo/post-likes.mongo.entity';
+import { CommentDocument, Comment } from '../../domain/Mongo/comment.mongo.entity';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 
 @Injectable()

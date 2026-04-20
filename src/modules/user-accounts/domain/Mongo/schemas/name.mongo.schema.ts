@@ -11,4 +11,4 @@ export class Name {
   lastName: string;
 }
 
-export const NameSchema = SchemaFactory.createForClass(Name);
+export const NameMongoSchema = SchemaFactory.createForClass(Name);

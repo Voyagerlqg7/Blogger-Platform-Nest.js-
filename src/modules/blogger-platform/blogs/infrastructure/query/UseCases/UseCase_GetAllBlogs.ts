@@ -4,7 +4,7 @@ import { BlogsViewDto } from '../../../api/view-dto/blogs.view-dto';
 import { GetBlogsQueryParams } from '../../../api/input-dto/get-blogs-query-params.input-dto';
 import { PaginatedViewDto } from '../../../../../../core/dto/base.paginated.view-dto';
 import { QueryFilter } from 'mongoose';
-import { BlogDocument } from '../../../domain/blogs.entity';
+import { BlogDocument } from '../../../domain/Mongo/blogs.mongo.entity';
 import { SortDirection } from '../../../../../../core/dto/base.query-params.input-dto';
 
 export class GetAllBlogsQuery {

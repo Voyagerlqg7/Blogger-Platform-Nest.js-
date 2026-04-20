@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentsRepository } from '../../infrastructure/comments.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { CommentLike } from '../../domain/Schema/commentatorLikeInfo.schema';
-import type { CommentLikeModelType } from '../../domain/Schema/commentatorLikeInfo.schema';
-import { LikeStatus } from '../../domain/Schema/commentatorLikeInfo.schema';
+import { CommentLike } from '../../domain/Mongo/Schema/commentatorLikeInfo.schema';
+import type { CommentLikeModelType } from '../../domain/Mongo/Schema/commentatorLikeInfo.schema';
+import { LikeStatus } from '../../domain/Mongo/Schema/commentatorLikeInfo.schema';
 
 export class UpdateCommentLikeStatusCommand {
   constructor(

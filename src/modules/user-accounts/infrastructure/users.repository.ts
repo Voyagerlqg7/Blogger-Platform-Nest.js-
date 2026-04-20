@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../domain/user.entity';
-import type { UserModelType } from '../domain/user.entity';
+import { User, UserDocument } from '../domain/Mongo/user.mongo.entity';
+import type { UserModelType } from '../domain/Mongo/user.mongo.entity';
 import { Injectable } from '@nestjs/common';
 import { DomainException } from '../../../core/exceptions/domain-exceptions';
 import { Types } from 'mongoose';

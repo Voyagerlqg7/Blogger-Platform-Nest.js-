@@ -1,12 +1,12 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
-import type { CommentModelType } from '../domain/comment.entity';
-import { CommentDocument, Comment } from '../domain/comment.entity';
+import type { CommentModelType } from '../domain/Mongo/comment.mongo.entity';
+import { CommentDocument, Comment } from '../domain/Mongo/comment.mongo.entity';
 import { Types } from 'mongoose';
-import { CommentLike } from '../domain/Schema/commentatorLikeInfo.schema';
-import type { CommentLikeModelType } from '../domain/Schema/commentatorLikeInfo.schema';
-import { CommentLikeDocument } from '../domain/Schema/commentatorLikeInfo.schema';
+import { CommentLike } from '../domain/Mongo/Schema/commentatorLikeInfo.schema';
+import type { CommentLikeModelType } from '../domain/Mongo/Schema/commentatorLikeInfo.schema';
+import { CommentLikeDocument } from '../domain/Mongo/Schema/commentatorLikeInfo.schema';
 
 @Injectable()
 export class CommentsRepository {
@@ -47,14 +47,4 @@ export class CommentsRepository {
     await commentLike.save();
   }
 
-  async updateCommentLikeStatus(
-    commentId: string,
-    userId: string,
-    newStatus: string,
-  ): Promise<void> {
-    await this.commentLikeModel.updateOne(
-      { commentId, userId },
-      { status: newStatus },
-    );
-  }
 }

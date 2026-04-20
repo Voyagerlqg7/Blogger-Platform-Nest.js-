@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { Token, TokenDocument } from '../domain/token.entity';
-import type { TokenModelType } from '../domain/token.entity';
+import { Token, TokenDocument } from '../domain/Mongo/token.mongo.entity';
+import type { TokenModelType } from '../domain/Mongo/token.mongo.entity';
 import { DomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()

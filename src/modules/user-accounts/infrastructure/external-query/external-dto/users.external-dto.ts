@@ -1,4 +1,4 @@
-import { UserDocument } from '../../../domain/user.entity';
+import { UserDocument } from '../../../domain/Mongo/user.mongo.entity';
 
 export class UserExternalDto {
   id: string;

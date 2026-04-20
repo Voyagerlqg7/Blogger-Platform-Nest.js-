@@ -1,7 +1,7 @@
 import { BlogsRepository } from '../../infrastructure/blogs.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog } from '../../domain/blogs.entity';
-import type { BlogModelType } from '../../domain/blogs.entity';
+import { Blog } from '../../domain/Mongo/blogs.mongo.entity';
+import type { BlogModelType } from '../../domain/Mongo/blogs.mongo.entity';
 import { CreateBlogDto } from '../../dto/create-blog.dto';
 import { BlogsViewDto } from '../../api/view-dto/blogs.view-dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';

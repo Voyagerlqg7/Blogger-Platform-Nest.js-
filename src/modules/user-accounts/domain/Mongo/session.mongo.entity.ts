@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { CreateSessionDto } from '../dto/auth_dto/create-session.dto';
+import { CreateSessionDto } from '../../dto/auth_dto/create-session.dto';
 
 @Schema({ timestamps: true })
 export class Session {

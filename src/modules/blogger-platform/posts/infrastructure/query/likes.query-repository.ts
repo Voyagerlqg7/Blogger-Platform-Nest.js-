@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PostLikes, PostLikeDocument } from '../../domain/post-likes.entity';
-import { LikeStatus } from '../../domain/post-likes.entity';
+import { PostLikes, PostLikeDocument } from '../../domain/Mongo/post-likes.mongo.entity';
+import { LikeStatus } from '../../domain/Mongo/post-likes.mongo.entity';
 import { ExtendedLikesInfoView } from '../../api/view-dto/post-likes.view-dto';
 
 @Injectable()

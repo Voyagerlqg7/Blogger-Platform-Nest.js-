@@ -1,4 +1,4 @@
-import { BlogDocument } from '../../domain/blogs.entity';
+import { BlogDocument } from '../../domain/Mongo/blogs.mongo.entity';
 
 export class BlogsViewDto {
   id: string;

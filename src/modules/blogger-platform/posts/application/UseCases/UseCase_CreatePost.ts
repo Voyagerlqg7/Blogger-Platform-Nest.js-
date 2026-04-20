@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { CreatePostDto } from '../../dto/create-post.dto';
-import { Post } from '../../domain/posts.entity';
-import type { PostModelType } from '../../domain/posts.entity';
+import { Post } from '../../domain/Mongo/posts.mongo.entity';
+import type { PostModelType } from '../../domain/Mongo/posts.mongo.entity';
 import { PostsRepository } from '../../infrastructure/posts.repository';
 import { PostsViewDto } from '../../api/view-dto/posts.view-dto';
 import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';

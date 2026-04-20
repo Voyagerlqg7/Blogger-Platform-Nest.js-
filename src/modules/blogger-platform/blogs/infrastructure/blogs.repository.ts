@@ -1,8 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Blog, BlogDocument } from '../domain/blogs.entity';
-import type { BlogModelType } from '../domain/blogs.entity';
+import { Blog, BlogDocument } from '../domain/Mongo/blogs.mongo.entity';
+import type { BlogModelType } from '../domain/Mongo/blogs.mongo.entity';
 import { Injectable } from '@nestjs/common';
-import { PostDocument } from '../../posts/domain/posts.entity';
+import { PostDocument } from '../../posts/domain/Mongo/posts.mongo.entity';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { Types } from 'mongoose';
 

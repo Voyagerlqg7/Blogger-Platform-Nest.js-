@@ -1,61 +1,23 @@
-import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model } from 'mongoose';
-import { CreateUserDomainDto } from './dto/create-user.domain.dto';
-import { Name, NameSchema } from './schemas/name.schema';
-import {
-  EmailConfirmationSchema,
-  EmailConfirmation,
-} from './schemas/email-confirmation.schema';
-import {
-  RecoverPasswordInfo,
-  RecoverPasswordInfoSchema,
-} from './schemas/recover-password.schema';
-import { DomainException } from '../../../core/exceptions/domain-exceptions';
+import { EmailConfirmationEntity } from './email.confirmation.entity';
+import { PasswordRecoverEntity } from './password.recover.entity';
+import { DomainException } from '../../../exceptions/domain-exceptions';
 
-@Schema({ timestamps: true })
 export class User {
-  @Prop({ type: String, required: true })
-  login: string;
-  @Prop({ type: String, required: true })
-  passwordHash: string;
-  @Prop({ type: String, required: true })
-  passwordSalt: string;
-  @Prop({ type: String, required: true })
-  email: string;
-  @Prop({ type: NameSchema })
-  name: Name;
-  createdAt: Date;
-  @Prop({ type: Date, nullable: true })
-  deletedAt: Date | null;
-
-  @Prop({ type: EmailConfirmationSchema, required: false })
-  emailConfirmation: EmailConfirmation;
-
-  @Prop({ type: RecoverPasswordInfoSchema, required: false })
-  recoverPasswordInfo: RecoverPasswordInfo;
-
-  static createInstance(
-    this: UserModelType,
-    dto: CreateUserDomainDto,
-  ): UserDocument {
-    const user = new this({
-      login: dto.login,
-      email: dto.email,
-      passwordHash: dto.passwordHash,
-      passwordSalt: dto.passwordSalt,
-    });
-
-    user.emailConfirmation = {
-      confirmationCode: null,
-      expiresAt: null,
-      isConfirmed: dto.isConfirmed,
-    };
-
-    return user;
-  }
+  constructor(
+    private readonly id: string,
+    private login: string,
+    private email: string,
+    private passwordHash: string,
+    private passwordSalt: string,
+    private createdAt: Date,
+    private updatedAt: Date,
+    private deleteAt: Date,
+    private emailConfirmation: EmailConfirmationEntity,
+    private recoverPasswordInfo: PasswordRecoverEntity,
+  ) {}
 
   makeDeleted(): void {
-    this.deletedAt = new Date();
+    this.deleteAt = new Date();
   }
 
   confirmEmail(code: string): void {
@@ -129,11 +91,3 @@ export class User {
     this.passwordSalt = new_passwordSalt;
   }
 }
-
-export const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.loadClass(User);
-export type UserDocument = HydratedDocument<User>;
-export type UserModelType = Model<User> & {
-  createInstance(dto: CreateUserDomainDto): UserDocument;
-};

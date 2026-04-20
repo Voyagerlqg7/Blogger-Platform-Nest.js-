@@ -1,9 +1,9 @@
 import { BlogsRepository } from '../../infrastructure/blogs.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import type { PostModelType } from '../../../posts/domain/posts.entity';
+import type { PostModelType } from '../../../posts/domain/Mongo/posts.mongo.entity';
 import { CreatePostForBlogDto } from '../../dto/create-post-for-blog.dto';
 import { PostsViewDto } from '../../../posts/api/view-dto/posts.view-dto';
-import { Post } from '../../../posts/domain/posts.entity';
+import { Post } from '../../../posts/domain/Mongo/posts.mongo.entity';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { LikesQueryRepository } from '../../../posts/infrastructure/query/likes.query-repository';

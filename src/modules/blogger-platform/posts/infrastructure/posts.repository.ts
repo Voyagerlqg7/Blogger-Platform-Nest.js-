@@ -1,11 +1,11 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostDocument } from '../domain/posts.entity';
+import { Post, PostDocument } from '../domain/Mongo/posts.mongo.entity';
 import { Injectable } from '@nestjs/common';
 import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 import { Types } from 'mongoose';
-import type { PostLikeModelType } from '../domain/post-likes.entity';
-import type { PostModelType } from '../domain/posts.entity';
-import { PostLikes, PostLikeDocument } from '../domain/post-likes.entity';
+import type { PostLikeModelType } from '../domain/Mongo/post-likes.mongo.entity';
+import type { PostModelType } from '../domain/Mongo/posts.mongo.entity';
+import { PostLikes, PostLikeDocument } from '../domain/Mongo/post-likes.mongo.entity';
 
 @Injectable()
 export class PostsRepository {

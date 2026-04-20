@@ -7,8 +7,8 @@ import {
   DomainException,
   Extension,
 } from '../../../../../core/exceptions/domain-exceptions';
-import type { UserModelType } from '../../../domain/user.entity';
-import { User } from '../../../domain/user.entity';
+import type { UserModelType } from '../../../domain/Mongo/user.mongo.entity';
+import { User } from '../../../domain/Mongo/user.mongo.entity';
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 import { UserCreatedEvent } from '../../Events/SendConfirmationMessage';
 

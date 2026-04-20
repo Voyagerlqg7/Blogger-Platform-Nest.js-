@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, QueryFilter } from 'mongoose';
-import { PostDocument, Post } from '../../domain/posts.entity';
+import { PostDocument, Post } from '../../domain/Mongo/posts.mongo.entity';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 
 @Injectable()

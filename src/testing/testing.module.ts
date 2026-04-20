@@ -5,32 +5,32 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   Blog,
   BlogSchema,
-} from '../modules/blogger-platform/blogs/domain/blogs.entity';
+} from '../modules/blogger-platform/blogs/domain/Mongo/blogs.mongo.entity';
 import {
   Post,
   PostSchema,
-} from '../modules/blogger-platform/posts/domain/posts.entity';
+} from '../modules/blogger-platform/posts/domain/Mongo/posts.mongo.entity';
 import {
   PostLikes,
   PostLikeSchema,
-} from '../modules/blogger-platform/posts/domain/post-likes.entity';
+} from '../modules/blogger-platform/posts/domain/Mongo/post-likes.mongo.entity';
 import {
   Comment,
   CommentSchema,
-} from '../modules/blogger-platform/comments/domain/comment.entity';
+} from '../modules/blogger-platform/comments/domain/Mongo/comment.mongo.entity';
 import {
   CommentLike,
   CommentLikeSchema,
-} from '../modules/blogger-platform/comments/domain/Schema/commentatorLikeInfo.schema';
-import { User, UserSchema } from '../modules/user-accounts/domain/user.entity';
+} from '../modules/blogger-platform/comments/domain/Mongo/Schema/commentatorLikeInfo.schema';
+import { User, UserSchema } from '../modules/user-accounts/domain/Mongo/user.mongo.entity';
 import {
   Token,
   TokenSchema,
-} from '../modules/user-accounts/domain/token.entity';
+} from '../modules/user-accounts/domain/Mongo/token.mongo.entity';
 import {
   Session,
   SessionSchema,
-} from '../modules/user-accounts/domain/session.entity';
+} from '../modules/user-accounts/domain/Mongo/session.mongo.entity';
 
 @Module({
   imports: [

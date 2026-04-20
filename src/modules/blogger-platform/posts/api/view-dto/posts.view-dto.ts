@@ -1,5 +1,5 @@
 import { ExtendedLikesInfoView } from './post-likes.view-dto';
-import { PostDocument } from '../../domain/posts.entity';
+import { PostDocument } from '../../domain/Mongo/posts.mongo.entity';
 
 export class PostsViewDto {
   id: string;

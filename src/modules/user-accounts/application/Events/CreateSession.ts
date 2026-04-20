@@ -1,7 +1,7 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { SessionRepository } from '../../infrastructure/sessions.repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { Session, type SessionModelType } from '../../domain/session.entity';
+import { Session, type SessionModelType } from '../../domain/Mongo/session.mongo.entity';
 import { CreateSessionDto } from '../../dto/auth_dto/create-session.dto';
 
 export class UserLoggedInEvent {

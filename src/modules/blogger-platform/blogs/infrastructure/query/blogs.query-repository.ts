@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { QueryFilter } from 'mongoose';
-import { Blog, BlogDocument } from '../../domain/blogs.entity';
-import type { BlogModelType } from '../../domain/blogs.entity';
+import { Blog, BlogDocument } from '../../domain/Mongo/blogs.mongo.entity';
+import type { BlogModelType } from '../../domain/Mongo/blogs.mongo.entity';
 import { PaginatedViewDto } from '../../../../../core/dto/base.paginated.view-dto';
 import { PostsViewDto } from '../../../posts/api/view-dto/posts.view-dto';
 import { GetPostsQueryParams } from '../../../posts/api/input-dto/get-posts-query-params.input-dto';
@@ -10,8 +10,8 @@ import { SortDirection } from '../../../../../core/dto/base.query-params.input-d
 import type {
   PostModelType,
   PostDocument,
-} from '../../../posts/domain/posts.entity';
-import { Post } from '../../../posts/domain/posts.entity';
+} from '../../../posts/domain/Mongo/posts.mongo.entity';
+import { Post } from '../../../posts/domain/Mongo/posts.mongo.entity';
 import { LikesQueryRepository } from '../../../posts/infrastructure/query/likes.query-repository';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 

@@ -1,4 +1,4 @@
-import { CommentDocument } from '../../domain/comment.entity';
+import { CommentDocument } from '../../domain/Mongo/comment.mongo.entity';
 import { LikesInfoViewDto } from './comments-likes.view-dto';
 
 export class CommentsViewDto {

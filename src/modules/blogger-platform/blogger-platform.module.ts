@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CqrsModule } from '@nestjs/cqrs';
-import { Blog, BlogSchema } from './blogs/domain/blogs.entity';
-import { Post, PostSchema } from './posts/domain/posts.entity';
-import { Comment, CommentSchema } from './comments/domain/comment.entity';
+import { Blog, BlogSchema } from './blogs/domain/Mongo/blogs.mongo.entity';
+import { Post, PostSchema } from './posts/domain/Mongo/posts.mongo.entity';
+import { Comment, CommentSchema } from './comments/domain/Mongo/comment.mongo.entity';
 import { CommentsController } from './comments/api/comments.controller';
-import { PostLikes, PostLikeSchema } from './posts/domain/post-likes.entity';
+import { PostLikes, PostLikeSchema } from './posts/domain/Mongo/post-likes.mongo.entity';
 import { BlogsController } from './blogs/api/blogs.controller';
 import { PostsController } from './posts/api/posts.controller';
 import { BlogService } from './blogs/application/blog.service';
@@ -20,7 +20,7 @@ import { bloggerPlatformUseCases } from './blogger-platfrom.all-use-cases';
 import {
   CommentLike,
   CommentLikeSchema,
-} from './comments/domain/Schema/commentatorLikeInfo.schema';
+} from './comments/domain/Mongo/Schema/commentatorLikeInfo.schema';
 import { CommentsRepository } from './comments/infrastructure/comments.repository';
 import { LikesQueryRepository } from './posts/infrastructure/query/likes.query-repository';
 

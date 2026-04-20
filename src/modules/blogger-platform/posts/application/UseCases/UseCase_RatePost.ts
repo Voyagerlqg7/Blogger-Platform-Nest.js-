@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
 import { PostsRepository } from '../../infrastructure/posts.repository';
-import type { PostLikeModelType } from '../../domain/post-likes.entity';
-import { PostLikes } from '../../domain/post-likes.entity';
-import { LikeStatus } from '../../domain/post-likes.entity';
+import type { PostLikeModelType } from '../../domain/Mongo/post-likes.mongo.entity';
+import { PostLikes } from '../../domain/Mongo/post-likes.mongo.entity';
+import { LikeStatus } from '../../domain/Mongo/post-likes.mongo.entity';
 
 export class UpdatePostLikeStatusCommand {
   constructor(

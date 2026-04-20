@@ -1,4 +1,4 @@
-import { SessionDocument } from '../../domain/session.entity';
+import { SessionDocument } from '../../domain/Mongo/session.mongo.entity';
 
 export class SessionViewDto {
   ip: string;

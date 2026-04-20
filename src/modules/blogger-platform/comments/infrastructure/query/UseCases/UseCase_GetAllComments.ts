@@ -5,7 +5,7 @@ import { SortDirection } from '../../../../../../core/dto/base.query-params.inpu
 import { GetCommentsQueryParams } from '../../../api/input-dto/get-comments-query-params.input-dto';
 import { CommentsViewDto } from '../../../api/view-dto/comments.view-dto';
 import { CommentsQueryRepository } from '../comments.query-repository';
-import { CommentDocument } from '../../../domain/comment.entity';
+import { CommentDocument } from '../../../domain/Mongo/comment.mongo.entity';
 import { PostsQueryRepository } from '../../../../posts/infrastructure/query/posts.query-repository';
 import { DomainException } from '../../../../../../core/exceptions/domain-exceptions';
 

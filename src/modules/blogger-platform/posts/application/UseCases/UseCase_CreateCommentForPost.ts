@@ -3,9 +3,9 @@ import { CreateCommentDto } from '../../dto/create-comment.dto';
 import { PostsRepository } from '../../infrastructure/posts.repository';
 import { CommentsRepository } from '../../../comments/infrastructure/comments.repository';
 import { CommentsViewDto } from '../../../comments/api/view-dto/comments.view-dto';
-import { Comment } from '../../../comments/domain/comment.entity';
+import { Comment } from '../../../comments/domain/Mongo/comment.mongo.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import type { CommentModelType } from '../../../comments/domain/comment.entity';
+import type { CommentModelType } from '../../../comments/domain/Mongo/comment.mongo.entity';
 import { UserViewDto } from '../../../../user-accounts/api/view-dto/users.view-dto';
 import { CommentsQueryRepository } from '../../../comments/infrastructure/query/comments.query-repository';
 
