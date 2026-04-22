@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { SessionViewDto } from '../../../api/view-dto/session.view-dto';
-import { SessionRepository } from '../../../infrastructure/sessions.repository';
+import { SessionRepository } from '../../../infrastructure/sessions.mongo.repository';
 
 export class GetAllDevicesQuery {
   constructor(

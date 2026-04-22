@@ -2,13 +2,13 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { DomainException } from '../exceptions/domain-exceptions';
-import { UsersRepository } from '../../modules/user-accounts/infrastructure/users.repository';
+import { UsersMongoRepository } from '../../modules/user-accounts/infrastructure/users.mongo.repository';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private usersRepository: UsersRepository,
+    private usersRepository: UsersMongoRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

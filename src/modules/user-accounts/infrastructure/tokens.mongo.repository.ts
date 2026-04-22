@@ -5,7 +5,7 @@ import type { TokenModelType } from '../domain/Mongo/token.mongo.entity';
 import { DomainException } from '../../../core/exceptions/domain-exceptions';
 
 @Injectable()
-export class TokensRepository {
+export class TokensMongoRepository {
   constructor(@InjectModel(Token.name) private tokenModel: TokenModelType) {}
 
   async findToken(token: string): Promise<TokenDocument> {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../../../infrastructure/users.repository';
+import { UsersMongoRepository } from '../../../infrastructure/users.mongo.repository';
 import { PasswordService } from '../../external/password.service';
 import {
   DomainException,
@@ -10,7 +10,7 @@ import {
 export class UseCase_CheckRecoverCodePassword {
   constructor(
     private readonly passwordService: PasswordService,
-    private readonly userRepository: UsersRepository,
+    private readonly userRepository: UsersMongoRepository,
   ) {}
 
   async execute(code: string, new_password: string): Promise<boolean> {

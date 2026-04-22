@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../../../infrastructure/users.repository';
+import { UsersMongoRepository } from '../../../infrastructure/users.mongo.repository';
 import {
   DomainException,
   Extension,
@@ -7,7 +7,7 @@ import {
 
 @Injectable()
 export class UseCase_CheckEmailCodeConfirmation {
-  constructor(private readonly userRepository: UsersRepository,
+  constructor(private readonly userRepository: UsersMongoRepository,
   ) {}
 
   async execute(code: string): Promise<boolean> {

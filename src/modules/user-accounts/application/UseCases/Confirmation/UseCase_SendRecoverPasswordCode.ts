@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EmailService } from '../../external/email.service';
-import { UsersRepository } from '../../../infrastructure/users.repository';
+import { UsersMongoRepository } from '../../../infrastructure/users.mongo.repository';
 import { randomUUID } from 'crypto';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 
@@ -8,7 +8,7 @@ import { DomainException } from '../../../../../core/exceptions/domain-exception
 export class UseCase_SendRecoverPasswordCode {
   constructor(
     private readonly emailService: EmailService,
-    private readonly userRepository: UsersRepository,
+    private readonly userRepository: UsersMongoRepository,
   ) {}
 
   async execute(email: string): Promise<void> {

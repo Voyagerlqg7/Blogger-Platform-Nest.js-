@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { TokensRepository } from '../../../infrastructure/tokens.repository';
-import { SessionRepository } from '../../../infrastructure/sessions.repository';
+import { TokensMongoRepository } from '../../../infrastructure/tokens.mongo.repository';
+import { SessionRepository } from '../../../infrastructure/sessions.mongo.repository';
 import { JwtPayload } from '../../auth/payload/JwtPayload';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -16,7 +16,7 @@ export class LogoutCommand {
 @CommandHandler(LogoutCommand)
 export class UseCase_Logout implements ICommandHandler<LogoutCommand, void> {
   constructor(
-    private readonly tokenRepository: TokensRepository,
+    private readonly tokenRepository: TokensMongoRepository,
     private readonly sessionRepository: SessionRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,

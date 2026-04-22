@@ -1,5 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { UsersRepository } from '../../../infrastructure/users.repository';
+import { UsersMongoRepository } from '../../../infrastructure/users.mongo.repository';
 import { PasswordService } from '../../external/password.service';
 import { registrationUserDTO } from '../../../dto/auth_dto/registration.dto';
 import { UserViewDto } from '../../../api/view-dto/users.view-dto';
@@ -21,7 +21,7 @@ export class UseCase_RegisterUser
   implements ICommandHandler<CreateUserCommand, UserViewDto>
 {
   constructor(
-    private usersRepository: UsersRepository,
+    private usersRepository: UsersMongoRepository,
     private passwordService: PasswordService,
     @InjectModel(User.name)
     private readonly userModel: UserModelType,

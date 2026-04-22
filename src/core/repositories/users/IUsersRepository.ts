@@ -1,13 +1,17 @@
-import { User } from '../../entities/user layer/user/user.entity';
+import { User as DomainUser } from '../../entities/user layer/user/user.entity';
 
 export interface IUsersRepository {
-  findById(id: string): Promise<User | null>;
+  findById(id: string): Promise<DomainUser | null>;
 
-  findOrNotFoundFail(id: string): Promise<User>;
+  findOrNotFoundFail(id: string): Promise<DomainUser>;
 
-  findByLoginOrEmail(loginOrEmail: string): Promise<User | null>;
+  findByLoginOrEmail(loginOrEmail: string): Promise<DomainUser | null>;
 
-  findByCodeConfirmation(confirmationCode: string): Promise<User | null>;
+  findByCodeConfirmation(confirmationCode: string): Promise<DomainUser | null>;
 
-  findByRecoverPasswordCode(recover_code: string): Promise<User | null>;
+  findByRecoverPasswordCode(recoverCode: string): Promise<DomainUser | null>;
+
+  save(domainUser: DomainUser): Promise<void>;
+
+  create(domainUser: DomainUser): Promise<void>;
 }

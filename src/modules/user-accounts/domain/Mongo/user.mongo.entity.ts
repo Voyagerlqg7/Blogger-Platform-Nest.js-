@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { CreateUserDomainDto } from './dto/create-user.domain.dto';
+import { CreateUserDomainDto } from '../dto/create-user.domain.dto';
 import { Name, NameMongoSchema } from './schemas/name.mongo.schema';
 import {
   EmailConfirmationMongoSchema,

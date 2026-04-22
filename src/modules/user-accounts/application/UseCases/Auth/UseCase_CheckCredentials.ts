@@ -1,13 +1,13 @@
 import { PasswordService } from '../../external/password.service';
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../../../infrastructure/users.repository';
+import { UsersMongoRepository } from '../../../infrastructure/users.mongo.repository';
 import { UserViewDto } from '../../../api/view-dto/users.view-dto';
 
 @Injectable()
 export class UseCase_CheckCredentials {
   constructor(
     private readonly passwordService: PasswordService,
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: UsersMongoRepository,
   ) {}
 
   async execute(

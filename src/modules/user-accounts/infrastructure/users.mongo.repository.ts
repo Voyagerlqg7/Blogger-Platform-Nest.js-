@@ -6,7 +6,7 @@ import { DomainException } from '../../../core/exceptions/domain-exceptions';
 import { Types } from 'mongoose';
 
 @Injectable()
-export class UsersRepository {
+export class UsersMongoRepository {
   constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
 
   async findById(id: string): Promise<UserDocument | null> {

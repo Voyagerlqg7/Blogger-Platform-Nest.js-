@@ -7,8 +7,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './domain/Mongo/user.mongo.entity';
 import { Session, SessionSchema } from './domain/Mongo/session.mongo.entity';
 import { UsersQueryRepository } from './infrastructure/query/users.query-repository';
-import { UsersRepository } from './infrastructure/users.repository';
-import { SessionRepository } from './infrastructure/sessions.repository';
+import { UsersMongoRepository } from './infrastructure/users.mongo.repository';
+import { SessionRepository } from './infrastructure/sessions.mongo.repository';
 import { AuthController } from './api/auth.controller';
 import { JwtStrategy } from '../../core/guards/strategy/jwt.strategy';
 import { LocalStrategy } from '../../core/guards/strategy/local.strategy';
@@ -16,7 +16,7 @@ import { PasswordService } from './application/external/password.service';
 import { AuthService } from './application/auth/auth.service';
 import { EmailService } from './application/external/email.service';
 import { UserConfirmationService } from './application/external/user-confirmation.service';
-import { TokensRepository } from './infrastructure/tokens.repository';
+import { TokensMongoRepository } from './infrastructure/tokens.mongo.repository';
 import { Token, TokenSchema } from './domain/Mongo/token.mongo.entity';
 import { BasicStrategy } from '../../core/guards/strategy/basic.strategy';
 import { APP_FILTER } from '@nestjs/core';
@@ -57,8 +57,8 @@ import { SecurityController } from './api/security-devices.controller';
     },
     UsersService,
     UsersQueryRepository,
-    TokensRepository,
-    UsersRepository,
+    TokensMongoRepository,
+    UsersMongoRepository,
     SessionRepository,
     JwtStrategy,
     LocalStrategy,
@@ -72,10 +72,10 @@ import { SecurityController } from './api/security-devices.controller';
   ],
   exports: [
     UsersService,
-    UsersRepository,
+    UsersMongoRepository,
     UsersQueryRepository,
     SessionRepository,
-    TokensRepository,
+    TokensMongoRepository,
     PasswordService,
     JwtModule,
     ...userAccountsEvents,

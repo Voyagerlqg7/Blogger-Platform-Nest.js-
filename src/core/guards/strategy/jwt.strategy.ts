@@ -1,7 +1,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../../../modules/user-accounts/infrastructure/users.repository';
+import { UsersMongoRepository } from '../../../modules/user-accounts/infrastructure/users.mongo.repository';
 import { UserViewDto } from '../../../modules/user-accounts/api/view-dto/users.view-dto';
 import { JwtPayload } from '../../../modules/user-accounts/application/auth/payload/JwtPayload';
 import { DomainException } from '../../exceptions/domain-exceptions';
@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: UsersMongoRepository,
     private readonly configService: ConfigService,
   ) {
     super({

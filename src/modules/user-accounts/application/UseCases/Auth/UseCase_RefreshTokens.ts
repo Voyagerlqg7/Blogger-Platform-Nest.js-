@@ -3,8 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CommandHandler, ICommandHandler, CommandBus } from '@nestjs/cqrs';
 import { GenerateTokensCommand } from './UseCase_GenerateTokens';
-import { TokensRepository } from '../../../infrastructure/tokens.repository';
-import { SessionRepository } from '../../../infrastructure/sessions.repository';
+import { TokensMongoRepository } from '../../../infrastructure/tokens.mongo.repository';
+import { SessionRepository } from '../../../infrastructure/sessions.mongo.repository';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 
 export class RefreshTokensCommand {
@@ -23,7 +23,7 @@ export class UseCase_RefreshTokens
     private readonly commandBus: CommandBus,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly tokenRepository: TokensRepository,
+    private readonly tokenRepository: TokensMongoRepository,
     private readonly sessionRepository: SessionRepository,
   ) {}
 

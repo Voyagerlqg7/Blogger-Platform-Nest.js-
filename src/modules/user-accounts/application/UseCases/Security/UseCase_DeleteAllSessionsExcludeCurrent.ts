@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
-import { TokensRepository } from '../../../infrastructure/tokens.repository';
-import { SessionRepository } from '../../../infrastructure/sessions.repository';
+import { TokensMongoRepository } from '../../../infrastructure/tokens.mongo.repository';
+import { SessionRepository } from '../../../infrastructure/sessions.mongo.repository';
 
 export class DeleteAllDevicesCommand {
   constructor(
@@ -16,7 +16,7 @@ export class UseCase_DeleteAllDevices
   implements ICommandHandler<DeleteAllDevicesCommand, void>
 {
   constructor(
-    private readonly tokenRepository: TokensRepository,
+    private readonly tokenRepository: TokensMongoRepository,
     private readonly sessionRepository: SessionRepository,
   ) {}
 

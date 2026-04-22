@@ -13,11 +13,11 @@ import { newPasswordDTO } from '../dto/auth_dto/new_password.dto';
 import { registrationUserDTO } from '../dto/auth_dto/registration.dto';
 import { codeDto } from '../dto/auth_dto/registration_confirmation.dto';
 import { LocalAuthGuard } from '../../../core/guards/local-auth.guard';
-import { TokensRepository } from '../infrastructure/tokens.repository';
+import { TokensMongoRepository } from '../infrastructure/tokens.mongo.repository';
 import { UserConfirmationService } from '../application/external/user-confirmation.service';
 import { UserViewDto } from './view-dto/users.view-dto';
 import { randomUUID } from 'crypto';
-import { CreateSessionDto } from '../dto/auth_dto/create-session.dto';
+import { CreateSessionDto } from '../domain/dto/create-session.dto';
 import { HttpException, HttpCode, HttpStatus } from '@nestjs/common';
 import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/UseCases/Auth/UseCase_RegisterUser';
@@ -39,7 +39,7 @@ export interface TokenType {
 export class AuthController {
   constructor(
     private readonly confirmationService: UserConfirmationService,
-    private readonly tokenRepository: TokensRepository,
+    private readonly tokenRepository: TokensMongoRepository,
     private readonly commandBus: CommandBus,
     private readonly eventBus: EventBus,
   ) {}

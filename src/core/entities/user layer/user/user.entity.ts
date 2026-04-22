@@ -11,9 +11,9 @@ export class User {
     private passwordSalt: string,
     private createdAt: Date,
     private updatedAt: Date,
-    private deleteAt: Date,
-    private emailConfirmation: EmailConfirmationEntity,
-    private recoverPasswordInfo: PasswordRecoverEntity,
+    private deleteAt: Date | null = null,
+    private emailConfirmation: EmailConfirmationEntity | null = null,
+    private recoverPasswordInfo: PasswordRecoverEntity | null = null,
   ) {}
 
   makeDeleted(): void {
@@ -63,6 +63,12 @@ export class User {
     newCode: string,
     newExpiresAt: Date,
   ): void {
+    if (!this.recoverPasswordInfo) {
+      throw DomainException.badRequest(
+        'Recovery password info not initialized',
+      );
+    }
+
     this.recoverPasswordInfo.code = newCode;
     this.recoverPasswordInfo.expiresAt = newExpiresAt;
   }
@@ -72,6 +78,12 @@ export class User {
     new_passwordHash: string,
     new_passwordSalt: string,
   ): void {
+    if (!this.recoverPasswordInfo) {
+      throw DomainException.badRequest(
+        'Recovery password info not initialized',
+      );
+    }
+
     const now = new Date();
     if (!this.recoverPasswordInfo.expiresAt) {
       throw DomainException.badRequest(
@@ -79,13 +91,13 @@ export class User {
       );
     }
     if (this.passwordHash == new_passwordHash) {
-      DomainException.badRequest('Password is the same!');
+      throw DomainException.badRequest('Password is the same!');
     }
     if (now > this.recoverPasswordInfo.expiresAt) {
-      DomainException.badRequest('Confirmation code expired');
+      throw DomainException.badRequest('Confirmation code expired');
     }
     if (code != this.recoverPasswordInfo.code) {
-      DomainException.badRequest('Incorrect confirmation code');
+      throw DomainException.badRequest('Incorrect confirmation code');
     }
     this.passwordHash = new_passwordHash;
     this.passwordSalt = new_passwordSalt;
