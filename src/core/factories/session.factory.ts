@@ -12,7 +12,7 @@ export class SessionFactory {
   }): SessionDomain {
     return new SessionDomain(
       randomUUID(),
-      params.deviceId,
+      params.userId,
       params.deviceId,
       params.ip,
       params.title,

@@ -1,5 +1,5 @@
-import { Comment } from '../../entities/blogs layer/comment/comment.entity';
-import { CommentLikes } from '../../entities/blogs layer/comment/commentatorLikesInfo.entity';
+import { Comment } from '../entities/blogs layer/comment/comment.entity';
+import { CommentLikes } from '../entities/blogs layer/comment/commentatorLikesInfo.entity';
 
 export interface ICommentRepository {
   findById(id: string): Promise<Comment | null>;

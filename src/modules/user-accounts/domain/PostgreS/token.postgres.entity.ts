@@ -1,9 +1,21 @@
-import { Entity, Column } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+} from 'typeorm';
 
-@Entity()
+@Entity('tokens')
 export class TokenPostgresEntity {
-  @Column()
-  toke: string;
-  @Column()
-  deletedAt: Date | null;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ type: 'text', unique: true })
+  token: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  expiresAt: Date | null;
 }

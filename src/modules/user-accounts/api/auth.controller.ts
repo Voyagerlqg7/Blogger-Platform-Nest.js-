@@ -13,7 +13,7 @@ import { newPasswordDTO } from '../dto/auth_dto/new_password.dto';
 import { registrationUserDTO } from '../dto/auth_dto/registration.dto';
 import { codeDto } from '../dto/auth_dto/registration_confirmation.dto';
 import { LocalAuthGuard } from '../../../core/guards/local-auth.guard';
-import { TokensMongoRepository } from '../infrastructure/tokens.mongo.repository';
+import { TokensMongoRepository } from '../infrastructure/Mongo/tokens.mongo.repository';
 import { UserConfirmationService } from '../application/external/user-confirmation.service';
 import { UserViewDto } from './view-dto/users.view-dto';
 import { randomUUID } from 'crypto';

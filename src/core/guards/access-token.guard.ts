@@ -2,7 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { DomainException } from '../exceptions/domain-exceptions';
-import { UsersMongoRepository } from '../../modules/user-accounts/infrastructure/users.mongo.repository';
+import { UsersMongoRepository } from '../../modules/user-accounts/infrastructure/Mongo/users.mongo.repository';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {

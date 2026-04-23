@@ -11,8 +11,11 @@ export class Session {
 
   updateActivityForDevice(ttlMs: number): void {
     const now = new Date();
-    this.lastActiveDate = new Date();
     this.lastActiveDate = now;
     this.sessionExpiresAt = new Date(now.getTime() + ttlMs);
+  }
+
+  isExpired(): boolean {
+    return new Date() > this.sessionExpiresAt;
   }
 }

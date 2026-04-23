@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../domain/Mongo/user.mongo.entity';
 import type { UserModelType } from '../domain/Mongo/user.mongo.entity';
-import { UsersMongoRepository } from '../infrastructure/users.mongo.repository';
+import { UsersMongoRepository } from '../infrastructure/Mongo/users.mongo.repository';
 import { UserViewDto } from '../api/view-dto/users.view-dto';
 import { PasswordService } from './external/password.service';
 

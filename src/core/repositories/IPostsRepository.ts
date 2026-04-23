@@ -1,5 +1,5 @@
-import { Post } from '../../entities/blogs layer/post/post.entity';
-import { PostLikes } from '../../entities/blogs layer/post/postLikesInfo.entity';
+import { Post } from '../entities/blogs layer/post/post.entity';
+import { PostLikes } from '../entities/blogs layer/post/postLikesInfo.entity';
 
 export interface IPostsRepository {
   findById(id: string): Promise<Post | null>;

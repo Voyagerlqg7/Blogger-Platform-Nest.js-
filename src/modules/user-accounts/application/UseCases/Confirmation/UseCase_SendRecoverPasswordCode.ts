@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EmailService } from '../../external/email.service';
-import { UsersMongoRepository } from '../../../infrastructure/users.mongo.repository';
+import { UsersMongoRepository } from '../../../infrastructure/Mongo/users.mongo.repository';
 import { randomUUID } from 'crypto';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
 

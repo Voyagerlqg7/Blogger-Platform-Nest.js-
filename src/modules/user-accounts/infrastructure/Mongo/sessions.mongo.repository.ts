@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import type { SessionModelType } from '../domain/Mongo/session.mongo.entity';
-import { SessionDocument } from '../domain/Mongo/session.mongo.entity';
-import { Session } from '../domain/Mongo/session.mongo.entity';
-import { DomainException } from '../../../core/exceptions/domain-exceptions';
+import type { SessionModelType } from '../../domain/Mongo/session.mongo.entity';
+import { SessionDocument } from '../../domain/Mongo/session.mongo.entity';
+import { Session } from '../../domain/Mongo/session.mongo.entity';
+import { DomainException } from '../../../../core/exceptions/domain-exceptions';
 
 @Injectable()
 export class SessionRepository {

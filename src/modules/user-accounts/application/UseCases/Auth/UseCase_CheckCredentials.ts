@@ -1,6 +1,6 @@
 import { PasswordService } from '../../external/password.service';
 import { Injectable } from '@nestjs/common';
-import { UsersMongoRepository } from '../../../infrastructure/users.mongo.repository';
+import { UsersMongoRepository } from '../../../infrastructure/Mongo/users.mongo.repository';
 import { UserViewDto } from '../../../api/view-dto/users.view-dto';
 
 @Injectable()

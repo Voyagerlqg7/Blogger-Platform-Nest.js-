@@ -1,7 +1,7 @@
 import { ICommandHandler, CommandHandler } from '@nestjs/cqrs';
 import { DomainException } from '../../../../../core/exceptions/domain-exceptions';
-import { TokensMongoRepository } from '../../../infrastructure/tokens.mongo.repository';
-import { SessionRepository } from '../../../infrastructure/sessions.mongo.repository';
+import { TokensMongoRepository } from '../../../infrastructure/Mongo/tokens.mongo.repository';
+import { SessionRepository } from '../../../infrastructure/Mongo/sessions.mongo.repository';
 
 export class DeleteDeviceCommand {
   constructor(

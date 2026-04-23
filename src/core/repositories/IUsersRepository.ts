@@ -1,4 +1,4 @@
-import { User as DomainUser } from '../../entities/user layer/user/user.entity';
+import { User as DomainUser } from '../entities/user layer/user/user.entity';
 
 export interface IUsersRepository {
   findById(id: string): Promise<DomainUser | null>;

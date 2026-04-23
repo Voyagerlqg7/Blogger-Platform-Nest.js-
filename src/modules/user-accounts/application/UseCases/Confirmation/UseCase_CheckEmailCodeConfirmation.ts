@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UsersMongoRepository } from '../../../infrastructure/users.mongo.repository';
+import { UsersMongoRepository } from '../../../infrastructure/Mongo/users.mongo.repository';
 import {
   DomainException,
   Extension,

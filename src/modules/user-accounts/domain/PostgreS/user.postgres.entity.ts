@@ -1,4 +1,3 @@
-// infrastructure/postgres/entities/user.postgres.entity.ts
 import {
   Entity,
   Column,
@@ -6,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
-  OneToMany, // Добавляем этот декоратор
+  OneToMany,
 } from 'typeorm';
 import { User as DomainUser } from '../../../../core/entities/user layer/user/user.entity';
 import { EmailConfirmationEntity } from '../../../../core/entities/user layer/user/email.confirmation.entity';

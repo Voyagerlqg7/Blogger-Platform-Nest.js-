@@ -1,5 +1,5 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { SessionRepository } from '../../infrastructure/sessions.mongo.repository';
+import { SessionRepository } from '../../infrastructure/Mongo/sessions.mongo.repository';
 import { InjectModel } from '@nestjs/mongoose';
 import { Session, type SessionModelType } from '../../domain/Mongo/session.mongo.entity';
 import { CreateSessionDto } from '../../domain/dto/create-session.dto';

@@ -1,5 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { UsersMongoRepository } from '../../../infrastructure/users.mongo.repository';
+import { UsersMongoRepository } from '../../../infrastructure/Mongo/users.mongo.repository';
 import { PasswordService } from '../../external/password.service';
 import { registrationUserDTO } from '../../../dto/auth_dto/registration.dto';
 import { UserViewDto } from '../../../api/view-dto/users.view-dto';

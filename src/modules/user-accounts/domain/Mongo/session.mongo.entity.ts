@@ -21,27 +21,6 @@ export class Session {
 
   @Prop({ type: Date, required: true })
   sessionExpiresAt: Date;
-
-  static createInstance(
-    this: SessionModelType,
-    dto: CreateSessionDto,
-    ttlMs: number,
-  ): SessionDocument {
-    const now = new Date();
-
-    return new this({
-      ...dto,
-      lastActiveDate: now,
-      sessionExpiresAt: new Date(now.getTime() + ttlMs),
-    });
-  }
-
-  updateActivityForDevice(ttlMs: number): void {
-    const now = new Date();
-    this.lastActiveDate = new Date();
-    this.lastActiveDate = now;
-    this.sessionExpiresAt = new Date(now.getTime() + ttlMs);
-  }
 }
 
 export const SessionSchema = SchemaFactory.createForClass(Session);

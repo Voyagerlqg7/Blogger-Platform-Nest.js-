@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { TokensMongoRepository } from '../../../infrastructure/tokens.mongo.repository';
-import { SessionRepository } from '../../../infrastructure/sessions.mongo.repository';
+import { TokensMongoRepository } from '../../../infrastructure/Mongo/tokens.mongo.repository';
+import { SessionRepository } from '../../../infrastructure/Mongo/sessions.mongo.repository';
 import { JwtPayload } from '../../auth/payload/JwtPayload';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';

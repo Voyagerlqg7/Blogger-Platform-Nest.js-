@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../domain/Mongo/user.mongo.entity';
 import type { UserModelType } from '../domain/Mongo/user.mongo.entity';
-import { UsersMongoRepository } from '../infrastructure/users.mongo.repository';
+import { UsersMongoRepository } from '../infrastructure/Mongo/users.mongo.repository';
 
 @Injectable()
 export class UsersExternalService {
